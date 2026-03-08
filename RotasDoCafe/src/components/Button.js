@@ -1,23 +1,8 @@
 import React from 'react'
 import { TouchableOpacity, Text, StyleSheet } from 'react-native'
 
-const buttonVariants = {
-  primary: {
-    button: styles.primaryButton,
-    text: styles.primaryText,
-  },
-  secondary: {
-    button: styles.secondaryButton,
-    text: styles.secondaryText,
-  },
-  danger: {
-    button: styles.dangerButton,
-    text: styles.dangerText,
-  },
-}
-
 export default function Button({ title, onPress, style, textStyle, variant = 'primary' }) {
-  
+
   const variantStyle = buttonVariants[variant] || buttonVariants.primary
 
   return (
@@ -72,3 +57,18 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
 })
+
+const buttonVariants = {
+  primary: {
+    button: styles.primaryButton,
+    text: styles.primaryText,
+  },
+  secondary: {
+    button: styles.secondaryButton,
+    text: styles.secondaryText,
+  },
+  danger: {
+    button: styles.dangerButton,
+    text: styles.dangerText,
+  },
+}
