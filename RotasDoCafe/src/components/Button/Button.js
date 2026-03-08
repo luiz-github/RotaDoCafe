@@ -1,41 +1,40 @@
 import React from "react";
-import BaseButton from "./BaseButton";
+import { TouchableOpacity, Text } from "react-native";
 import styles from "./styles";
 
-function Primary(props){
+export default function Button({
+  title,
+  onPress,
+  style,
+  textStyle,
+  variant = "primary"
+}) {
+
+  const variantStyle = buttonVariants[variant] || buttonVariants.primary;
+
   return (
-    <BaseButton
-      {...props}
-      style={[styles.primaryButton, props.style]}
-      textStyle={[styles.primaryText, props.textStyle]}
-    />
+    <TouchableOpacity
+      style={[styles.button, variantStyle.button, style]}
+      onPress={onPress}
+    >
+      <Text style={[styles.text, variantStyle.text, textStyle]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
   );
 }
 
-function Secondary(props) {
-  return (
-    <BaseButton
-      {...props}
-      style={[styles.secondaryButton, props.style]}
-      textStyle={[styles.secondaryText, props.textStyle]}
-    />
-  );
-}
-
-function Danger(props) {
-  return (
-    <BaseButton
-      {...props}
-      style={[styles.dangerButton, props.style]}
-      textStyle={[styles.dangerText, props.textStyle]}
-    />
-  );
-}
-
-const Button = {
-  Primary,
-  Secondary,
-  Danger
+const buttonVariants = {
+  primary: {
+    button: styles.primaryButton,
+    text: styles.primaryText
+  },
+  secondary: {
+    button: styles.secondaryButton,
+    text: styles.secondaryText
+  },
+  danger: {
+    button: styles.dangerButton,
+    text: styles.dangerText
+  }
 };
-
-export default Button;

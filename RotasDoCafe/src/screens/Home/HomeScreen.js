@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Alert } from 'react-native'
-import Button from '../../components/Button/Button'
 import styles from './styles'
+import Button from '../../components/Button/Button'
 
 export default function HomeScreen({ navigation }) {
   const handleLogout = () => {
@@ -28,9 +28,10 @@ export default function HomeScreen({ navigation }) {
         </Text>
       </View>
 
-      <Button.Danger
+      <Button
         title="Logout"
         onPress={handleLogout}
+        variant="danger"
       />
     </View>
   )

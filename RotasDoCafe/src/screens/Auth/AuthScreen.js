@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Alert } from 'react-native'
 import * as LocalAuthentication from 'expo-local-authentication'
-import Button from '../../components/Button/Button'
 import styles from './styles'
+import Button from '../../components/Button/Button'
 
 export default function AuthScreen({ navigation }) {
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false)
@@ -48,9 +48,10 @@ export default function AuthScreen({ navigation }) {
       <Text style={styles.subtitle}>Bem-vindo!</Text>
 
       {isBiometricAvailable ? (
-        <Button.Primary
+        <Button
           title="Entrar com Biometria"
           onPress={handleBiometricAuth}
+          variant="primary"
         />
       ) : (
         <Text style={styles.errorText}>
