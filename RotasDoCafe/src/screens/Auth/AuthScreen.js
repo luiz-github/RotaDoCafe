@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Alert } from 'react-native'
 import * as LocalAuthentication from 'expo-local-authentication'
-import Button from '../../components/Button'
+import Button from '../../components/Button/Button'
+import styles from './styles'
 
 export default function AuthScreen({ navigation }) {
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false)
@@ -47,37 +48,15 @@ export default function AuthScreen({ navigation }) {
       <Text style={styles.subtitle}>Bem-vindo!</Text>
 
       {isBiometricAvailable ? (
-        <Button title="Entrar com Biometria" onPress={handleBiometricAuth} variant="primary" />
+        <Button.Primary
+          title="Entrar com Biometria"
+          onPress={handleBiometricAuth}
+        />
       ) : (
-        <Text style={styles.errorText}>Dispositivo não compatível com biometria</Text>
+        <Text style={styles.errorText}>
+          Dispositivo não compatível com biometria
+        </Text>
       )}
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#6F4E37',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#DDD',
-    marginBottom: 40,
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-  },
-})
