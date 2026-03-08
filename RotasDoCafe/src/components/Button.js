@@ -1,36 +1,33 @@
 import React from 'react'
 import { TouchableOpacity, Text, StyleSheet } from 'react-native'
 
-export default function Button({ title, onPress, style, textStyle, variant = 'primary' }) {
-  const getButtonStyle = () => {
-    switch (variant) {
-      case 'primary':
-        return styles.primaryButton
-      case 'secondary':
-        return styles.secondaryButton
-      case 'danger':
-        return styles.dangerButton
-      default:
-        return styles.primaryButton
-    }
-  }
+const buttonVariants = {
+  primary: {
+    button: styles.primaryButton,
+    text: styles.primaryText,
+  },
+  secondary: {
+    button: styles.secondaryButton,
+    text: styles.secondaryText,
+  },
+  danger: {
+    button: styles.dangerButton,
+    text: styles.dangerText,
+  },
+}
 
-  const getTextStyle = () => {
-    switch (variant) {
-      case 'primary':
-        return styles.primaryText
-      case 'secondary':
-        return styles.secondaryText
-      case 'danger':
-        return styles.dangerText
-      default:
-        return styles.primaryText
-    }
-  }
+export default function Button({ title, onPress, style, textStyle, variant = 'primary' }) {
+  
+  const variantStyle = buttonVariants[variant] || buttonVariants.primary
 
   return (
-    <TouchableOpacity style={[styles.button, getButtonStyle(), style]} onPress={onPress}>
-      <Text style={[styles.text, getTextStyle(), textStyle]}>{title}</Text>
+    <TouchableOpacity
+      style={[styles.button, variantStyle.button, style]}
+      onPress={onPress}
+    >
+      <Text style={[styles.text, variantStyle.text, textStyle]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   )
 }
@@ -43,27 +40,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   primaryButton: {
     backgroundColor: '#FFF',
   },
+
   secondaryButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderWidth: 2,
     borderColor: '#FFF',
   },
+
   dangerButton: {
     backgroundColor: '#FF6B6B',
   },
+
   text: {
     fontSize: 18,
     fontWeight: 'bold',
   },
+
   primaryText: {
     color: '#6F4E37',
   },
+
   secondaryText: {
     color: '#FFF',
   },
+
   dangerText: {
     color: '#FFF',
   },
