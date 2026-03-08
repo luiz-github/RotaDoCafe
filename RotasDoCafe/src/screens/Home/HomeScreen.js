@@ -1,31 +1,39 @@
-import { View, Text, StyleSheet, Alert } from 'react-native'
-import styles from './styles'
-import Button from '../../components/Button/Button'
+import { View, Text, Alert } from "react-native";
+import Button from "../../components/Button/Button";
 
 export default function HomeScreen({ navigation }) {
+
   const handleLogout = () => {
-    Alert.alert('Sair', 'Deseja realmente sair do aplicativo?', [
+    Alert.alert("Sair", "Deseja realmente sair do aplicativo?", [
       {
-        text: 'Cancelar',
-        style: 'cancel',
+        text: "Cancelar",
+        style: "cancel",
       },
       {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: () => navigation.replace('Auth'),
+        text: "Sair",
+        style: "destructive",
+        onPress: () => navigation.replace("Auth"),
       },
-    ])
-  }
+    ]);
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Rotas do Café</Text>
-      <Text style={styles.welcome}>Bem-vindo à Home!</Text>
+    <View className="flex-1 bg-coffee items-center justify-center p-5">
 
-      <View style={styles.content}>
-        <Text style={styles.message}>
+      <Text className="text-3xl font-bold text-white mb-2">
+        Rotas do Café
+      </Text>
+
+      <Text className="text-xl text-gray-300 mb-8">
+        Bem-vindo à Home!
+      </Text>
+
+      <View className="bg-white/10 p-5 rounded-lg mb-10 w-full">
+
+        <Text className="text-white text-base text-center leading-6">
           Você está autenticado e pronto para usar o aplicativo.
         </Text>
+
       </View>
 
       <Button
@@ -33,7 +41,7 @@ export default function HomeScreen({ navigation }) {
         onPress={handleLogout}
         variant="danger"
       />
-    </View>
-  )
-}
 
+    </View>
+  );
+}
