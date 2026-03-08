@@ -1,68 +1,63 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { use, useEffect, useState, UseState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function TelaSegura() {
-  const [ access, setAcess ] = useState(false)
+  const [access, setAccess] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const authentication = await LocalAuthentication.authenticateAsync()
+      const authentication = await LocalAuthentication.authenticateAsync();
       if (authentication.success)
         setAccess(true)
       else
-        setAcess(false)
-    })()
-  }, [])
+        setAccess(false)
+    })();
+  }, []);
 
   return (
-        <View style={styles.container}>
-
-      {acess && (
-        <Text>Usuário logado com sucesso!</Text>
+    <View>
+      {access && (
+        <Text>Usuário logado co sucesso!</Text>
       )}
-      <StatusBar style="auto" />
     </View>
   )
+
 }
 
 export default function App() {
 
-  const [biometria, setBiometria] = useState(false)
-  const [render, setRender] = useState(false)
+  const [biometria, setBiometria] = useState(false);
+  const [render, setRender] = useState(false);
 
   const changeRender = () => setRender(true)
 
-  useEffect (() => {
+  useEffect(() => {
     (async () => {
       const compativel = await LocalAuthentication.hasHardwareAsync();
-      setBiometria(compativel)
+      setBiometria(compativel);
     })();
-
-
-
   }, []);
 
   if (render) {
-    renturn(
-      <TelaSegura/>
+    return (
+      <TelaSegura />
     )
   } else {
-  return (
-    <View style={styles.container}>
-      <Text>
-        {biometria
-          ? 'Faça o login com biometria'
-          : 'Dispositivo não compativel'
-        }
-      </Text>
-      <TouchableOpacity onPress={changeRender}><text></text></TouchableOpacity>
-
-    </View>
-  );
+    return (
+      <View style={styles.container}>
+        <Text>
+          {biometria
+            ? 'Faça o login com biometria'
+            : 'Dispositivo n"ao cmpativel com biometrias'
+          }
+        </Text>
+        <TouchableOpacity onPress={changeRender}><Text>Logar</Text></TouchableOpacity>
+        <StatusBar style="auto" />
+      </View>
+    );
   }
-
 }
 
 const styles = StyleSheet.create({
