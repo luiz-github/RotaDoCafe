@@ -1,83 +1,62 @@
-import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Alert } from 'react-native'
-import * as LocalAuthentication from 'expo-local-authentication'
-import Button from '../../components/Button'
+import { useEffect, useState } from "react";
+import { View, Text, Alert } from "react-native";
+import * as LocalAuthentication from "expo-local-authentication";
+import Button from "../../components/Button/Button";
+import "../../styles/global.css";
 
 export default function AuthScreen({ navigation }) {
-  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
   useEffect(() => {
-    checkBiometricAvailability()
-  }, [])
+    checkBiometricAvailability();
+  }, []);
 
   const checkBiometricAvailability = async () => {
-    const compatible = await LocalAuthentication.hasHardwareAsync()
-    const enrolled = await LocalAuthentication.isEnrolledAsync()
+    const compatible = await LocalAuthentication.hasHardwareAsync();
+    const enrolled = await LocalAuthentication.isEnrolledAsync();
 
-    if (compatible && enrolled) {
-      setIsBiometricAvailable(true)
-    } else {
-      setIsBiometricAvailable(false)
-    }
-  }
+    setIsBiometricAvailable(compatible && enrolled);
+  };
 
   const handleBiometricAuth = async () => {
     try {
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: 'Autentique para acessar o app',
-        cancelLabel: 'Cancelar',
+        promptMessage: "Autentique para acessar o app",
+        cancelLabel: "Cancelar",
         disableDeviceFallback: false,
-      })
+      });
 
       if (result.success) {
-        setIsAuthenticated(true)
-        navigation.replace('Home')
+        navigation.replace("Home");
       } else {
-        Alert.alert('Erro', 'Autenticação falhou. Tente novamente.')
+        Alert.alert("Erro", "Autenticação falhou. Tente novamente.");
       }
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro durante a autenticação.')
+      Alert.alert("Erro", "Ocorreu um erro durante a autenticação.");
     }
-  }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Rotas do Café</Text>
-      <Text style={styles.subtitle}>Bem-vindo!</Text>
+    <View className="flex-1 bg-coffee items-center justify-center p-5">
+
+      <Text className="text-3xl font-bold text-white mb-2">
+        Rotas do Café
+      </Text>
+
+      <Text className="text-lg text-gray-300 mb-10">
+        Bem-vindo!
+      </Text>
 
       {isBiometricAvailable ? (
-        <Button title="Entrar com Biometria" onPress={handleBiometricAuth} variant="primary" />
+        <Button
+          title="Entrar com Biometria"
+          onPress={handleBiometricAuth}
+        />
       ) : (
-        <Text style={styles.errorText}>Dispositivo não compatível com biometria</Text>
+        <Text className="text-red-400 text-base text-center mt-5">
+          Dispositivo não compatível com biometria
+        </Text>
       )}
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#6F4E37',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#DDD',
-    marginBottom: 40,
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-  },
-})
