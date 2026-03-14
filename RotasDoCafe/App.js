@@ -1,7 +1,10 @@
 import 'react-native-gesture-handler'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import * as NavigationBar from 'expo-navigation-bar'
+import colors from './src/styles/colors'
+
 import AuthScreen from './src/screens/Auth/AuthScreen'
 import BottomTabs from './src/components/BottomTabs/BottomTabs'
 
@@ -10,6 +13,12 @@ import './src/styles/global.css'
 const Stack = createNativeStackNavigator()
 
 export default function App() {
+
+  useEffect(() => {
+    NavigationBar.setBackgroundColorAsync(colors.background)
+    NavigationBar.setButtonStyleAsync("light")
+  }, [])
+
   return (
     <NavigationContainer>
 
