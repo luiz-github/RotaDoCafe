@@ -3,7 +3,8 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AuthScreen from './src/screens/Auth/AuthScreen'
-import HomeScreen from './src/screens/Home/HomeScreen'
+import BottomTabs from './src/components/BottomTabs/BottomTabs'
+
 import './src/styles/global.css'
 
 const Stack = createNativeStackNavigator()
@@ -11,27 +12,26 @@ const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <NavigationContainer>
+
       <Stack.Navigator
         initialRouteName="Auth"
         screenOptions={{
           headerShown: false,
         }}
       >
+
         <Stack.Screen
           name="Auth"
           component={AuthScreen}
-          options={{
-            title: 'Login',
-          }}
         />
+
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: 'Home',
-          }}
+          name="App"
+          component={BottomTabs}
         />
+
       </Stack.Navigator>
+
     </NavigationContainer>
   )
 }
