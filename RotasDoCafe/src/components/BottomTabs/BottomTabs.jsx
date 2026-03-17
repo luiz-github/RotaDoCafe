@@ -2,7 +2,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HomeScreen from "../../screens/Home/HomeScreen";
 import ExploreScreen from "../../screens/Explore/ExploreScreen";
-import MapaScreen from "../../screens/Mapa/MapaScreen";
+import MapScreen from "../../screens/Map/MapScreen";
 import EventosScreen from "../../screens/Eventos/EventosScreen";
 import ProfileScreen from "../../screens/Profile/ProfileScreen";
 
@@ -26,6 +26,10 @@ export default function BottomTabs() {
           borderTopWidth: 0,
           height: 60 + insets.bottom,
           paddingBottom: insets.bottom,
+        },
+        
+        labelStyle: {
+          margin: 0
         },
         
         tabBarIndicatorStyle: {height: 0},
@@ -59,7 +63,7 @@ export default function BottomTabs() {
 
       <Tab.Screen
         name="Mapa"
-        component={MapaScreen}
+        component={MapScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="map" size={22} color={color} />
