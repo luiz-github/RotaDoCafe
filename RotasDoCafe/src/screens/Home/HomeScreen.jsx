@@ -6,7 +6,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
 
-    <SafeAreaView className="flex-1 bg-coffee">
+    <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-coffee">
 
       <ScrollView
         className="flex-1 px-5"
