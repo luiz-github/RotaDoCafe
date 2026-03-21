@@ -5,6 +5,7 @@ import Button from "../../components/Button/Button";
 import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
+import Loading from "../../components/Loading/Loading";
 
 import "../../styles/global.css";
 
@@ -12,7 +13,7 @@ export default function AuthScreen({ navigation }) {
   const { username, password, setUsername, setPassword } = useLoginForm();
   const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
   const [showPassword, setShowPassword] = useState(false);
-  const handleLogin = useLogin(navigation);
+  const { handleLogin, loading } = useLogin(navigation);
 
 
   return (
@@ -25,6 +26,11 @@ export default function AuthScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
+
+       <Loading
+          visible={loading}
+          text="Autenticando..."
+        />
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
@@ -82,6 +88,7 @@ export default function AuthScreen({ navigation }) {
 
               <Button
                 title="Entrar"
+                disabled={loading}
                 onPress={() => handleLogin(username, password)}
               />
 
