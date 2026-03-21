@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 
 export default function useLoginForm() {
 
@@ -6,11 +6,12 @@ export default function useLoginForm() {
     const [password, setPassword] = useState("");
 
 
-    return(
+    return {
         username,
         password,
         setUsername,
         setPassword
-    )
+    }
+
 
 }
