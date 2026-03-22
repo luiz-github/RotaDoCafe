@@ -13,13 +13,18 @@
       "backgroundColor": "#6F4E37"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "infoPlist": {
+        "NSCameraUsageDescription": "Precisamos acessar sua câmera para foto de perfil",
+        "NSPhotoLibraryUsageDescription": "Precisamos acessar sua galeria"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#6F4E37",
         "foregroundImage": "./assets/splash-icon.png"
-      }
+      },
+      "permissions": ["CAMERA", "READ_MEDIA_IMAGES"]
     },
     "web": {
       "favicon": "./assets/splash-icon.png"

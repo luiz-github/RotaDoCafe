@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import useLogout from "../../hooks/AuthScreen/useLogout";
+import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 
 export default function ProfileScreen({ navigation }) {
 
@@ -31,6 +32,10 @@ export default function ProfileScreen({ navigation }) {
           <Text className="text-white text-lg font-semibold mb-6">
             Conta
           </Text>
+
+          <View className="my-10">
+            <ProfileAvatar />
+          </View>
 
           <Button
             title="Sair da conta"
