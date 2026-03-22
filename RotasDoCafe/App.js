@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as NavigationBar from 'expo-navigation-bar'
 import colors from './src/styles/colors'
+import Toast from 'react-native-toast-message'
 
 import AuthScreen from './src/screens/Auth/AuthScreen'
 import BottomTabs from './src/components/BottomTabs/BottomTabs'
@@ -40,6 +41,7 @@ export default function App() {
         />
 
       </Stack.Navigator>
+      <Toast />
 
     </NavigationContainer>
   )

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
+import useToast from "../../components/Toast/ToastMessage";
 
 export default function useBiometricAuth(navigation) {
-
     const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+    const { showSuccess, showError } = useToast()
 
     useEffect(() => {
         checkBiometricAvailability();
@@ -27,11 +27,12 @@ export default function useBiometricAuth(navigation) {
             });
             if (result.success) {
                 navigation.replace("App");
+                showSuccess("Autenticação bem-sucedida.");
             } else {
-                Alert.alert("Erro", "Autenticação falhou. Tente novamente.");
+                showError("Autenticação falhou. Tente novamente.");
             }
         } catch (error) {
-            Alert.alert("Erro", "Ocorreu um erro durante a autenticação.");
+            showError("Ocorreu um erro durante a autenticação.");
         }
     
     };

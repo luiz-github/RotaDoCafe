@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Alert } from 'react-native'
+import useToast from '../../components/Toast/ToastMessage'
 
 export default function useLogin(navigation) {
   const [loading, setLoading] = useState(false)
+  const { showSuccess, showError } = useToast()
 
   const MOCK_USER = {
     username: 'admin',
@@ -11,8 +12,7 @@ export default function useLogin(navigation) {
 
   const handleLogin = (username, password) => {
     if (!username || !password) {
-      Alert.alert('Erro', 'Preencha todos os campos para continuar.')
-      return
+      return showError("Preencha todos os campos para continuar.")
     }
 
     setLoading(true)
@@ -20,12 +20,11 @@ export default function useLogin(navigation) {
     setTimeout(() => {
       if (username !== MOCK_USER.username || password !== MOCK_USER.password) {
         setLoading(false)
-        Alert.alert('Erro', 'Usuário ou senha inválidos.')
-        return
+        return showError("Usuário ou senha inválidos.")
       }
 
       setLoading(false)
-      Alert.alert('Sucesso', `Bem-vindo, ${MOCK_USER.username}!`)
+      showSuccess("Autenticado com sucesso.")
       navigation.replace('App')
     }, 1000)
   }
