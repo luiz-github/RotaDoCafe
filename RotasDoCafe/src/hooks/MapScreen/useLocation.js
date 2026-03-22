@@ -1,18 +1,26 @@
-import * as Location from 'expo-location';
-import { useState, useEffect } from 'react';
+import * as Location from 'expo-location'
+import { useState, useEffect } from 'react'
 
 export default function useLocation() {
-    const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(null)
+  const [status, setStatus] = useState(null)
+  const [canAskAgain, setCanAskAgain] = useState(true)
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') return;
+  const requestPermission = async () => {
+    const permission = await Location.requestForegroundPermissionsAsync()
 
-            const { coords } = await Location.getCurrentPositionAsync({});
-            setLocation(coords);
-        })();
-    }, []);
+    setStatus(permission.status)
+    setCanAskAgain(permission.canAskAgain)
 
-    return location;
+    if (permission.status !== 'granted') return
+
+    const { coords } = await Location.getCurrentPositionAsync({})
+    setLocation(coords)
+  }
+
+  useEffect(() => {
+    requestPermission()
+  }, [])
+
+  return { location, status, canAskAgain, requestPermission }
 }
