@@ -88,7 +88,7 @@ RotasDoCafe/
 
 ### Pré-requisitos
 
-* Node.js 18+
+* Node.js 20+
 * Expo CLI (`npm install -g @expo/cli`)
 * Android Studio ou Xcode (opcional)
 
