@@ -146,3 +146,10 @@ npm run start:tunnel
 ## 🎯 Objetivo do Projeto
 
 O objetivo do **Rotas do Café** é valorizar o turismo regional, facilitando o acesso às informações sobre o **Vale do Café**, promovendo experiências culturais e incentivando a exploração dos patrimônios históricos da região.
+
+---
+
+## 👥 Integrantes
+Alysson André de Paula Silva
+Lucas Coutinho de Oliveira Bastos
+Luiz Gustavo Lima Drilard
