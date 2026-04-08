@@ -13,7 +13,7 @@ export default function AuthScreen({ navigation }) {
   const { username, password, setUsername, setPassword } = useLoginForm();
   const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, loading } = useLogin(navigation);
+  const { handleLogin, loading, firstLogin } = useLogin(navigation);
 
 
   return (
@@ -27,7 +27,7 @@ export default function AuthScreen({ navigation }) {
         className="flex-1"
       >
 
-       <Loading
+        <Loading
           visible={loading}
           text="Autenticando..."
         />
@@ -92,31 +92,29 @@ export default function AuthScreen({ navigation }) {
                 onPress={() => handleLogin(username, password)}
               />
 
-              <View className="flex-row items-center my-6">
+              {!firstLogin && (
+                <>
+                  <View className="flex-row items-center my-6">
+                    <View className="flex-1 h-px bg-gray-400" />
 
-                <View className="flex-1 h-px bg-gray-400" />
+                    <Text className="mx-3 text-gray-300">
+                      ou
+                    </Text>
 
-                <Text className="mx-3 text-gray-300">
-                  ou
-                </Text>
+                    <View className="flex-1 h-px bg-gray-400" />
+                  </View>
 
-                <View className="flex-1 h-px bg-gray-400" />
-
-              </View>
-
-              {isBiometricAvailable && (
-
-                <TouchableOpacity
-                  onPress={handleBiometricAuth}
-                  className="bg-white/20 p-4 rounded-lg items-center"
-                >
-
-                  <Text className="text-white font-semibold">
-                    Entrar com Biometria
-                  </Text>
-
-                </TouchableOpacity>
-
+                  {isBiometricAvailable && (
+                    <TouchableOpacity
+                      onPress={handleBiometricAuth}
+                      className="bg-white/20 p-4 rounded-lg items-center"
+                    >
+                      <Text className="text-white font-semibold">
+                        Entrar com Biometria
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </>
               )}
 
             </View>
