@@ -18,9 +18,10 @@ export default async function getPlaces() {
             method: "POST",
             body: VALE_DO_CAFE_QUERY,
         });
+        
+        if (!response.ok) throw new Error("Unexpected api response.")
+            
         const json = await response.json();
-
-        if (!json.elements) throw new Error("Unexpected api response.")
 
         const filteredData = json.elements.map((el) => ({
             id: el.id,

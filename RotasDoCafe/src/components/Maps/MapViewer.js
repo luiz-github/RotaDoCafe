@@ -36,7 +36,7 @@ export default function Map() {
 
       <MapView
         style={styles.map}
-        showsUserLocation={true}
+        showsUserLocation={false}
         followsUserLocation={false} 
         initialRegion={{
             latitude: location?.latitude ?? -22.43,
@@ -47,6 +47,17 @@ export default function Map() {
 
       >
         <UrlTile urlTemplate={`${baseUrlTemplate}/{z}/{x}/{y}.png`} />
+        {location && (
+          <Marker
+            key={"userLocation"}
+            pinColor='#228dff'
+            coordinate={{
+              latitude: location.latitude,
+              longitude: location.longitude,
+            }}
+            title='User live location'
+          />
+        )}
         {places.map(place => (
           <Marker
             key={place.id}
