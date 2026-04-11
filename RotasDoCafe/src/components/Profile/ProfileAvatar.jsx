@@ -2,6 +2,9 @@ import { View, Image, Pressable, Text, Modal } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import { Animated } from "react-native";
+import useCamera from "../../hooks/ProfileScreen/useCamera";
+import useGallery from "../../hooks/ProfileScreen/useGallery";
+import { startLocationUpdatesAsync } from "expo-location";
 
 export default function ProfileAvatar() {
     const [image, setImage] = useState(null);
@@ -9,6 +12,9 @@ export default function ProfileAvatar() {
     const [visible, setVisible] = useState(false);
 
     const slideAnim = useRef(new Animated.Value(300)).current;
+
+    const { status: camStatus, canAskAgain: camCanAskAgain, requestCameraPermission } = useCamera()
+    const { status: galleryStatus, canAskAgain: galleryCanAskAgain, requestGalleryPermission } = useGallery()
 
     const openModal = () => {
         setVisible(true);
@@ -26,31 +32,37 @@ export default function ProfileAvatar() {
             useNativeDriver: true,
         }).start(() => setVisible(false));
     };
-
+    
     const openCamera = async () => {
         closeModal();
+        
+        let currentStatus = camStatus
 
         try {
-            const permission = await ImagePicker.requestCameraPermissionsAsync();
+            if (currentStatus !== "granted") {
+                const permission = await requestCameraPermission()
+                currentStatus = permission.status
 
-            if (!permission.granted) {
-                alert("Permissão da câmera necessária");
-                return;
-            }
+                if (currentStatus !== "granted") {
+                    alert("Permissão necessária para utilizar a câmera")
+                }
+            } 
 
-            const result = await ImagePicker.launchCameraAsync({
-                allowsEditing: false,
-                quality: 0.7,
-                base64: true,
-            });
-
-            if (!result.canceled && result.assets?.length > 0) {
-                const asset = result.assets[0];
-
-                setImage(asset.uri);
-                setBase64Image(asset.base64);
-
-                console.log("BASE64:", asset.base64);
+            if (currentStatus === "granted") {
+                const result = await ImagePicker.launchCameraAsync({
+                    allowsEditing: false,
+                    quality: 0.7,
+                    base64: true,
+                });
+                
+                if (!result.canceled && result.assets?.length > 0) {
+                    const asset = result.assets[0];
+                    
+                    setImage(asset.uri);
+                    setBase64Image(asset.base64);
+                    
+                    console.log("BASE64:", asset.base64);
+                }
             }
         } catch (error) {
             console.log("Erro ao abrir câmera:", error);
@@ -60,28 +72,34 @@ export default function ProfileAvatar() {
     const openGallery = async () => {
         closeModal();
 
+        let currentStatus = galleryStatus
+
         try {
-            const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (currentStatus !== "granted") {
+                const permission = await requestGalleryPermission()
+                currentStatus = permission.status
 
-            if (!permission.granted) {
-                alert("Permissão da galeria necessária");
-                return;
-            }
+                if (currentStatus !== "granted") {
+                    alert("Permissão necessária para utilizar a galeria")
+                }
+            } 
 
-            const result = await ImagePicker.launchImageLibraryAsync({
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.7,
-                base64: true,
-            });
-
-            if (!result.canceled && result.assets?.length > 0) {
-                const asset = result.assets[0];
-
-                setImage(asset.uri);
-                setBase64Image(asset.base64);
-
-                console.log("BASE64:", asset.base64);
+            if (currentStatus === "granted") {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                    allowsEditing: true,
+                    aspect: [1, 1],
+                    quality: 0.7,
+                    base64: true,
+                });
+    
+                if (!result.canceled && result.assets?.length > 0) {
+                    const asset = result.assets[0];
+    
+                    setImage(asset.uri);
+                    setBase64Image(asset.base64);
+    
+                    console.log("BASE64:", asset.base64);
+                }
             }
         } catch (error) {
             console.log("Erro ao abrir galeria:", error);
