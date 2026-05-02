@@ -12,7 +12,6 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 }
 
-// sadasdas
 
 const app = initializeApp(firebaseConfig)
 
