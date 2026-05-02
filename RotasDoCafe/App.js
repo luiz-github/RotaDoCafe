@@ -8,6 +8,8 @@ import Toast from 'react-native-toast-message'
 
 import AuthScreen from './src/screens/Auth/AuthScreen'
 import BottomTabs from './src/components/BottomTabs/BottomTabs'
+import RegisterScreen from './src/screens/Auth/RegisterScreen'
+import ForgotPasswordScreen from './src/screens/Auth/ForgotPasswordScreen'
 
 import './src/styles/global.css'
 
@@ -40,6 +42,17 @@ export default function App() {
           component={BottomTabs}
         />
 
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+        />
+
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordScreen}
+        />
+
+        
       </Stack.Navigator>
       <Toast />
 
