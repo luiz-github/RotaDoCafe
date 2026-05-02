@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
@@ -6,14 +6,20 @@ import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
 import Loading from "../../components/Loading/Loading";
+import { canSubmitLoginForm } from "../../services/validations/loginValidation";
 
 import "../../styles/global.css";
 
-export default function AuthScreen({ navigation }) {
-  const { username, password, setUsername, setPassword } = useLoginForm();
+export default function AuthScreen({ navigation, route }) {
+  const initialEmail = route?.params?.email || "";
+  const { email, password, setEmail, setPassword } = useLoginForm(initialEmail);
   const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
   const [showPassword, setShowPassword] = useState(false);
   const { handleLogin, loading, firstLogin } = useLogin(navigation);
+  const isLoginFormValid = useMemo(
+    () => canSubmitLoginForm({ email, password }),
+    [email, password]
+  );
 
 
   return (
@@ -54,14 +60,16 @@ export default function AuthScreen({ navigation }) {
             <View className="bg-white/10 p-6 rounded-xl">
 
               <Text className="text-white text-sm mb-2">
-                Usuário
+                E-mail
               </Text>
 
               <TextInput
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Digite seu usuário"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Digite seu e-mail"
                 placeholderTextColor="#ccc"
+                keyboardType="email-address"
+                autoCapitalize="none"
                 className="bg-white rounded-lg px-4 py-3 mb-4"
               />
 
@@ -105,8 +113,8 @@ export default function AuthScreen({ navigation }) {
 
               <Button
                 title="Entrar"
-                disabled={loading}
-                onPress={() => handleLogin(username, password)}
+                disabled={loading || !isLoginFormValid}
+                onPress={() => handleLogin(email, password)}
               />
 
               <TouchableOpacity

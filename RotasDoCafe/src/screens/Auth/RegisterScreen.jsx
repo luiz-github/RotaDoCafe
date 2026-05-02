@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     View,
     Text,
@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import Loading from "../../components/Loading/Loading";
 import useRegister from "../../hooks/AuthScreen/useRegister";
+import { validateRegisterForm } from "../../services/validations/registerValidation";
 
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState("");
@@ -21,8 +22,19 @@ export default function RegisterScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showValidationErrors, setShowValidationErrors] = useState(false);
 
     const { handleRegister, loading } = useRegister(navigation);
+
+    const formValidation = useMemo(
+        () => validateRegisterForm({ username, email, password, confirmPassword }),
+        [username, email, password, confirmPassword]
+    );
+
+    const hasAllFieldsFilled = useMemo(
+        () => [username, email, password, confirmPassword].every((field) => field.trim().length > 0),
+        [username, email, password, confirmPassword]
+    );
 
     return (
         <SafeAreaView className="flex-1 bg-coffee">
@@ -65,6 +77,11 @@ export default function RegisterScreen({ navigation }) {
                                 placeholderTextColor="#ccc"
                                 className="bg-white rounded-lg px-4 py-3 mb-4"
                             />
+                            {showValidationErrors && formValidation.errors.username && (
+                                <Text className="text-red-300 text-sm -mt-2 mb-3">
+                                    {formValidation.errors.username}
+                                </Text>
+                            )}
                             <Text className="text-white mb-2">E-mail</Text>
                             <TextInput
                                 value={email}
@@ -75,6 +92,11 @@ export default function RegisterScreen({ navigation }) {
                                 autoCapitalize="none"
                                 className="bg-white rounded-lg px-4 py-3 mb-4"
                             />
+                            {showValidationErrors && formValidation.errors.email && (
+                                <Text className="text-red-300 text-sm -mt-2 mb-3">
+                                    {formValidation.errors.email}
+                                </Text>
+                            )}
 
                             <Text className="text-white mb-2">Senha</Text>
                             <View className="relative mb-4">
@@ -100,6 +122,11 @@ export default function RegisterScreen({ navigation }) {
                                     <Text>{showPassword ? "🙈" : "👁️"}</Text>
                                 </TouchableOpacity>
                             </View>
+                            {showValidationErrors && formValidation.errors.password && (
+                                <Text className="text-red-300 text-sm -mt-2 mb-3">
+                                    {formValidation.errors.password}
+                                </Text>
+                            )}
 
                             <Text className="text-white mb-2">Confirmar senha</Text>
                             <View className="relative mb-6">
@@ -125,12 +152,18 @@ export default function RegisterScreen({ navigation }) {
                                     <Text>{showConfirm ? "🙈" : "👁️"}</Text>
                                 </TouchableOpacity>
                             </View>
+                            {showValidationErrors && formValidation.errors.confirmPassword && (
+                                <Text className="text-red-300 text-sm -mt-4 mb-3">
+                                    {formValidation.errors.confirmPassword}
+                                </Text>
+                            )}
                             <Button
                                 title="Criar conta"
-                                onPress={() =>
-                                    handleRegister({ username, email, password, confirmPassword })
-                                }
-                                disabled={loading}
+                                onPress={() => {
+                                    setShowValidationErrors(true);
+                                    handleRegister({ username, email, password, confirmPassword });
+                                }}
+                                disabled={loading || !hasAllFieldsFilled}
                             />
 
                             <TouchableOpacity
