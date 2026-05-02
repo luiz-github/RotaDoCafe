@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { initializeApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
@@ -10,8 +11,9 @@ const firebaseConfig = {
   messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 }
-
+console.log('ENV:', process.env.EXPO_PUBLIC_FIREBASE_API_KEY)
 const app = initializeApp(firebaseConfig)
 
 export const db = getFirestore(app)
 export const auth = getAuth(app)
+

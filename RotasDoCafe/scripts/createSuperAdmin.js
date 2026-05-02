@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, db } from '../firebase.ts'
+import { auth, db } from '../src/services/firebase.js'
 
 async function criarSuperAdmin() {
   try {
