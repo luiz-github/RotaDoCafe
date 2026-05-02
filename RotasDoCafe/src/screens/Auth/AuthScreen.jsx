@@ -24,6 +24,7 @@ export default function AuthScreen({ navigation }) {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={80}
         className="flex-1"
       >
 
@@ -32,7 +33,9 @@ export default function AuthScreen({ navigation }) {
           text="Autenticando..."
         />
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
 
           <View className="flex-1 justify-center px-6 pt-10">
 
@@ -65,32 +68,58 @@ export default function AuthScreen({ navigation }) {
               <Text className="text-white text-sm mb-2">
                 Senha
               </Text>
-              <View>
+              <View className="relative mb-6">
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
                   placeholder="Digite sua senha"
                   placeholderTextColor="#ccc"
                   secureTextEntry={!showPassword}
-                  className="bg-white rounded-lg px-4 py-3 mb-6"
+                  className="bg-white rounded-lg px-4 py-3 pr-12"
                 />
 
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-3"
+                  style={{
+                    position: "absolute",
+                    right: 8,
+                    top: "50%",
+                    transform: [{ translateY: -10 }]
+                  }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                  <Text className="text-gray-500">
+                  <Text style={{ fontSize: 16 }}>
                     {showPassword ? "🙈" : "👁️"}
                   </Text>
                 </TouchableOpacity>
               </View>
 
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPassword")}
+                className="mb-4 items-end"
+              >
+                <Text className="text-gray-300 underline">
+                  Esqueceu sua senha?
+                </Text>
+              </TouchableOpacity>
 
               <Button
                 title="Entrar"
                 disabled={loading}
                 onPress={() => handleLogin(username, password)}
               />
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Register")}
+                className="mt-4 items-center"
+              >
+                <Text className="text-gray-300">
+                  Não tem conta?{" "}
+                  <Text className="text-white font-semibold">
+                    Cadastre-se
+                  </Text>
+                </Text>
+              </TouchableOpacity>
 
               {!firstLogin && (
                 <>
