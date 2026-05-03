@@ -1,115 +1,60 @@
-/**
- * Validações para o registro de usuário
- * Cada função retorna { isValid: boolean, error?: string }
- */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/
+
+const createResult = (isValid, error = null) => ({ isValid, error })
+
+const normalize = (value) => value?.trim() || ''
 
 const validateUsername = (username) => {
-  const normalizedUsername = username?.trim() || ''
-
-  if (!normalizedUsername) {
-    return { isValid: false, error: 'Usuário é obrigatório' }
+  const value = normalize(username)
+  if (!value) return createResult(false, 'Usuário é obrigatório')
+  if (value.length < 3) return createResult(false, 'Usuário deve ter pelo menos 3 caracteres')
+  if (value.length > 20) return createResult(false, 'Usuário não pode ter mais de 20 caracteres')
+  if (!USERNAME_REGEX.test(value)) {
+    return createResult(false, 'Usuário pode conter apenas letras, números, _ e -')
   }
-
-  if (normalizedUsername.length < 3) {
-    return { isValid: false, error: 'Usuário deve ter pelo menos 3 caracteres' }
-  }
-
-  if (normalizedUsername.length > 20) {
-    return { isValid: false, error: 'Usuário não pode ter mais de 20 caracteres' }
-  }
-
-  if (!/^[a-zA-Z0-9_-]+$/.test(normalizedUsername)) {
-    return {
-      isValid: false,
-      error: 'Usuário pode conter apenas letras, números, _ e -',
-    }
-  }
-
-  return { isValid: true }
+  return createResult(true)
 }
 
 const validateEmail = (email) => {
-  const normalizedEmail = email?.trim() || ''
-
-  if (!normalizedEmail) {
-    return { isValid: false, error: 'E-mail é obrigatório' }
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(normalizedEmail)) {
-    return { isValid: false, error: 'E-mail inválido' }
-  }
-
-  return { isValid: true }
+  const value = normalize(email)
+  if (!value) return createResult(false, 'E-mail é obrigatório')
+  if (!EMAIL_REGEX.test(value)) return createResult(false, 'E-mail inválido')
+  return createResult(true)
 }
 
 const validatePassword = (password) => {
-  const normalizedPassword = password?.trim() || ''
-
-  if (!normalizedPassword) {
-    return { isValid: false, error: 'Senha é obrigatória' }
+  const value = normalize(password)
+  if (!value) return createResult(false, 'Senha é obrigatória')
+  if (value.length < 6) return createResult(false, 'Senha deve ter pelo menos 6 caracteres')
+  if (value.length > 50) return createResult(false, 'Senha não pode ter mais de 50 caracteres')
+  if (!/[a-zA-Z]/.test(value) || !/[0-9]/.test(value)) {
+    return createResult(false, 'Senha deve conter letras e números')
   }
-
-  if (normalizedPassword.length < 6) {
-    return { isValid: false, error: 'Senha deve ter pelo menos 6 caracteres' }
-  }
-
-  if (normalizedPassword.length > 50) {
-    return { isValid: false, error: 'Senha não pode ter mais de 50 caracteres' }
-  }
-
-  // Verifica se tem pelo menos uma letra e um número
-  if (!/[a-zA-Z]/.test(normalizedPassword) || !/[0-9]/.test(normalizedPassword)) {
-    return {
-      isValid: false,
-      error: 'Senha deve conter letras e números',
-    }
-  }
-
-  return { isValid: true }
+  return createResult(true)
 }
 
 const validateConfirmPassword = (password, confirmPassword) => {
-  const normalizedPassword = password?.trim() || ''
-  const normalizedConfirmPassword = confirmPassword?.trim() || ''
-
-  if (!normalizedConfirmPassword) {
-    return { isValid: false, error: 'Confirmação de senha é obrigatória' }
-  }
-
-  if (normalizedPassword !== normalizedConfirmPassword) {
-    return { isValid: false, error: 'As senhas não coincidem' }
-  }
-
-  return { isValid: true }
+  const pass = normalize(password)
+  const confirm = normalize(confirmPassword)
+  if (!confirm) return createResult(false, 'Confirmação de senha é obrigatória')
+  if (pass !== confirm) return createResult(false, 'As senhas não coincidem')
+  return createResult(true)
 }
 
-/**
- * Valida todos os campos do registro
- * @returns { isValid: boolean, errors: { [field]: string } }
- */
-const validateRegisterForm = ({ username, email, password, confirmPassword }) => {
-  const errors = {}
-
-  const usernameValidation = validateUsername(username)
-  if (!usernameValidation.isValid) {
-    errors.username = usernameValidation.error
+const validateRegisterForm = (data) => {
+  const validators = {
+    username: () => validateUsername(data.username),
+    email: () => validateEmail(data.email),
+    password: () => validatePassword(data.password),
+    confirmPassword: () => validateConfirmPassword(data.password, data.confirmPassword),
   }
 
-  const emailValidation = validateEmail(email)
-  if (!emailValidation.isValid) {
-    errors.email = emailValidation.error
-  }
-
-  const passwordValidation = validatePassword(password)
-  if (!passwordValidation.isValid) {
-    errors.password = passwordValidation.error
-  }
-
-  const confirmPasswordValidation = validateConfirmPassword(password, confirmPassword)
-  if (!confirmPasswordValidation.isValid) {
-    errors.confirmPassword = confirmPasswordValidation.error
-  }
+  const errors = Object.entries(validators).reduce((acc, [field, fn]) => {
+    const result = fn()
+    if (!result.isValid) acc[field] = result.error
+    return acc
+  }, {})
 
   return {
     isValid: Object.keys(errors).length === 0,
@@ -117,19 +62,11 @@ const validateRegisterForm = ({ username, email, password, confirmPassword }) =>
   }
 }
 
-/**
- * Verifica se o formulário pode ser enviado
- * (todos os campos preenchidos, sem erros)
- */
-const canSubmitForm = ({ username, email, password, confirmPassword }) => {
-  // Verifica se todos os campos estão preenchidos
-  if (!username?.trim() || !email?.trim() || !password?.trim() || !confirmPassword?.trim()) {
-    return false
-  }
-
-  // Valida o formulário
-  const validation = validateRegisterForm({ username, email, password, confirmPassword })
-  return validation.isValid
+const canSubmitForm = (data) => {
+  const requiredFields = ['username', 'email', 'password', 'confirmPassword']
+  const hasEmpty = requiredFields.some((field) => !normalize(data?.[field]))
+  if (hasEmpty) return false
+  return validateRegisterForm(data).isValid
 }
 
 export {

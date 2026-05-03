@@ -1,40 +1,29 @@
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const createResult = (isValid, error = null) => ({ isValid, error })
+
 const validateEmail = (email) => {
-  if (!email || email.trim() === '') {
-    return { isValid: false, error: 'E-mail é obrigatório' }
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email.trim())) {
-    return { isValid: false, error: 'E-mail inválido' }
-  }
-
-  return { isValid: true }
+  const value = email?.trim() || ''
+  if (!value) return createResult(false, 'E-mail é obrigatório')
+  if (!EMAIL_REGEX.test(value)) return createResult(false, 'E-mail inválido')
+  return createResult(true)
 }
 
 const validatePassword = (password) => {
-  if (!password || password.trim() === '') {
-    return { isValid: false, error: 'Senha é obrigatória' }
-  }
-
-  if (password.trim().length < 6) {
-    return { isValid: false, error: 'Senha deve ter pelo menos 6 caracteres' }
-  }
-
-  return { isValid: true }
+  const value = password?.trim() || ''
+  if (!value) return createResult(false, 'Senha é obrigatória')
+  if (value.length < 6) return createResult(false, 'Senha deve ter pelo menos 6 caracteres')
+  return createResult(true)
 }
 
 const validateLoginForm = ({ email, password }) => {
   const errors = {}
 
-  const emailValidation = validateEmail(email)
-  if (!emailValidation.isValid) {
-    errors.email = emailValidation.error
-  }
+  const emailResult = validateEmail(email)
+  if (!emailResult.isValid) errors.email = emailResult.error
 
-  const passwordValidation = validatePassword(password)
-  if (!passwordValidation.isValid) {
-    errors.password = passwordValidation.error
-  }
+  const passwordResult = validatePassword(password)
+  if (!passwordResult.isValid) errors.password = passwordResult.error
 
   return {
     isValid: Object.keys(errors).length === 0,
@@ -42,20 +31,13 @@ const validateLoginForm = ({ email, password }) => {
   }
 }
 
-const canSubmitLoginForm = ({ email, password }) => {
-  if (!email || !password) {
-    return false
-  }
-
-  const validation = validateLoginForm({ email, password })
-  return validation.isValid
+const canSubmitLoginForm = (data) => {
+  if (!data?.email || !data?.password) return false
+  return validateLoginForm(data).isValid
 }
 
 const canSubmitEmailOnlyForm = (email) => {
-  if (!email) {
-    return false
-  }
-
+  if (!email) return false
   return validateEmail(email).isValid
 }
 
