@@ -1,17 +1,20 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useUserRole } from "../../hooks/AuthScreen/useUserRole";
+import { Ionicons } from "@expo/vector-icons";
+
 import HomeScreen from "../../screens/Home/HomeScreen";
 import ExploreScreen from "../../screens/Explore/ExploreScreen";
 import MapScreen from "../../screens/Map/MapScreen";
 import EventosScreen from "../../screens/Eventos/EventosScreen";
 import ProfileScreen from "../../screens/Profile/ProfileScreen";
-
-import { Ionicons } from "@expo/vector-icons";
+import AdminScreen from "../../screens/admin/AdminScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function BottomTabs() {
   const insets = useSafeAreaInsets();
+  const { role } = useUserRole();
 
   return (
 
@@ -27,12 +30,12 @@ export default function BottomTabs() {
           height: 60 + insets.bottom,
           paddingBottom: insets.bottom,
         },
-        
+
         labelStyle: {
           margin: 0
         },
-        
-        tabBarIndicatorStyle: {height: 0},
+
+        tabBarIndicatorStyle: { height: 0 },
 
         tabBarActiveTintColor: "#fbbf24",
         tabBarInactiveTintColor: "#cbd5e1",
@@ -90,6 +93,17 @@ export default function BottomTabs() {
           ),
         }}
       />
+      {role === "super-admin" && (
+        <Tab.Screen
+          name="Admin"
+          component={AdminScreen}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="settings" size={22} color={color} />
+            ),
+          }}
+        />
+      )}
 
     </Tab.Navigator>
 

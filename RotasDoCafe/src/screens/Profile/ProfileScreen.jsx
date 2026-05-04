@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,16 +14,19 @@ import Button from "../../components/Button/Button";
 import useLogout from "../../hooks/AuthScreen/useLogout";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import useChangePassword from "../../hooks/ProfileScreen/useChangePassword";
+import useUserProfile from "../../hooks/ProfileScreen/useUserProfile";
 
 export default function ProfileScreen({ navigation }) {
 
   const handleLogout = useLogout(navigation);
   const { handleSave, loading } = useChangePassword();
+
+  const { user, updateProfile, updating } = useUserProfile();
+
   const [isEditing, setIsEditing] = useState(false);
 
-  // implementar API AQ
-  const [name, setName] = useState("teste");
-  const [email, setEmail] = useState("teste@email.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -33,20 +36,19 @@ export default function ProfileScreen({ navigation }) {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
+
   const handleSaveProfile = async () => {
-    await handleSave({
-      name,
-      email,
-      currentPassword,
-      newPassword,
-      confirmPassword,
-      onSuccess: () => {
-        setIsEditing(false);
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      }
-    });
+    const success = await updateProfile({ name, email });
+
+    if (success) {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -115,57 +117,34 @@ export default function ProfileScreen({ navigation }) {
             {isEditing && (
               <>
                 <Text className="text-gray-400 mb-1">Senha atual</Text>
-                <View className="relative mb-4">
-                  <TextInput
-                    value={currentPassword}
-                    onChangeText={setCurrentPassword}
-                    secureTextEntry={!showCurrent}
-                    className="bg-white rounded-xl px-4 py-3 pr-12"
-                  />
-                  <TouchableOpacity
-                    onPress={() => setShowCurrent(!showCurrent)}
-                    style={{ position: "absolute", right: 10, top: "50%", transform: [{ translateY: -10 }] }}
-                  >
-                    <Text>{showCurrent ? "🙈" : "👁️"}</Text>
-                  </TouchableOpacity>
-                </View>
+                <TextInput
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  secureTextEntry={!showCurrent}
+                  className="bg-white rounded-xl px-4 py-3 mb-4"
+                />
 
                 <Text className="text-gray-400 mb-1">Nova senha</Text>
-                <View className="relative mb-4">
-                  <TextInput
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                    secureTextEntry={!showNew}
-                    className="bg-white rounded-xl px-4 py-3 pr-12"
-                  />
-                  <TouchableOpacity
-                    onPress={() => setShowNew(!showNew)}
-                    style={{ position: "absolute", right: 10, top: "50%", transform: [{ translateY: -10 }] }}
-                  >
-                    <Text>{showNew ? "🙈" : "👁️"}</Text>
-                  </TouchableOpacity>
-                </View>
+                <TextInput
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  secureTextEntry={!showNew}
+                  className="bg-white rounded-xl px-4 py-3 mb-4"
+                />
 
                 <Text className="text-gray-400 mb-1">Confirmar nova senha</Text>
-                <View className="relative mb-6">
-                  <TextInput
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    secureTextEntry={!showConfirm}
-                    className="bg-white rounded-xl px-4 py-3 pr-12"
-                  />
-                  <TouchableOpacity
-                    onPress={() => setShowConfirm(!showConfirm)}
-                    style={{ position: "absolute", right: 10, top: "50%", transform: [{ translateY: -10 }] }}
-                  >
-                    <Text>{showConfirm ? "🙈" : "👁️"}</Text>
-                  </TouchableOpacity>
-                </View>
+                <TextInput
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirm}
+                  className="bg-white rounded-xl px-4 py-3 mb-6"
+                />
               </>
             )}
 
             {isEditing ? (
               <View className="flex-row gap-3 mt-2">
+
                 <View className="flex-1">
                   <Button
                     title="Cancelar"
@@ -180,11 +159,12 @@ export default function ProfileScreen({ navigation }) {
 
                 <View className="flex-1">
                   <Button
-                    title="Salvar"
+                    title={updating ? "Salvando..." : "Salvar"}
                     onPress={handleSaveProfile}
-                    disabled={loading}
+                    disabled={updating}
                   />
                 </View>
+
               </View>
             ) : (
               <Button

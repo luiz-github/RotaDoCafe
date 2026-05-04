@@ -10,6 +10,10 @@ import AuthScreen from './src/screens/Auth/AuthScreen'
 import BottomTabs from './src/components/BottomTabs/BottomTabs'
 import RegisterScreen from './src/screens/Auth/RegisterScreen'
 import ForgotPasswordScreen from './src/screens/Auth/ForgotPasswordScreen'
+import ManageEventsScreen from './src/screens/Eventos/ManageEventsScreen'
+import CreateEventScreen from './src/screens/Eventos/CreateEventScreen'
+import EditEventScreen from './src/screens/Eventos/EditEventScreen'
+
 
 import './src/styles/global.css'
 
@@ -51,8 +55,21 @@ export default function App() {
           name="ForgotPassword"
           component={ForgotPasswordScreen}
         />
+        <Stack.Screen
+          name="ManageEvents"
+          component={ManageEventsScreen}
+        />
 
-        
+        <Stack.Screen
+          name="CreateEvent"
+          component={CreateEventScreen}
+        />
+
+        <Stack.Screen
+          name="EditEvent"
+          component={EditEventScreen}
+        />
+
       </Stack.Navigator>
       <Toast />
 
