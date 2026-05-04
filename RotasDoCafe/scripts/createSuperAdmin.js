@@ -1,7 +1,20 @@
 import 'dotenv/config'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
-import { auth, db } from '../src/services/firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { doc, serverTimestamp, setDoc, getFirestore } from 'firebase/firestore'
+import { initializeApp } from 'firebase/app'
+
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+}
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
 async function criarSuperAdmin() {
   try {
@@ -25,7 +38,9 @@ async function criarSuperAdmin() {
     const uid = userCredential.user.uid
 
     await setDoc(doc(db, 'users', uid), {
-      nome: 'Super Admin',
+      uid,
+      username: 'Super Admin',
+      firstLogin: true,
       email,
       role: 'super-admin',
       createdAt: serverTimestamp(),
