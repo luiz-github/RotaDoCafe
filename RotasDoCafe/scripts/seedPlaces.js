@@ -3,6 +3,7 @@ import { collection, doc, setDoc, getDocs, query } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from '../src/services/firebaseCore/config.js'
+import { COLLECTIONS } from '../src/services/firebase.js'
 
 const PLACES_DATA = [
   {
@@ -435,7 +436,7 @@ async function seedPlaces() {
 
     for (const place of PLACES_DATA) {
       const docId = String(place.id)
-      const docRef = doc(db, 'places', docId)
+      const docRef = doc(db, COLLECTIONS.PLACES, docId)
 
       await setDoc(docRef, {
         id: place.id,
