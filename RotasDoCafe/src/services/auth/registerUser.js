@@ -12,7 +12,6 @@ const registerUserInFirebase = async ({ username, email, password }) => {
       uid: user.uid,
       username,
       email: normalizedEmail,
-      emailNormalized: normalizedEmail,
       role: 'user',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

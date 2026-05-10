@@ -41,7 +41,7 @@ const getUserByEmail = async (email) => {
   const byNormalizedEmail = await getDocs(
     query(
       collection(db, COLLECTIONS.USERS),
-      where('emailNormalized', '==', normalizedEmail),
+      where('email', '==', normalizedEmail),
       limit(1),
     ),
   )
@@ -119,8 +119,7 @@ const updateCurrentUserProfile = async ({ name, email }) => {
 
   await updateDoc(userRef, {
     username: name,
-    email: normalizedEmail,
-    emailNormalized: normalizedEmail,
+    // email: normalizedEmail,
   })
 
   let authEmailUpdated = true
@@ -151,7 +150,7 @@ const markUserFirstLoginAsCompleted = async (userId, email) => {
 
   await updateDoc(doc(db, COLLECTIONS.USERS, userId), {
     firstLogin: false,
-    ...(normalizedEmail ? { email: normalizedEmail, emailNormalized: normalizedEmail } : {}),
+    ...(normalizedEmail ? { email: normalizedEmail } : {}),
   })
 
   return true
