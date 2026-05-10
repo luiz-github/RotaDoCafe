@@ -28,13 +28,13 @@ export default function ProfileScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [currentPassword, setCurrentPassword] = useState("");
+  // const [newPassword, setNewPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  // const [showCurrent, setShowCurrent] = useState(false);
+  // const [showNew, setShowNew] = useState(false);
+  // const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -100,7 +100,21 @@ export default function ProfileScreen({ navigation }) {
             )}
 
             <Text className="text-gray-400 mb-1">E-mail</Text>
-            {isEditing ? (
+            <TextInput
+              value={email}
+              editable={false}
+              selectTextOnFocus={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              className={`
+                rounded-xl mb-4
+                ${isEditing
+                  ? 'bg-neutral-200 text-neutral-500 px-4'
+                  : 'bg-transparent text-white'
+                }
+              `}
+            />
+            {/* {isEditing ? (
               <TextInput
                 value={email}
                 onChangeText={setEmail}
@@ -112,9 +126,9 @@ export default function ProfileScreen({ navigation }) {
               <Text className="text-white mb-6 text-lg">
                 {email}
               </Text>
-            )}
+            )} */}
 
-            {isEditing && (
+            {/* {isEditing && (
               <>
                 <Text className="text-gray-400 mb-1">Senha atual</Text>
                 <TextInput
@@ -140,7 +154,7 @@ export default function ProfileScreen({ navigation }) {
                   className="bg-white rounded-xl px-4 py-3 mb-6"
                 />
               </>
-            )}
+            )} */}
 
             {isEditing ? (
               <View className="flex-row gap-3 mt-2">
@@ -149,10 +163,12 @@ export default function ProfileScreen({ navigation }) {
                   <Button
                     title="Cancelar"
                     onPress={() => {
+                      setName(user?.name || "");
+                      setEmail(user?.email || "");
                       setIsEditing(false);
-                      setCurrentPassword("");
-                      setNewPassword("");
-                      setConfirmPassword("");
+                      // setCurrentPassword("");
+                      // setNewPassword("");
+                      // setConfirmPassword("");
                     }}
                   />
                 </View>
