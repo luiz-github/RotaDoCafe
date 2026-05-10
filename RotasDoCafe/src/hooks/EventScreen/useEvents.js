@@ -53,7 +53,7 @@ export const useEvents = () => {
 
     const handleDeleteEvent = async (eventId) => {
         try {
-            await deleteEvent(eventId);
+            await deleteEvent(eventId)
 
             Toast.show({
                 type: "success",
