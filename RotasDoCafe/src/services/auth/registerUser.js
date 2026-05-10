@@ -1,18 +1,22 @@
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth'
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
-import { auth, db } from '../firebase'
+import { auth, COLLECTIONS, db } from '../firebase'
 
 const registerUserInFirebase = async ({ username, email, password }) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password)
   const user = userCredential.user
+  const normalizedEmail = email.trim().toLowerCase()
 
   try {
-    await setDoc(doc(db, 'users', user.uid), {
+    await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
       uid: user.uid,
       username,
-      email,
+      email: normalizedEmail,
+      emailNormalized: normalizedEmail,
       role: 'user',
       createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      deletedAt: null,
       firstLogin: true,
     })
 

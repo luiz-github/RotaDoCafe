@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from "../../components/Loading/Loading";
 import { canSubmitLoginForm } from "../../services/validations/loginValidation";
 
@@ -13,9 +14,23 @@ import "../../styles/global.css";
 export default function AuthScreen({ navigation, route }) {
   const initialEmail = route?.params?.email || "";
   const { email, password, setEmail, setPassword } = useLoginForm(initialEmail);
+
+  useEffect(() => {
+    const loadLastEmail = async () => {
+      if (initialEmail) return
+      try {
+        const last = await AsyncStorage.getItem('lastEmail')
+        if (last) setEmail(last)
+      } catch (e) {
+        console.warn('Erro ao carregar lastEmail:', e)
+      }
+    }
+
+    loadLastEmail()
+  }, [initialEmail, setEmail])
   const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, loading, firstLogin } = useLogin(navigation);
+  const { handleLogin, loading, firstLogin } = useLogin(navigation, email);
   const isLoginFormValid = useMemo(
     () => canSubmitLoginForm({ email, password }),
     [email, password]

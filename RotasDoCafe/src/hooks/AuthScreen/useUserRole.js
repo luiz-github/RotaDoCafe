@@ -1,31 +1,23 @@
-import { use, useEffect, useState } from "react";
-import {doc, getDoc} from "firebase/firestore";
-import { db, auth } from "../../services/firebase";
+import { useEffect, useState } from 'react'
+import { getCurrentUserRole } from '../../services/users/userService'
 
 export const useUserRole = () => {
-    const [role, setRole] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        const fetchRole = async () => {
-            try {
-                const user = auth.currentUser;
-                if (!user) return;
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const currentRole = await getCurrentUserRole()
+        setRole(currentRole)
+      } catch (error) {
+        console.error('Erro ao buscar role do usuário:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRole()
+  }, [])
 
-                const snap = await getDoc(doc(db, 'users', user.uid));
-
-                if (snap.exists()) {
-                    setRole(snap.data().role);
-                }
-
-            } catch (error) {
-                console.error("Erro ao buscar role do usuário:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchRole();
-    }, []);
-
-    return { role, loading };
-};
+  return { role, loading }
+}

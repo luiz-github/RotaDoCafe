@@ -1,31 +1,52 @@
 import { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import useToast from '../../components/Toast/ToastMessage'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { auth } from '../../services/firebase'
 import { handleFirebaseError } from '../../services/validations/firebaseErrorHandler'
 import { validateLoginForm } from '../../services/validations/loginValidation'
+import { getUserByEmail, markUserFirstLoginAsCompleted } from '../../services/users/userService'
 
-export default function useLogin(navigation) {
+export default function useLogin(navigation, email) {
   const [loading, setLoading] = useState(false)
   const [firstLogin, setFirstLogin] = useState(true)
   const { showSuccess, showError } = useToast()
 
   useEffect(() => {
-    const loadFirstLogin = async () => {
-      try {
-        const value = await AsyncStorage.getItem('firstLogin')
+    let isActive = true
 
-        if (value === 'false') {
-          setFirstLogin(false)
+    const loadFirstLogin = async () => {
+      const typedEmail = email?.trim()
+
+      if (!typedEmail) {
+        if (isActive) {
+          setFirstLogin(true)
+        }
+        return
+      }
+
+      try {
+        const userRecord = await getUserByEmail(typedEmail)
+
+        if (isActive) {
+          setFirstLogin(userRecord?.firstLogin ?? true)
         }
       } catch (error) {
-        console.log('Erro ao carregar firstLogin:', error)
+        console.log('Erro ao buscar firstLogin do Firestore:', error)
+
+        if (isActive) {
+          setFirstLogin(true)
+        }
       }
     }
 
-    loadFirstLogin()
-  }, [])
+    const timer = setTimeout(loadFirstLogin, 300)
+
+    return () => {
+      isActive = false
+      clearTimeout(timer)
+    }
+  }, [email])
 
   const handleLogin = async (email, password) => {
     const validation = validateLoginForm({ email, password })
@@ -37,12 +58,16 @@ export default function useLogin(navigation) {
     setLoading(true)
 
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password)
+      const normalizedEmail = email.trim()
+      const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password)
 
+      await markUserFirstLoginAsCompleted(userCredential.user.uid, normalizedEmail)
+
+      // Salva o último email usado para facilitar preenchimento automático
       try {
-        await AsyncStorage.setItem('firstLogin', 'false')
-      } catch (error) {
-        console.log('Erro ao salvar firstLogin:', error)
+        await AsyncStorage.setItem('lastEmail', normalizedEmail)
+      } catch (e) {
+        console.warn('Não foi possível salvar lastEmail:', e)
       }
 
       setFirstLogin(false)
