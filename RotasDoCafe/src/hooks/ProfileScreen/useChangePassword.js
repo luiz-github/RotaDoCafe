@@ -43,8 +43,6 @@ export default function useChangePassword() {
 
       console.log("Salvando perfil:", { name, email });
 
-      // implementar API AQ
-
       const validation = validate({
         currentPassword,
         newPassword,
@@ -58,8 +56,6 @@ export default function useChangePassword() {
           currentPassword,
           newPassword,
         });
-
-        // implementar API AQ
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 

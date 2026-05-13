@@ -3,7 +3,7 @@ import { collection, doc, setDoc, getDocs, query } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from '../src/services/firebaseCore/config.js'
-import { COLLECTIONS } from '../src/services/firebase.js'
+import { COLLECTIONS } from '../src/services/firebaseCore/collections.js'
 
 const PLACES_DATA = [
   {

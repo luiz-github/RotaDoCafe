@@ -10,7 +10,6 @@ export default function ManageEventsScreen({ navigation }) {
   const { events, loading, deleteEvent, fetchEvents } = useEvents();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  // 🔥 ISSO RESOLVE
   useFocusEffect(
     useCallback(() => {
       fetchEvents();

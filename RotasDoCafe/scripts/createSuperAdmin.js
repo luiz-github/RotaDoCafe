@@ -11,7 +11,7 @@ const db = getFirestore(app)
 
 async function criarSuperAdmin() {
   try {
-    console.log('Criando usuário super-admin...')
+    console.log('🚀 Criando usuário super-admin...')
 
     const email = 'super-admin@rotadocafe.com'
     const senha = '123456'

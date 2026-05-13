@@ -11,7 +11,6 @@ export default function useRegister(navigation) {
     const validation = validateRegisterForm({ username, email, password, confirmPassword })
 
     if (!validation.isValid) {
-      // Mostra o primeiro erro
       const firstError = Object.values(validation.errors)[0]
       Toast.show({
         type: 'error',

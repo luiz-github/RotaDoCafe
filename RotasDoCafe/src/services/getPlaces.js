@@ -3,7 +3,7 @@ import { getCache, setCache, validateCache } from '../cache/cacheManager'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from './firebase'
 
-const CACHE_KEY = 'VALE_DO_CAFE_PLACES'
+const CACHE_KEY = process.env.EXPO_PUBLIC_CACHE_KEY
 const baseUrl = process.env.EXPO_PUBLIC_OVERPASS_API_URL
 
 let memoryCache = null
@@ -56,7 +56,6 @@ const fetchFreshPlaces = async () => {
     .map(mapOverpassElement)
     .filter((place) => place.latitude && place.longitude)
 
-  console.log('filteredData', filteredData)
   memoryCache = filteredData
   await setCache(CACHE_KEY, filteredData)
 
@@ -81,7 +80,6 @@ const fetchPlacesFromDatabase = async () => {
     }))
 
     if (isValidPlacesPayload(placesFromDb)) {
-      console.log('✅ Places carregados do banco de dados:', placesFromDb.length)
       memoryCache = placesFromDb
       await setCache(CACHE_KEY, placesFromDb)
       return placesFromDb
@@ -112,7 +110,6 @@ export default async function getPlaces() {
     const cachedPlaces = await readCachedPlaces()
 
     if (cachedPlaces) {
-      console.log('📦 Usando dados do cache')
       return cachedPlaces
     }
 
@@ -120,7 +117,6 @@ export default async function getPlaces() {
     const dbPlaces = await fetchPlacesFromDatabase()
 
     if (dbPlaces) {
-      console.log('🗄️ Usando dados do banco de dados')
       return dbPlaces
     }
 

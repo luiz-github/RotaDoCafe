@@ -115,11 +115,9 @@ const getCurrentUserRole = async () => {
 const updateCurrentUserProfile = async ({ name, email }) => {
   const currentUser = getAuthenticatedUser()
   const userRef = doc(db, COLLECTIONS.USERS, currentUser.uid)
-  const normalizedEmail = normalizeEmail(email)
 
   await updateDoc(userRef, {
     username: name,
-    // email: normalizedEmail,
   })
 
   let authEmailUpdated = true
