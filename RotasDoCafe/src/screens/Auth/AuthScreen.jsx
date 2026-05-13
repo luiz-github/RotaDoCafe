@@ -20,7 +20,9 @@ export default function AuthScreen({ navigation, route }) {
       if (initialEmail) return
       try {
         const last = await AsyncStorage.getItem('lastEmail')
-        if (last) setEmail(last)
+        if (!initialEmail && last) {
+          setEmail(last)
+        }
       } catch (e) {
         console.warn('Erro ao carregar lastEmail:', e)
       }
@@ -28,7 +30,7 @@ export default function AuthScreen({ navigation, route }) {
 
     loadLastEmail()
   }, [initialEmail, setEmail])
-  const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
+  const { isBiometricAvailable, isBiometricEnabledForEmail, handleBiometricAuth } = useBiometricAuth(navigation, email);
   const [showPassword, setShowPassword] = useState(false);
   const { handleLogin, loading, firstLogin } = useLogin(navigation, email);
   const isLoginFormValid = useMemo(
@@ -144,7 +146,7 @@ export default function AuthScreen({ navigation, route }) {
                 </Text>
               </TouchableOpacity>
 
-              {!firstLogin && (
+              {!firstLogin && isBiometricAvailable && isBiometricEnabledForEmail && (
                 <>
                   <View className="flex-row items-center my-6">
                     <View className="flex-1 h-px bg-gray-400" />
@@ -156,16 +158,14 @@ export default function AuthScreen({ navigation, route }) {
                     <View className="flex-1 h-px bg-gray-400" />
                   </View>
 
-                  {isBiometricAvailable && (
-                    <TouchableOpacity
-                      onPress={handleBiometricAuth}
-                      className="bg-white/20 p-4 rounded-lg items-center"
-                    >
-                      <Text className="text-white font-semibold">
-                        Entrar com Biometria
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    onPress={() => handleBiometricAuth(email)}
+                    className="bg-white/20 p-4 rounded-lg items-center"
+                  >
+                    <Text className="text-white font-semibold">
+                      Entrar com Biometria
+                    </Text>
+                  </TouchableOpacity>
                 </>
               )}
 

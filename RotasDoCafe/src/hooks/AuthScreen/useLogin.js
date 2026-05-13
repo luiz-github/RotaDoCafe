@@ -6,6 +6,7 @@ import { auth } from '../../services/firebase'
 import { handleFirebaseError } from '../../services/validations/firebaseErrorHandler'
 import { validateLoginForm } from '../../services/validations/loginValidation'
 import { getUserByEmail, markUserFirstLoginAsCompleted } from '../../services/users/userService'
+import { saveBiometricEmail, saveBiometricSecret } from '../../services/biometric/biometricStorage'
 
 export default function useLogin(navigation, email) {
   const [loading, setLoading] = useState(false)
@@ -63,11 +64,17 @@ export default function useLogin(navigation, email) {
 
       await markUserFirstLoginAsCompleted(userCredential.user.uid, normalizedEmail)
 
-      // Salva o último email usado para facilitar preenchimento automático
       try {
         await AsyncStorage.setItem('lastEmail', normalizedEmail)
       } catch (e) {
         console.warn('Não foi possível salvar lastEmail:', e)
+      }
+
+      try {
+        await saveBiometricEmail(normalizedEmail)
+        await saveBiometricSecret(normalizedEmail, password)
+      } catch (e) {
+        console.warn('Não foi possível salvar dados biométricos:', e)
       }
 
       setFirstLogin(false)
