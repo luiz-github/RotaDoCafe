@@ -7,7 +7,6 @@ import {
   Platform
 } from "react-native";
 
-
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState, useRef } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -44,12 +43,10 @@ export default function CreateEventScreen({ navigation }) {
     eventDateTime: "Dia e hora do evento",
   };
 
-
   const [loading, setLoading] = useState(false);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
@@ -77,37 +74,23 @@ export default function CreateEventScreen({ navigation }) {
             </Text>
 
             {field === "eventDateTime" ? (
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => setShowDatePicker(true)}
-                  className="mb-2"
-                >
-                  <Text className="bg-white/10 text-white p-3 rounded">
-                    {form.eventDateTime
-                      ? `Dia: ${form.eventDateTime.toLocaleDateString("pt-BR")}`
-                      : "Selecione o dia"}
-                  </Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setShowDatePicker(true)}
+                className="bg-white/10 border border-white/10 p-4 rounded-xl flex-row items-center justify-between"
+              >
+                <Text className="text-white">
+                  {form.eventDateTime
+                    ? form.eventDateTime.toLocaleString("pt-BR", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })
+                    : "Selecionar data e hora"}
+                </Text>
 
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => setShowTimePicker(true)}
-                >
-                  <Text className="bg-white/10 text-white p-3 rounded">
-                    {form.eventDateTime
-                      ? `Hora: ${form.eventDateTime.toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`
-                      : "Selecione a hora"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                <Text className="text-gray-400 text-lg">📅</Text>
+              </TouchableOpacity>
             ) : (
-
-
-
               <TextInput
                 value={form[field]}
                 keyboardType={field === "price" ? "numeric" : "default"}
@@ -116,11 +99,9 @@ export default function CreateEventScreen({ navigation }) {
                 }}
                 onChangeText={(v) => {
                   if (field === "price") {
-                    // Aceita vírgula e ponto (ex: 12,50 ou 12.50)
                     const cleaned = v.replace(/[^0-9.,]/g, "");
                     setForm({ ...form, [field]: cleaned });
                   } else {
-
                     setForm({ ...form, [field]: v });
                   }
                 }}
@@ -128,10 +109,10 @@ export default function CreateEventScreen({ navigation }) {
               />
             )}
 
-
           </View>
         ))}
 
+        {/* DATE PICKER */}
         {showDatePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
@@ -144,16 +125,18 @@ export default function CreateEventScreen({ navigation }) {
                 const merged = new Date(selected);
                 merged.setHours(current.getHours(), current.getMinutes(), 0, 0);
                 setForm({ ...form, eventDateTime: merged });
+                setShowTimePicker(true);
               }
             }}
           />
         )}
 
+        {/* TIME PICKER */}
         {showTimePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
             mode="time"
-            is24Hour={false}
+            is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={(_, selected) => {
               setShowTimePicker(false);
@@ -167,9 +150,7 @@ export default function CreateEventScreen({ navigation }) {
           />
         )}
 
-
         <View className="flex-row gap-3 mt-6">
-
 
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -200,11 +181,7 @@ export default function CreateEventScreen({ navigation }) {
                 is_free: Number((form.price || "0").replace(",", ".")) === 0,
                 price: Number((form.price || "0").replace(",", ".")).toFixed(2) * 1,
                 date: form.eventDateTime || new Date(),
-
-
-
               });
-
 
               setLoading(false);
 

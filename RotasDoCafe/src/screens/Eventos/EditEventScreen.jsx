@@ -9,7 +9,6 @@ import {
 
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState, useRef } from "react";
 import { useEvents } from "../../hooks/EventScreen/useEvents";
@@ -30,9 +29,9 @@ export default function EditEventScreen({ route, navigation }) {
     organizer: event.organizer,
     price: event.price?.toString() || "",
     age_rating: event.age_rating,
-    eventDateTime: event.date?.toDate ? event.date.toDate() : event.date || null,
+    eventDateTime:
+      event.date?.toDate ? event.date.toDate() : event.date || null,
   });
-
 
   const labels = {
     title: "Título",
@@ -46,12 +45,10 @@ export default function EditEventScreen({ route, navigation }) {
     eventDateTime: "Dia e hora do evento",
   };
 
-
   const [loading, setLoading] = useState(false);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
@@ -63,7 +60,7 @@ export default function EditEventScreen({ route, navigation }) {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           padding: 24,
-          paddingBottom: 160
+          paddingBottom: 160,
         }}
       >
 
@@ -79,33 +76,22 @@ export default function EditEventScreen({ route, navigation }) {
             </Text>
 
             {field === "eventDateTime" ? (
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => setShowDatePicker(true)}
-                  className="mb-2"
-                >
-                  <Text className="bg-white/10 text-white p-3 rounded">
-                    {form.eventDateTime
-                      ? `Dia: ${form.eventDateTime.toLocaleDateString("pt-BR")}`
-                      : "Selecione o dia"}
-                  </Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setShowDatePicker(true)}
+                className="bg-white/10 border border-white/10 p-4 rounded-xl flex-row items-center justify-between"
+              >
+                <Text className="text-white">
+                  {form.eventDateTime
+                    ? form.eventDateTime.toLocaleString("pt-BR", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })
+                    : "Selecionar data e hora"}
+                </Text>
 
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => setShowTimePicker(true)}
-                >
-                  <Text className="bg-white/10 text-white p-3 rounde">
-                    {form.eventDateTime
-                      ? `Hora: ${form.eventDateTime.toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`
-                      : "Selecione a hora"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                <Text className="text-gray-400 text-lg">📅</Text>
+              </TouchableOpacity>
             ) : (
               <TextInput
                 value={form[field]}
@@ -125,10 +111,10 @@ export default function EditEventScreen({ route, navigation }) {
               />
             )}
 
-
           </View>
         ))}
 
+        {/* DATE PICKER */}
         {showDatePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
@@ -136,36 +122,54 @@ export default function EditEventScreen({ route, navigation }) {
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={(_, selected) => {
               setShowDatePicker(false);
+
               if (selected) {
                 const current = form.eventDateTime || new Date();
                 const merged = new Date(selected);
-                merged.setHours(current.getHours(), current.getMinutes(), 0, 0);
+
+                merged.setHours(
+                  current.getHours(),
+                  current.getMinutes(),
+                  0,
+                  0
+                );
+
                 setForm({ ...form, eventDateTime: merged });
+                setShowTimePicker(true);
               }
             }}
           />
         )}
 
+        {/* TIME PICKER */}
         {showTimePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
             mode="time"
-            is24Hour={false}
+            is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={(_, selected) => {
               setShowTimePicker(false);
+
               if (selected) {
                 const current = form.eventDateTime || new Date();
                 const merged = new Date(current);
-                merged.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
+
+                merged.setHours(
+                  selected.getHours(),
+                  selected.getMinutes(),
+                  0,
+                  0
+                );
+
                 setForm({ ...form, eventDateTime: merged });
               }
             }}
           />
         )}
 
+        {/* ACTIONS */}
         <View className="flex-row gap-3 mt-6">
-
 
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -193,11 +197,13 @@ export default function EditEventScreen({ route, navigation }) {
 
               const success = await updateEvent(event.id, {
                 ...form,
-                is_free: Number((form.price || "0").replace(",", ".")) === 0,
-                price: Number((form.price || "0").replace(",", ".")).toFixed(2) * 1,
+                is_free:
+                  Number((form.price || "0").replace(",", ".")) === 0,
+                price:
+                  Number((form.price || "0").replace(",", ".")).toFixed(2) *
+                  1,
                 date: form.eventDateTime || event.date,
               });
-
 
               setLoading(false);
 
