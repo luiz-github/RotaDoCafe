@@ -84,15 +84,6 @@ export default function BottomTabs() {
         }}
       />
 
-      <Tab.Screen
-        name="Perfil"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={22} color={color} />
-          ),
-        }}
-      />
       {role === "super-admin" && (
         <Tab.Screen
           name="Admin"
@@ -104,6 +95,16 @@ export default function BottomTabs() {
           }}
         />
       )}
+
+      <Tab.Screen
+        name="Perfil"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person" size={22} color={color} />
+          ),
+        }}
+      />
 
     </Tab.Navigator>
 
