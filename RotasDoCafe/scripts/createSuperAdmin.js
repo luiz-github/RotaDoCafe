@@ -44,7 +44,7 @@ async function criarSuperAdmin() {
     console.log('✅ Super-admin criado com sucesso!')
     process.exit(0)
   } catch (error) {
-    console.log(error.message)
+    console.error(error.message)
     process.exit(1)
   }
 }

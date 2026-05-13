@@ -41,8 +41,6 @@ export default function useChangePassword() {
     try {
       setLoading(true);
 
-      console.log("Salvando perfil:", { name, email });
-
       const validation = validate({
         currentPassword,
         newPassword,
@@ -52,10 +50,6 @@ export default function useChangePassword() {
       if (validation === null) return;
 
       if (validation) {
-        console.log("Alterando senha...", {
-          currentPassword,
-          newPassword,
-        });
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 

@@ -33,7 +33,7 @@ export default function useLogin(navigation, email) {
           setFirstLogin(userRecord?.firstLogin ?? true)
         }
       } catch (error) {
-        console.log('Erro ao buscar firstLogin do Firestore:', error)
+        console.error('Erro ao buscar firstLogin do Firestore:', error)
 
         if (isActive) {
           setFirstLogin(true)
