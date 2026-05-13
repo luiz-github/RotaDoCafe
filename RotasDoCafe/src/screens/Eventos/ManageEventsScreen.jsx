@@ -62,6 +62,14 @@ export default function ManageEventsScreen({ navigation }) {
                 📍 {event.city} • {date} às {time}
               </Text>
 
+              <View className="mt-2">
+                <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
+                  }`}>
+                  {event.is_free ? "Gratuito" : `R$ ${Number(event.price ?? 0).toFixed(2).replace('.', ',')}`}
+                </Text>
+              </View>
+
+
               <View className="flex-row gap-3 mt-4">
 
                 <TouchableOpacity
@@ -86,9 +94,8 @@ export default function ManageEventsScreen({ navigation }) {
 
                     setConfirmDeleteId(null);
                   }}
-                  className={`flex-1 p-2 rounded ${
-                    isConfirming ? "bg-red-700" : "bg-red-500"
-                  }`}
+                  className={`flex-1 p-2 rounded ${isConfirming ? "bg-red-700" : "bg-red-500"
+                    }`}
                 >
                   <Text className="text-white text-center">
                     {isConfirming ? "Confirmar" : "Deletar"}

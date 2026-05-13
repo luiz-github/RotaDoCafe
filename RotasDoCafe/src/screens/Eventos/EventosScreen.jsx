@@ -54,13 +54,12 @@ export default function EventosScreen() {
 
                 <View className="flex-row gap-2">
 
-                  <View className={`px-3 py-1 rounded-full ${
-                    event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
-                  }`}>
-                    <Text className={`text-xs font-semibold ${
-                      event.is_free ? "text-green-400" : "text-yellow-400"
+                  <View className={`px-3 py-1 rounded-full ${event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
                     }`}>
-                      {event.is_free ? "Gratuito" : `R$ ${event.price ?? 0}`}
+                    <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
+                      }`}>
+                      event.is_free ? "Gratuito" : `R$ ${Number(event.price ?? 0).toFixed(2).replace('.', ',')}`
+
                     </Text>
                   </View>
 

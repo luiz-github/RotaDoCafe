@@ -4,48 +4,59 @@ const normalize = (value) => value?.toString().trim() || ''
 
 const validateTitle = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Título é obrigatório")
-  if (v.length < 3) return createResult(false, "Título muito curto")
+  if (!v) return createResult(false, 'Título é obrigatório')
+  if (v.length < 3) return createResult(false, 'Título muito curto')
   return createResult(true)
 }
 
 const validateCity = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Cidade é obrigatória")
+  if (!v) return createResult(false, 'Cidade é obrigatória')
   return createResult(true)
 }
 
 const validateState = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Estado é obrigatório")
+  if (!v) return createResult(false, 'Estado é obrigatório')
   return createResult(true)
 }
 
 const validateLocation = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Local é obrigatório")
+  if (!v) return createResult(false, 'Local é obrigatório')
   return createResult(true)
 }
 
 const validateDescription = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Descrição é obrigatória")
-  if (v.length < 5) return createResult(false, "Descrição muito curta")
+  if (!v) return createResult(false, 'Descrição é obrigatória')
+  if (v.length < 5) return createResult(false, 'Descrição muito curta')
   return createResult(true)
 }
 
 const validateOrganizer = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(false, "Organizador é obrigatório")
+  if (!v) return createResult(false, 'Organizador é obrigatório')
   return createResult(true)
 }
 
 const validatePrice = (value) => {
   const v = normalize(value)
-  if (!v) return createResult(true)
 
-  if (isNaN(Number(v))) {
-    return createResult(false, "Preço inválido")
+  if (!v) {
+    return createResult(false, 'Preço é obrigatório. Se for gratuito, informe 0.00')
+  }
+
+  // Aceita entrada com vírgula ou ponto
+  const normalized = v.replace(',', '.')
+
+  const num = Number(normalized)
+  if (!Number.isFinite(num)) {
+    return createResult(false, 'Preço inválido')
+  }
+
+  if (num < 0) {
+    return createResult(false, 'Preço inválido')
   }
 
   return createResult(true)

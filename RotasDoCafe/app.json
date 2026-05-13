@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-       "infoPlist": {
+      "infoPlist": {
         "NSCameraUsageDescription": "Precisamos acessar sua câmera para foto de perfil",
         "NSPhotoLibraryUsageDescription": "Precisamos acessar sua galeria"
       }
@@ -24,10 +24,16 @@
         "backgroundColor": "#6F4E37",
         "foregroundImage": "./assets/splash-icon.png"
       },
-      "permissions": ["CAMERA", "READ_MEDIA_IMAGES"]
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/splash-icon.png"
-    }
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ]
   }
 }
