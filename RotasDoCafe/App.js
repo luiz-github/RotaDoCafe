@@ -1,4 +1,5 @@
-import 'react-native-gesture-handler'
+import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -27,52 +28,56 @@ export default function App() {
   }, [])
 
   return (
-    <NavigationContainer>
+    <GestureHandlerRootView>
 
-      <Stack.Navigator
-        initialRouteName="Auth"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
+      <NavigationContainer>
 
-        <Stack.Screen
-          name="Auth"
-          component={AuthScreen}
-        />
+        <Stack.Navigator
+          initialRouteName="Auth"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
 
-        <Stack.Screen
-          name="App"
-          component={BottomTabs}
-        />
+          <Stack.Screen
+            name="Auth"
+            component={AuthScreen}
+          />
 
-        <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-        />
+          <Stack.Screen
+            name="App"
+            component={BottomTabs}
+          />
 
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPasswordScreen}
-        />
-        <Stack.Screen
-          name="ManageEvents"
-          component={ManageEventsScreen}
-        />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+          />
 
-        <Stack.Screen
-          name="CreateEvent"
-          component={CreateEventScreen}
-        />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
+          />
 
-        <Stack.Screen
-          name="EditEvent"
-          component={EditEventScreen}
-        />
+          <Stack.Screen
+            name="ManageEvents"
+            component={ManageEventsScreen}
+          />
 
-      </Stack.Navigator>
-      <Toast />
+          <Stack.Screen
+            name="CreateEvent"
+            component={CreateEventScreen}
+          />
 
-    </NavigationContainer>
+          <Stack.Screen
+            name="EditEvent"
+            component={EditEventScreen}
+          />
+
+        </Stack.Navigator>
+        <Toast />
+
+      </NavigationContainer>
+    </GestureHandlerRootView>
   )
 }
