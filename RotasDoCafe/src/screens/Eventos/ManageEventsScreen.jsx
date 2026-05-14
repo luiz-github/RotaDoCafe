@@ -1,14 +1,13 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useEvents } from "../../hooks/EventScreen/useEvents";
-import { formatDateTime } from "../../utils/date";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import SwipeableCard from "../../components/SwipeableCard/SwipeableCard";
 
 export default function ManageEventsScreen({ navigation }) {
   const { events, loading, deleteEvent, fetchEvents } = useEvents();
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,70 +42,12 @@ export default function ManageEventsScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
 
-        {loading && (
-          <Text className="text-gray-400">Carregando...</Text>
-        )}
-
-        {!loading && events.map((event) => {
-          const { date, time } = formatDateTime(event.date);
-          const isConfirming = confirmDeleteId === event.id;
-
-          return (
-            <View key={event.id} className="bg-white/10 p-4 rounded-xl mb-4">
-
-              <Text className="text-white font-semibold text-lg">
-                {event.title}
-              </Text>
-
-              <Text className="text-gray-400 text-sm">
-                📍 {event.city} • {date} às {time}
-              </Text>
-
-              <View className="mt-2">
-                <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
-                  }`}>
-                  {event.is_free ? "Gratuito" : `R$ ${Number(event.price ?? 0).toFixed(2).replace('.', ',')}`}
-                </Text>
-              </View>
-
-
-              <View className="flex-row gap-3 mt-4">
-
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("EditEvent", { event })}
-                  className="flex-1 bg-blue-500 p-2 rounded"
-                >
-                  <Text className="text-white text-center">
-                    Editar
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={async () => {
-                    if (!isConfirming) {
-                      setConfirmDeleteId(event.id);
-                      setTimeout(() => setConfirmDeleteId(null), 3000);
-                      return;
-                    }
-
-                    const success = await deleteEvent(event.id);
-                    if (success) fetchEvents();
-
-                    setConfirmDeleteId(null);
-                  }}
-                  className={`flex-1 p-2 rounded ${isConfirming ? "bg-red-700" : "bg-red-500"
-                    }`}
-                >
-                  <Text className="text-white text-center">
-                    {isConfirming ? "Confirmar" : "Deletar"}
-                  </Text>
-                </TouchableOpacity>
-
-              </View>
-
-            </View>
-          );
-        })}
+        <SwipeableCard
+          events={events}
+          loading={loading}
+          deleteEvent={deleteEvent}
+          navigation={navigation}
+        />
 
       </ScrollView>
     </SafeAreaView>
