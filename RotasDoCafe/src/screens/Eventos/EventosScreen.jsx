@@ -58,7 +58,11 @@ export default function EventosScreen() {
                     }`}>
                     <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
                       }`}>
-                      event.is_free ? "Gratuito" : `R$ ${Number(event.price ?? 0).toFixed(2).replace('.', ',')}`
+                      {event.is_free
+                          ? "Gratuito"
+                          : `R$ ${Number(event.price ?? 0)
+                              .toFixed(2)
+                              .replace(".", ",")}`}
 
                     </Text>
                   </View>
