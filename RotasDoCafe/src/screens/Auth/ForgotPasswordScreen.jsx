@@ -13,10 +13,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import Loading from "../../components/Loading/Loading";
 import useForgotPassword from "../../hooks/AuthScreen/useForgotPassword";
+import { canSubmitEmailOnlyForm } from "../../services/validations/loginValidation";
 
 export default function ForgotPasswordScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const { handleForgotPassword, loading } = useForgotPassword(navigation);
+  const isEmailValid = canSubmitEmailOnlyForm(email);
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
@@ -58,7 +60,7 @@ export default function ForgotPasswordScreen({ navigation }) {
               <Button
                 title="Enviar link de recuperação"
                 onPress={() => handleForgotPassword(email)}
-                disabled={loading}
+                disabled={loading || !isEmailValid}
               />
 
               <TouchableOpacity

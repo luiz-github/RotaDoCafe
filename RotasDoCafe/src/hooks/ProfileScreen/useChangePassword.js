@@ -41,10 +41,6 @@ export default function useChangePassword() {
     try {
       setLoading(true);
 
-      console.log("Salvando perfil:", { name, email });
-
-      // implementar API AQ
-
       const validation = validate({
         currentPassword,
         newPassword,
@@ -54,12 +50,6 @@ export default function useChangePassword() {
       if (validation === null) return;
 
       if (validation) {
-        console.log("Alterando senha...", {
-          currentPassword,
-          newPassword,
-        });
-
-        // implementar API AQ
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 

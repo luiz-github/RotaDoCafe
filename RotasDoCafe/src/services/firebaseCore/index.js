@@ -1,0 +1,5 @@
+export { firebaseConfig } from './config'
+export { app } from './app'
+export { auth } from './auth'
+export { db } from './firestore'
+export { COLLECTIONS } from './collections'

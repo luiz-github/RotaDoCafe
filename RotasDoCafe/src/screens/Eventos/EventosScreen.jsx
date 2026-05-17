@@ -1,8 +1,19 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { events } from "../../mocks/events";
+import { useEvents } from "../../hooks/EventScreen/useEvents";
+import { formatDateTime } from "../../utils/date";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function EventosScreen() {
+  const { events, loading, fetchEvents } = useEvents();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+    }, [])
+  );
+
   return (
     <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-coffee">
 
@@ -20,70 +31,74 @@ export default function EventosScreen() {
           Viva experiências no Vale do Café ☕
         </Text>
 
-        {events.map((event) => (
-          <TouchableOpacity
-            key={event.id}
-            className="bg-white/10 rounded-2xl mb-4 overflow-hidden active:opacity-80"
-          >
+        {loading && (
+          <Text className="text-gray-400">Carregando eventos...</Text>
+        )}
 
-            <View className="p-4 pb-2 flex-row justify-between items-center">
+        {!loading && events.length === 0 && (
+          <Text className="text-gray-400">
+            Nenhum evento encontrado.
+          </Text>
+        )}
 
-              <View className="flex-row gap-2">
+        {!loading && events.map((event) => {
+          const { date, time } = formatDateTime(event.date);
 
-                <View className={`px-3 py-1 rounded-full ${
-                  event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
-                }`}>
-                  <Text className={`text-xs font-semibold ${
-                    event.is_free ? "text-green-400" : "text-yellow-400"
-                  }`}>
-                    {event.is_free ? "Gratuito" : `R$ ${event.price}`}
-                  </Text>
+          return (
+            <TouchableOpacity
+              key={event.id}
+              className="bg-white/10 rounded-2xl mb-4 overflow-hidden active:opacity-80"
+            >
+
+              <View className="p-4 pb-2 flex-row justify-between items-center">
+
+                <View className="flex-row gap-2">
+
+                  <View className={`px-3 py-1 rounded-full ${event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
+                    }`}>
+                    <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
+                      }`}>
+                      {event.is_free
+                          ? "Gratuito"
+                          : `R$ ${Number(event.price ?? 0)
+                              .toFixed(2)
+                              .replace(".", ",")}`}
+
+                    </Text>
+                  </View>
+
+                  <View className="bg-white/10 px-3 py-1 rounded-full">
+                    <Text className="text-xs text-gray-300">
+                      {event.age_rating || "Livre"}
+                    </Text>
+                  </View>
+
                 </View>
 
-                <View className="bg-white/10 px-3 py-1 rounded-full">
-                  <Text className="text-xs text-gray-300">
-                    {event.age_rating || "Livre"}
-                  </Text>
-                </View>
+                <Text className="text-gray-400 text-xs">
+                  {date}
+                </Text>
+              </View>
+
+              <View className="px-4 pb-4">
+
+                <Text className="text-white text-lg font-semibold mb-1">
+                  {event.title}
+                </Text>
+
+                <Text className="text-gray-400 text-sm mb-2">
+                  📍 {event.city} • {time}
+                </Text>
+
+                <Text numberOfLines={2} className="text-gray-300 text-sm">
+                  {event.description}
+                </Text>
 
               </View>
 
-              <Text className="text-gray-400 text-xs">
-                {event.date}
-              </Text>
-            </View>
-
-            <View className="px-4 pb-4">
-
-              <Text className="text-white text-lg font-semibold mb-1">
-                {event.title}
-              </Text>
-
-              <Text className="text-gray-400 text-sm mb-2">
-                📍 {event.city} • {event.time}
-              </Text>
-
-              <Text
-                numberOfLines={2}
-                className="text-gray-300 text-sm"
-              >
-                {event.description}
-              </Text>
-
-            </View>
-
-            <View className="px-4 py-3 border-t border-white/10 flex-row justify-between items-center">
-              <Text className="text-gray-500 text-xs">
-                {event.organizer}
-              </Text>
-
-              <Text className="text-amber-400 text-sm font-semibold">
-                Ver →
-              </Text>
-            </View>
-
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          );
+        })}
 
       </ScrollView>
 

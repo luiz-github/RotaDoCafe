@@ -1,19 +1,42 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from "../../components/Loading/Loading";
+import { canSubmitLoginForm } from "../../services/validations/loginValidation";
 
 import "../../styles/global.css";
 
-export default function AuthScreen({ navigation }) {
-  const { username, password, setUsername, setPassword } = useLoginForm();
-  const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
+export default function AuthScreen({ navigation, route }) {
+  const initialEmail = route?.params?.email || "";
+  const { email, password, setEmail, setPassword } = useLoginForm(initialEmail);
+
+  useEffect(() => {
+    const loadLastEmail = async () => {
+      if (initialEmail) return
+      try {
+        const last = await AsyncStorage.getItem('lastEmail')
+        if (!initialEmail && last) {
+          setEmail(last)
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar lastEmail:', e)
+      }
+    }
+
+    loadLastEmail()
+  }, [initialEmail, setEmail])
+  const { isBiometricAvailable, isBiometricEnabledForEmail, handleBiometricAuth } = useBiometricAuth(navigation, email);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, loading, firstLogin } = useLogin(navigation);
+  const { handleLogin, loading, firstLogin } = useLogin(navigation, email);
+  const isLoginFormValid = useMemo(
+    () => canSubmitLoginForm({ email, password }),
+    [email, password]
+  );
 
 
   return (
@@ -54,14 +77,16 @@ export default function AuthScreen({ navigation }) {
             <View className="bg-white/10 p-6 rounded-xl">
 
               <Text className="text-white text-sm mb-2">
-                Usuário
+                E-mail
               </Text>
 
               <TextInput
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Digite seu usuário"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Digite seu e-mail"
                 placeholderTextColor="#ccc"
+                keyboardType="email-address"
+                autoCapitalize="none"
                 className="bg-white rounded-lg px-4 py-3 mb-4"
               />
 
@@ -105,8 +130,8 @@ export default function AuthScreen({ navigation }) {
 
               <Button
                 title="Entrar"
-                disabled={loading}
-                onPress={() => handleLogin(username, password)}
+                disabled={loading || !isLoginFormValid}
+                onPress={() => handleLogin(email, password)}
               />
 
               <TouchableOpacity
@@ -121,7 +146,7 @@ export default function AuthScreen({ navigation }) {
                 </Text>
               </TouchableOpacity>
 
-              {!firstLogin && (
+              {!firstLogin && isBiometricAvailable && isBiometricEnabledForEmail && (
                 <>
                   <View className="flex-row items-center my-6">
                     <View className="flex-1 h-px bg-gray-400" />
@@ -133,16 +158,14 @@ export default function AuthScreen({ navigation }) {
                     <View className="flex-1 h-px bg-gray-400" />
                   </View>
 
-                  {isBiometricAvailable && (
-                    <TouchableOpacity
-                      onPress={handleBiometricAuth}
-                      className="bg-white/20 p-4 rounded-lg items-center"
-                    >
-                      <Text className="text-white font-semibold">
-                        Entrar com Biometria
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    onPress={() => handleBiometricAuth(email)}
+                    className="bg-white/20 p-4 rounded-lg items-center"
+                  >
+                    <Text className="text-white font-semibold">
+                      Entrar com Biometria
+                    </Text>
+                  </TouchableOpacity>
                 </>
               )}
 

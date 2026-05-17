@@ -1,78 +1,57 @@
-import { useState } from "react";
-import Toast from "react-native-toast-message";
+import { useState } from 'react'
+import Toast from 'react-native-toast-message'
+import { validateRegisterForm } from '../../services/validations/registerValidation'
+import { handleFirebaseError } from '../../services/validations/firebaseErrorHandler'
+import { registerUserInFirebase } from '../../services/auth/registerUser'
 
 export default function useRegister(navigation) {
-  const [loading, setLoading] = useState(false);
-
-  const isValidEmail = (email) => {
-    return /\S+@\S+\.\S+/.test(email);
-  };
+  const [loading, setLoading] = useState(false)
 
   const validate = ({ username, email, password, confirmPassword }) => {
-    if (!username || !email || !password || !confirmPassword) {
+    const validation = validateRegisterForm({ username, email, password, confirmPassword })
+
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0]
       Toast.show({
-        type: "error",
-        text1: "Erro",
-        text2: "Preencha todos os campos.",
-      });
-      return false;
+        type: 'error',
+        text1: 'Erro de validação',
+        text2: firstError,
+      })
+      return false
     }
 
-    if (!isValidEmail(email)) {
-      Toast.show({
-        type: "error",
-        text1: "E-mail inválido",
-        text2: "Digite um e-mail válido.",
-      });
-      return false;
-    }
-
-
-    if (password !== confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Erro",
-        text2: "As senhas não coincidem.",
-      });
-      return false;
-    }
-
-    return true;
-  };
+    return true
+  }
 
   const handleRegister = async ({ username, email, password, confirmPassword }) => {
-    if (!validate({ username, email, password, confirmPassword })) return;
+    if (!validate({ username, email, password, confirmPassword })) return
 
     try {
-      setLoading(true);
+      setLoading(true)
 
-      console.log("Registrando usuário:", { username, email });
-
-      // implementar API AQ
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await registerUserInFirebase({ username, email, password })
 
       Toast.show({
-        type: "success",
-        text1: "Conta criada 🎉",
-      });
+        type: 'success',
+        text1: 'Conta criada 🎉',
+      })
 
-      navigation.navigate("Auth");
-
+      navigation.navigate('Auth', { email })
     } catch (error) {
-      console.error(error);
+      const errorResponse = handleFirebaseError(error)
 
       Toast.show({
-        type: "error",
-        text1: "Erro",
-        text2: "Falha ao registrar usuário.",
-      });
+        type: 'error',
+        text1: 'Erro',
+        text2: errorResponse.message,
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return {
     loading,
-    handleRegister
-  };
+    handleRegister,
+  }
 }
