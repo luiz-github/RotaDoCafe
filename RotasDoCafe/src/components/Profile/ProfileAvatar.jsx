@@ -60,10 +60,12 @@ export default function ProfileAvatar() {
                     
                     setImage(asset.uri);
                     setBase64Image(asset.base64);
+                    
+                    console.log("BASE64:", asset.base64);
                 }
             }
         } catch (error) {
-            console.error("Erro ao abrir câmera:", error);
+            console.log("Erro ao abrir câmera:", error);
         }
     };
 
@@ -95,10 +97,12 @@ export default function ProfileAvatar() {
     
                     setImage(asset.uri);
                     setBase64Image(asset.base64);
+    
+                    console.log("BASE64:", asset.base64);
                 }
             }
         } catch (error) {
-            console.error("Erro ao abrir galeria:", error);
+            console.log("Erro ao abrir galeria:", error);
         }
     };
 

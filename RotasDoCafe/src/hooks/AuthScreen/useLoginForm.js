@@ -1,13 +1,17 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-export default function useLoginForm(initialEmail = '') {
-  const [email, setEmail] = useState(initialEmail)
-  const [password, setPassword] = useState('')
+export default function useLoginForm() {
 
-  return {
-    email,
-    password,
-    setEmail,
-    setPassword,
-  }
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+
+    return {
+        username,
+        password,
+        setUsername,
+        setPassword
+    }
+
+
 }
