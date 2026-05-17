@@ -106,21 +106,18 @@ export default async function getPlaces() {
   } catch (error) {
     console.warn('Erro ao consultar API:', error?.message ?? error)
 
-    // Tentar cache
     const cachedPlaces = await readCachedPlaces()
 
     if (cachedPlaces) {
       return cachedPlaces
     }
 
-    // Tentar banco de dados
     const dbPlaces = await fetchPlacesFromDatabase()
 
     if (dbPlaces) {
       return dbPlaces
     }
 
-    // Se nada funcionar, retornar vazio (sem mostrar erro)
     console.error('❌ Não foi possível carregar places de nenhuma fonte')
     return []
   }

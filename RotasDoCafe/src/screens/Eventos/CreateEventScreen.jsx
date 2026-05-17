@@ -112,7 +112,6 @@ export default function CreateEventScreen({ navigation }) {
           </View>
         ))}
 
-        {/* DATE PICKER */}
         {showDatePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
@@ -131,7 +130,6 @@ export default function CreateEventScreen({ navigation }) {
           />
         )}
 
-        {/* TIME PICKER */}
         {showTimePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}

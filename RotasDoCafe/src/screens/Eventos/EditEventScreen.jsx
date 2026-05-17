@@ -114,7 +114,6 @@ export default function EditEventScreen({ route, navigation }) {
           </View>
         ))}
 
-        {/* DATE PICKER */}
         {showDatePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
@@ -141,7 +140,6 @@ export default function EditEventScreen({ route, navigation }) {
           />
         )}
 
-        {/* TIME PICKER */}
         {showTimePicker && (
           <DateTimePicker
             value={form.eventDateTime || new Date()}
@@ -168,7 +166,6 @@ export default function EditEventScreen({ route, navigation }) {
           />
         )}
 
-        {/* ACTIONS */}
         <View className="flex-row gap-3 mt-6">
 
           <TouchableOpacity

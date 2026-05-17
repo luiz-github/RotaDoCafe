@@ -47,7 +47,6 @@ const validatePrice = (value) => {
     return createResult(false, 'Preço é obrigatório. Se for gratuito, informe 0.00')
   }
 
-  // Aceita entrada com vírgula ou ponto
   const normalized = v.replace(',', '.')
 
   const num = Number(normalized)
