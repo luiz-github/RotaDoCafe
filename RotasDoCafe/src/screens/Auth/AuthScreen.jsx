@@ -1,42 +1,19 @@
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
 import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import Loading from "../../components/Loading/Loading";
-import { canSubmitLoginForm } from "../../services/validations/loginValidation";
 
 import "../../styles/global.css";
 
-export default function AuthScreen({ navigation, route }) {
-  const initialEmail = route?.params?.email || "";
-  const { email, password, setEmail, setPassword } = useLoginForm(initialEmail);
-
-  useEffect(() => {
-    const loadLastEmail = async () => {
-      if (initialEmail) return
-      try {
-        const last = await AsyncStorage.getItem('lastEmail')
-        if (!initialEmail && last) {
-          setEmail(last)
-        }
-      } catch (e) {
-        console.warn('Erro ao carregar lastEmail:', e)
-      }
-    }
-
-    loadLastEmail()
-  }, [initialEmail, setEmail])
-  const { isBiometricAvailable, isBiometricEnabledForEmail, handleBiometricAuth } = useBiometricAuth(navigation, email);
+export default function AuthScreen({ navigation }) {
+  const { username, password, setUsername, setPassword } = useLoginForm();
+  const { isBiometricAvailable, handleBiometricAuth } = useBiometricAuth(navigation);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, loading, firstLogin } = useLogin(navigation, email);
-  const isLoginFormValid = useMemo(
-    () => canSubmitLoginForm({ email, password }),
-    [email, password]
-  );
+  const { handleLogin, loading, firstLogin } = useLogin(navigation);
 
 
   return (
@@ -47,7 +24,6 @@ export default function AuthScreen({ navigation, route }) {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={80}
         className="flex-1"
       >
 
@@ -56,9 +32,7 @@ export default function AuthScreen({ navigation, route }) {
           text="Autenticando..."
         />
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
           <View className="flex-1 justify-center px-6 pt-10">
 
@@ -77,76 +51,48 @@ export default function AuthScreen({ navigation, route }) {
             <View className="bg-white/10 p-6 rounded-xl">
 
               <Text className="text-white text-sm mb-2">
-                E-mail
+                Usuário
               </Text>
 
               <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Digite seu e-mail"
+                value={username}
+                onChangeText={setUsername}
+                placeholder="Digite seu usuário"
                 placeholderTextColor="#ccc"
-                keyboardType="email-address"
-                autoCapitalize="none"
                 className="bg-white rounded-lg px-4 py-3 mb-4"
               />
 
               <Text className="text-white text-sm mb-2">
                 Senha
               </Text>
-              <View className="relative mb-6">
+              <View>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
                   placeholder="Digite sua senha"
                   placeholderTextColor="#ccc"
                   secureTextEntry={!showPassword}
-                  className="bg-white rounded-lg px-4 py-3 pr-12"
+                  className="bg-white rounded-lg px-4 py-3 mb-6"
                 />
 
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: "absolute",
-                    right: 8,
-                    top: "50%",
-                    transform: [{ translateY: -10 }]
-                  }}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  className="absolute right-4 top-3"
                 >
-                  <Text style={{ fontSize: 16 }}>
+                  <Text className="text-gray-500">
                     {showPassword ? "🙈" : "👁️"}
                   </Text>
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity
-                onPress={() => navigation.navigate("ForgotPassword")}
-                className="mb-4 items-end"
-              >
-                <Text className="text-gray-300 underline">
-                  Esqueceu sua senha?
-                </Text>
-              </TouchableOpacity>
 
               <Button
                 title="Entrar"
-                disabled={loading || !isLoginFormValid}
-                onPress={() => handleLogin(email, password)}
+                disabled={loading}
+                onPress={() => handleLogin(username, password)}
               />
 
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Register")}
-                className="mt-4 items-center"
-              >
-                <Text className="text-gray-300">
-                  Não tem conta?{" "}
-                  <Text className="text-white font-semibold">
-                    Cadastre-se
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-
-              {!firstLogin && isBiometricAvailable && isBiometricEnabledForEmail && (
+              {!firstLogin && (
                 <>
                   <View className="flex-row items-center my-6">
                     <View className="flex-1 h-px bg-gray-400" />
@@ -158,14 +104,16 @@ export default function AuthScreen({ navigation, route }) {
                     <View className="flex-1 h-px bg-gray-400" />
                   </View>
 
-                  <TouchableOpacity
-                    onPress={() => handleBiometricAuth(email)}
-                    className="bg-white/20 p-4 rounded-lg items-center"
-                  >
-                    <Text className="text-white font-semibold">
-                      Entrar com Biometria
-                    </Text>
-                  </TouchableOpacity>
+                  {isBiometricAvailable && (
+                    <TouchableOpacity
+                      onPress={handleBiometricAuth}
+                      className="bg-white/20 p-4 rounded-lg items-center"
+                    >
+                      <Text className="text-white font-semibold">
+                        Entrar com Biometria
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </>
               )}
 

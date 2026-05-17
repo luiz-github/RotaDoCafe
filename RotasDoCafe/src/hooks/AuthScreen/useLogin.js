@@ -1,91 +1,57 @@
 import { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { signInWithEmailAndPassword } from 'firebase/auth'
 import useToast from '../../components/Toast/ToastMessage'
-import { auth } from '../../services/firebase'
-import { handleFirebaseError } from '../../services/validations/firebaseErrorHandler'
-import { validateLoginForm } from '../../services/validations/loginValidation'
-import { getUserByEmail, markUserFirstLoginAsCompleted } from '../../services/users/userService'
-import { saveBiometricEmail, saveBiometricSecret } from '../../services/biometric/biometricStorage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default function useLogin(navigation, email) {
+export default function useLogin(navigation) {
   const [loading, setLoading] = useState(false)
   const [firstLogin, setFirstLogin] = useState(true)
   const { showSuccess, showError } = useToast()
 
+  const MOCK_USER = {
+    username: 'admin',
+    password: '123',
+  }
+
   useEffect(() => {
-    let isActive = true
-
     const loadFirstLogin = async () => {
-      const typedEmail = email?.trim()
-
-      if (!typedEmail) {
-        if (isActive) {
-          setFirstLogin(true)
-        }
-        return
-      }
-
       try {
-        const userRecord = await getUserByEmail(typedEmail)
+        const value = await AsyncStorage.getItem('firstLogin')
 
-        if (isActive) {
-          setFirstLogin(userRecord?.firstLogin ?? true)
+        if (value === 'false') {
+          setFirstLogin(false)
         }
       } catch (error) {
-        console.error('Erro ao buscar firstLogin do Firestore:', error)
-
-        if (isActive) {
-          setFirstLogin(true)
-        }
+        console.log('Erro ao carregar firstLogin:', error)
       }
     }
 
-    const timer = setTimeout(loadFirstLogin, 300)
+    loadFirstLogin()
+  }, [])
 
-    return () => {
-      isActive = false
-      clearTimeout(timer)
-    }
-  }, [email])
-
-  const handleLogin = async (email, password) => {
-    const validation = validateLoginForm({ email, password })
-
-    if (!validation.isValid) {
-      return showError(Object.values(validation.errors)[0])
+  const handleLogin = async (username, password) => {
+    if (!username || !password) {
+      return showError('Preencha todos os campos para continuar.')
     }
 
     setLoading(true)
 
-    try {
-      const normalizedEmail = email.trim()
-      const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password)
-
-      await markUserFirstLoginAsCompleted(userCredential.user.uid, normalizedEmail)
-
-      try {
-        await AsyncStorage.setItem('lastEmail', normalizedEmail)
-      } catch (e) {
-        console.warn('Não foi possível salvar lastEmail:', e)
+    setTimeout(async () => {
+      if (username !== MOCK_USER.username || password !== MOCK_USER.password) {
+        setLoading(false)
+        return showError('Usuário ou senha inválidos.')
       }
 
       try {
-        await saveBiometricEmail(normalizedEmail)
-        await saveBiometricSecret(normalizedEmail, password)
-      } catch (e) {
-        console.warn('Não foi possível salvar dados biométricos:', e)
+        await AsyncStorage.setItem('firstLogin', 'false')
+      } catch (error) {
+        console.log('Erro ao salvar firstLogin:', error)
       }
 
       setFirstLogin(false)
-      showSuccess('Autenticado com sucesso.')
-      navigation.replace('App')
-    } catch (error) {
-      const firebaseError = handleFirebaseError(error)
-      showError(firebaseError.message)
-    } finally {
       setLoading(false)
-    }
+      showSuccess("Autenticado com sucesso.")
+      navigation.replace('App')
+    }, 1000)
   }
 
   return { handleLogin, loading, firstLogin }
