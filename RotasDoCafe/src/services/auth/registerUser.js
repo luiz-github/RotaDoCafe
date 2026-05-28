@@ -17,6 +17,7 @@ const registerUserInFirebase = async ({ username, email, password }) => {
       updatedAt: serverTimestamp(),
       deletedAt: null,
       firstLogin: true,
+      photoURL: null
     })
 
     return {
