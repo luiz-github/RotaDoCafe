@@ -4,11 +4,8 @@ import { useState, useRef } from "react";
 import { Animated } from "react-native";
 import useCamera from "../../hooks/ProfileScreen/useCamera";
 import useGallery from "../../hooks/ProfileScreen/useGallery";
-import { startLocationUpdatesAsync } from "expo-location";
 
-export default function ProfileAvatar() {
-    const [image, setImage] = useState(null);
-    const [base64Image, setBase64Image] = useState(null);
+export default function ProfileAvatar({ image, onChangePhoto }) {
     const [visible, setVisible] = useState(false);
 
     const slideAnim = useRef(new Animated.Value(300)).current;
@@ -58,8 +55,9 @@ export default function ProfileAvatar() {
                 if (!result.canceled && result.assets?.length > 0) {
                     const asset = result.assets[0];
                     
-                    setImage(asset.uri);
-                    setBase64Image(asset.base64);
+                    const formattedBase64 = `data:image/jpeg;base64,${asset.base64}`
+
+                    onChangePhoto(formattedBase64);
                 }
             }
         } catch (error) {
@@ -93,8 +91,9 @@ export default function ProfileAvatar() {
                 if (!result.canceled && result.assets?.length > 0) {
                     const asset = result.assets[0];
     
-                    setImage(asset.uri);
-                    setBase64Image(asset.base64);
+                    const formattedBase64 = `data:image/jpeg;base64,${asset.base64}`
+
+                    onChangePhoto(formattedBase64);
                 }
             }
         } catch (error) {
@@ -104,8 +103,7 @@ export default function ProfileAvatar() {
 
     const removeImage = () => {
         closeModal();
-        setImage(null);
-        setBase64Image(null);
+        onChangePhoto(null);
     };
 
     return (

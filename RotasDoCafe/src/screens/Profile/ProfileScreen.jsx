@@ -21,12 +21,13 @@ export default function ProfileScreen({ navigation }) {
   const handleLogout = useLogout(navigation);
   const { handleSave, loading } = useChangePassword();
 
-  const { user, updateProfile, updating } = useUserProfile();
+  const { user, updateProfile, updating, updateProfilePhoto } = useUserProfile();
 
   const [isEditing, setIsEditing] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [image, setImage] = useState(null)
 
   // const [currentPassword, setCurrentPassword] = useState("");
   // const [newPassword, setNewPassword] = useState("");
@@ -40,6 +41,7 @@ export default function ProfileScreen({ navigation }) {
     if (user) {
       setName(user.name || "");
       setEmail(user.email || "");
+      setImage(user.photoURL || null)
     }
   }, [user]);
 
@@ -50,6 +52,10 @@ export default function ProfileScreen({ navigation }) {
       setIsEditing(false);
     }
   };
+
+  const onChangePhoto = async (base64Image) => {
+    await updateProfilePhoto(base64Image)
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
@@ -83,7 +89,10 @@ export default function ProfileScreen({ navigation }) {
           <View className="bg-white/10 p-6 rounded-2xl">
 
             <View className="items-center mb-8">
-              <ProfileAvatar />
+              <ProfileAvatar
+                image={image}
+                onChangePhoto={onChangePhoto}
+              />
             </View>
 
             <Text className="text-gray-400 mb-1">Nome</Text>

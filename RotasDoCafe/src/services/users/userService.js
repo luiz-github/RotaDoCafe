@@ -78,6 +78,7 @@ const mapUserProfile = (userId, data, fallbackEmail) => ({
   role: data?.role || 'user',
   firstLogin: data?.firstLogin ?? false,
   biometricEnabled: data?.biometricEnabled ?? false,
+  photoURL: data?.photoURL ?? null
 })
 
 const getCurrentUserProfile = async () => {
@@ -154,10 +155,26 @@ const markUserFirstLoginAsCompleted = async (userId, email) => {
   return true
 }
 
+
+const updateCurrentProfilePhoto = async (base64Image) => {
+  try {
+    const currentUser = getAuthenticatedUser()
+
+    await updateDoc(doc(db, COLLECTIONS.USERS, currentUser.uid), {
+      photoURL: base64Image || null
+    })
+
+  } catch (error) {
+    console.error('Erro ao atualizar foto de perfil:', error)
+    throw error
+  }
+}
+
 export {
   getCurrentUserProfile,
   getCurrentUserRole,
   getUserByEmail,
   markUserFirstLoginAsCompleted,
   updateCurrentUserProfile,
+  updateCurrentProfilePhoto,
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Toast from 'react-native-toast-message'
-import { getCurrentUserProfile, updateCurrentUserProfile } from '../../services/users/userService'
+import { getCurrentUserProfile, updateCurrentUserProfile, updateCurrentProfilePhoto } from '../../services/users/userService'
 
 export default function useUserProfile() {
   const [user, setUser] = useState(null)
@@ -21,6 +21,36 @@ export default function useUserProfile() {
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const updateProfilePhoto = async (base64Image) => {
+    try {
+      setUpdating(true)
+      await updateCurrentProfilePhoto(base64Image)
+      
+      setUser((prev) => ({
+        ...prev,
+        photoURL: base64Image,
+      }))
+
+      Toast.show({
+        type: 'success',
+        text1: 'Foto atualizada!',
+      })
+      
+      return true
+    } catch (error) {
+      console.error('Erro ao atualizar foto do perfil:', error)
+
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao atualizar foto do perfil',
+      })
+
+      return false
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -71,5 +101,6 @@ export default function useUserProfile() {
     updating,
     refetch: fetchUser,
     updateProfile,
+    updateProfilePhoto
   }
 }
