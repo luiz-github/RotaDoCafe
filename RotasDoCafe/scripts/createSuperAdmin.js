@@ -13,15 +13,25 @@ async function criarSuperAdmin() {
   try {
     console.log('🚀 Criando usuário super-admin...')
 
-    const email = 'super-admin@rotadocafe.com'
-    const senha = '123456'
+    const email = process.env.EXPO_PUBLIC_SUPER_ADMIN_EMAIL
+    const senha = process.env.EXPO_PUBLIC_SUPER_ADMIN_PASSWORD
+
+    if (!email || !senha) {
+      throw new Error(
+        'EXPO_PUBLIC_SUPER_ADMIN_EMAIL e EXPO_PUBLIC_SUPER_ADMIN_PASSWORD devem estar definidos no .env',
+      )
+    }
 
     let userCredential
 
     try {
       userCredential = await createUserWithEmailAndPassword(auth, email, senha)
+
+      console.log('✅ Usuário criado no Firebase Auth')
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
+        console.log('ℹ️  Usuário já existe. Fazendo login...')
+
         userCredential = await signInWithEmailAndPassword(auth, email, senha)
       } else {
         throw error
@@ -30,21 +40,25 @@ async function criarSuperAdmin() {
 
     const uid = userCredential.user.uid
 
-    await setDoc(doc(db, COLLECTIONS.USERS, uid), {
-      uid,
-      username: 'Super Admin',
-      firstLogin: true,
-      email,
-      role: 'super-admin',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      deletedAt: null,
-    })
+    await setDoc(
+      doc(db, COLLECTIONS.USERS, uid),
+      {
+        uid,
+        username: 'Super Admin',
+        firstLogin: true,
+        email,
+        role: 'super-admin',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        deletedAt: null,
+      },
+      { merge: true },
+    )
 
-    console.log('✅ Super-admin criado com sucesso!')
+    console.log('✅ Super-admin criado/atualizado com sucesso!')
     process.exit(0)
   } catch (error) {
-    console.error(error.message)
+    console.error('❌ Erro:', error.message)
     process.exit(1)
   }
 }
