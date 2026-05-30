@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button/Button";
+import AppLogo from "../../components/Brand/AppLogo";
 import useBiometricAuth from "../../hooks/AuthScreen/useBiometricAuth";
 import useLogin from "../../hooks/AuthScreen/useLogin";
 import useLoginForm from "../../hooks/AuthScreen/useLoginForm";
@@ -64,13 +65,10 @@ export default function AuthScreen({ navigation, route }) {
 
             <View className="items-center mb-10">
 
-              <Text className="text-3xl font-bold text-white mb-2">
-                Rota do Café
-              </Text>
-
-              <Text className="text-lg text-gray-300">
-                Bem-vindo!
-              </Text>
+              <AppLogo
+                size={120}
+                subtitle="Bem-vindo!"
+              />
 
             </View>
 
