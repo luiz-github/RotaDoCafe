@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import usePlaces from "../../hooks/MapScreen/usePlaces";
 import useLocation from "../../hooks/MapScreen/useLocation";
+import { saveRecentPlace } from "../../services/recentPlaces";
 import {
   categories,
   buildCategorySummary,
@@ -44,6 +45,8 @@ export default function ExploreScreen() {
   const featuredPlace = recommended[0] ?? enrichedPlaces[0] ?? null;
 
   const openPlaceOnMap = (place) => {
+    saveRecentPlace(place);
+
     navigation.navigate('Mapa', {
       selectedPlace: place,
     });
