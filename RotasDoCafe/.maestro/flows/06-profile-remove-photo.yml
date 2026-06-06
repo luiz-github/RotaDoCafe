@@ -1,0 +1,40 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+
+- tapOn: "Digite seu e-mail"
+- inputText: "${TEST_EMAIL}"
+
+- tapOn: "Digite sua senha"
+- inputText: "${TEST_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+# - extendedWaitUntil:
+#     visible: "No thanks"
+#     timeout: 5000
+
+# - tapOn: "No thanks"
+
+- assertVisible: "Rota do Café"
+
+- tapOn:
+    id: "tab-perfil"
+
+- assertVisible: "Perfil"
+
+- tapOn:
+    id: "profile-avatar"
+
+- assertVisible: "Escolher foto"
+
+- assertVisible: "Remover foto"
+
+- tapOn: "Remover foto"
+
+- extendedWaitUntil:
+    visible: "Toque para alterar foto"
+    timeout: 5000

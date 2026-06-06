@@ -1,0 +1,44 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+
+- tapOn: "Digite seu e-mail"
+- inputText: "${TEST_EMAIL}"
+
+- tapOn: "Digite sua senha"
+- inputText: "${TEST_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+# - extendedWaitUntil:
+#     visible: "No thanks"
+#     timeout: 5000
+
+# - tapOn: "No thanks"
+
+- assertVisible: "Rota do Café"
+
+- tapOn:
+    id: "tab-perfil"
+
+- assertVisible: "Perfil"
+
+- tapOn: "Editar dados"
+
+- assertVisible: "Salvar"
+- assertVisible: "Cancelar"
+
+- tapOn: "TesteMaestro"
+
+- eraseText
+
+- inputText: "Teste Maestro Editado"
+
+- hideKeyboard
+
+- tapOn: "Salvar"
+
+- assertVisible: "Teste Maestro Editado"
