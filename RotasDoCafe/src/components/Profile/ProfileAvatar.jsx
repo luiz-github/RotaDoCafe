@@ -109,7 +109,7 @@ export default function ProfileAvatar({ image, onChangePhoto }) {
     return (
         <View className="items-center gap-3">
 
-            <Pressable onPress={openModal}>
+            <Pressable testID="profile-avatar" onPress={openModal}>
                 <Image
                     source={
                         image
@@ -147,6 +147,7 @@ export default function ProfileAvatar({ image, onChangePhoto }) {
                         </View>
 
                         <Pressable
+                            testID="camera-option"
                             onPress={openCamera}
                             className="flex-row items-center py-4 border-b border-gray-200 active:bg-gray-100"
                         >
@@ -158,6 +159,7 @@ export default function ProfileAvatar({ image, onChangePhoto }) {
                         </Pressable>
 
                         <Pressable
+                            testID="gallery-option"
                             onPress={openGallery}
                             className="flex-row items-center py-4 active:bg-gray-100"
                         >
