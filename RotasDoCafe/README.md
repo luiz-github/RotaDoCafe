@@ -208,7 +208,7 @@ npx expo start
 Os testes ficam centralizados em `src/tests/` organizados por domínio:
 
 ```bash
-npm test
+npm run test
 ```
 
 **Cobertura atual:** 15 test suites, 51 testes cobrindo:
