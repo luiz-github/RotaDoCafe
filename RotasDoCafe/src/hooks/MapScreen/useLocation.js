@@ -6,18 +6,26 @@ export default function useLocation() {
   const [status, setStatus] = useState(null)
   const [canAskAgain, setCanAskAgain] = useState(true)
 
-  const requestPermission = async () => {
+const requestPermission = async () => {
+  try {
     const permission = await Location.requestForegroundPermissionsAsync()
 
     setStatus(permission.status)
     setCanAskAgain(permission.canAskAgain)
 
-    if (permission.status !== 'granted') return
+    if (permission.status !== 'granted') {
+      return
+    }
 
-    const { coords } = await Location.getCurrentPositionAsync({})
-    setLocation(coords)
+    const currentLocation = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    })
+
+    setLocation(currentLocation.coords)
+  } catch (error) {
+    console.error('LOCATION ERROR:', error)
   }
-
+}
   useEffect(() => {
     requestPermission()
   }, [])

@@ -72,6 +72,7 @@ export default function Map({ selectedPlace }) {
       )}
 
       <MapView
+        testID="map-screen"
         ref={mapRef}
         style={styles.map}
         showsUserLocation={false}
@@ -83,7 +84,7 @@ export default function Map({ selectedPlace }) {
           longitudeDelta: selectedPlaceMapData ? 0.08 : 1.5,
         }}
       >
-        <UrlTile urlTemplate={`${baseUrlTemplate}/{z}/{x}/{y}.png`} />
+        {/* <UrlTile urlTemplate={`${baseUrlTemplate}/{z}/{x}/{y}.png`} /> */}
 
         {location && (
           <Marker

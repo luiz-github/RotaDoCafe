@@ -48,7 +48,7 @@ export default function AuthScreen({ navigation, route }) {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={80}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 140 : 120}
         className="flex-1"
       >
 
@@ -57,11 +57,11 @@ export default function AuthScreen({ navigation, route }) {
           text="Autenticando..."
         />
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
           keyboardShouldPersistTaps="handled"
         >
 
-          <View className="flex-1 justify-center px-6 pt-10">
+          <View className="flex-1 px-6 pt-10">
 
             <View className="items-center mb-10">
 
@@ -133,6 +133,7 @@ export default function AuthScreen({ navigation, route }) {
               />
 
               <TouchableOpacity
+                testID="register-button"
                 onPress={() => navigation.navigate("Register")}
                 className="mt-4 items-center"
               >

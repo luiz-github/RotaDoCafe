@@ -158,6 +158,7 @@ export default function RegisterScreen({ navigation }) {
                                 </Text>
                             )}
                             <Button
+                                testID="register-submit-button"
                                 title="Criar conta"
                                 onPress={() => {
                                     setShowValidationErrors(true);

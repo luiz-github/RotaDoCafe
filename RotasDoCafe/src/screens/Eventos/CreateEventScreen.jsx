@@ -93,6 +93,8 @@ export default function CreateEventScreen({ navigation }) {
             ) : (
               <TextInput
                 value={form[field]}
+                placeholder={field === "price" ? "0.00" : labels[field]}
+                placeholderTextColor="#94a3b8"
                 keyboardType={field === "price" ? "numeric" : "default"}
                 onFocus={(event) => {
                   scrollRef.current?.scrollToFocusedInput(event.target);
