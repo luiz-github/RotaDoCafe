@@ -1,0 +1,68 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+    
+- tapOn: "Digite seu e-mail"
+- inputText: "${SUPERADMIN_EMAIL}"
+
+- tapOn: "Digite sua senha"
+- inputText: "${SUPERADMIN_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+- assertVisible: "Rota do Café"
+
+- tapOn: "Admin"
+- assertVisible: "Painel Admin"
+
+- tapOn: "Gerenciar Eventos"
+- assertVisible: "Gerenciar Eventos"
+
+- tapOn: "Criar Evento"
+- assertVisible: "Criar Evento"
+
+- tapOn: "Título"
+- inputText: "${EVENT_TITLE}"
+
+- tapOn: "Cidade"
+- inputText: "${EVENT_CITY}"
+
+- tapOn: "Estado"
+- inputText: "${EVENT_STATE}"
+
+- tapOn: "Local"
+- inputText: "${EVENT_LOCATION}"
+
+- tapOn: "Descrição"
+- inputText: "${EVENT_DESCRIPTION}"
+
+- tapOn: "Organizador"
+- inputText: "${EVENT_ORGANIZER}"
+
+- tapOn: "0.00"
+- inputText: "${EVENT_PRICE}"
+
+- tapOn: "Livre"
+- eraseText
+- inputText: "Livre"
+
+- tapOn: "Selecionar data e hora"
+
+- extendedWaitUntil:
+    visible: "OK"
+    timeout: 5000
+
+- tapOn: "OK"
+
+- extendedWaitUntil:
+    visible: "OK"
+    timeout: 5000
+
+- tapOn: "OK"
+
+
+- tapOn: "Salvar"
+- assertVisible: "${EVENT_TITLE}"

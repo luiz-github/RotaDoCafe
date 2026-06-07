@@ -58,6 +58,7 @@ export default function BottomTabs() {
         name="Explorar"
         component={ExploreScreen}
         options={{
+          tabBarButtonTestID: 'tab-explorar',
           tabBarIcon: ({ color }) => (
             <Ionicons name="compass" size={22} color={color} />
           ),
@@ -68,6 +69,7 @@ export default function BottomTabs() {
         name="Mapa"
         component={MapScreen}
         options={{
+          tabBarButtonTestID: 'tab-mapa',
           tabBarIcon: ({ color }) => (
             <Ionicons name="map" size={22} color={color} />
           ),
@@ -100,6 +102,7 @@ export default function BottomTabs() {
         name="Perfil"
         component={ProfileScreen}
         options={{
+          tabBarButtonTestID: 'tab-perfil',
           tabBarIcon: ({ color }) => (
             <Ionicons name="person" size={22} color={color} />
           ),
