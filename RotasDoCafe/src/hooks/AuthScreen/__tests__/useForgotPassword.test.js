@@ -1,4 +1,3 @@
-// Suíte do fluxo de recuperação de senha: cobre validação, sucesso e erro do serviço assíncrono.
 import { renderHook, act } from '@testing-library/react-native'
 import useForgotPassword from '../useForgotPassword'
 

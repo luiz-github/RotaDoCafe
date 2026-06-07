@@ -1,4 +1,3 @@
-// Suíte do logo da aplicação: cobre título, subtítulo opcional e modo horizontal.
 import React from 'react'
 import { render } from '@testing-library/react-native'
 import AppLogo from '../AppLogo'

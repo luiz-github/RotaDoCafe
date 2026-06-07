@@ -1,4 +1,3 @@
-// Suíte-base dos validadores: cobre caminhos felizes, erros de formulário e limites de entrada.
 import {
   canSubmitEmailOnlyForm,
   canSubmitLoginForm,

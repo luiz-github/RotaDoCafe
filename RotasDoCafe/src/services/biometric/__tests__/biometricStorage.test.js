@@ -1,4 +1,3 @@
-// Suíte de storage biométrico: cobre normalização, persistência, limpeza e comparação de credenciais.
 const mockSecureStore = {
   setItemAsync: jest.fn(),
   getItemAsync: jest.fn(),

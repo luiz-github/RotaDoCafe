@@ -1,4 +1,3 @@
-// Suíte de eventos: cobre leitura, criação, atualização, remoção e a camada de serviço em cima do repositório.
 const mockAddDoc = jest.fn()
 const mockCollection = jest.fn((...args) => ({ type: 'collection', args }))
 const mockDoc = jest.fn((...args) => ({ type: 'doc', args }))

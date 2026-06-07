@@ -1,4 +1,3 @@
-// Suíte do fluxo de login: cobre validação, carregamento do firstLogin e sucesso assíncrono com persistência local.
 import { renderHook, act, waitFor } from '@testing-library/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import useLogin from '../useLogin'

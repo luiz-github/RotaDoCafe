@@ -1,4 +1,3 @@
-// Suíte do fluxo de cadastro: cobre validação local, sucesso de cadastro e erros mapeados.
 import { renderHook, act } from '@testing-library/react-native'
 import useRegister from '../useRegister'
 

@@ -1,4 +1,3 @@
-// Suíte do cadastro no Firebase: cobre persistência bem-sucedida e rollback quando o Firestore falha.
 const mockCreateUserWithEmailAndPassword = jest.fn()
 const mockDeleteUser = jest.fn()
 const mockSetDoc = jest.fn()

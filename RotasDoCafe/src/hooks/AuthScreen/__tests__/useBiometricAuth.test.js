@@ -1,4 +1,3 @@
-// Suíte da autenticação biométrica: cobre disponibilidade, bloqueio por e-mail e login biométrico bem-sucedido.
 import { renderHook, act, waitFor } from '@testing-library/react-native'
 import useBiometricAuth from '../useBiometricAuth'
 

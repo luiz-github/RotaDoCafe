@@ -1,4 +1,3 @@
-// Suíte do wrapper de toast: valida os três tipos de mensagem padronizados do app.
 const mockToastShow = jest.fn()
 
 jest.mock('react-native-toast-message', () => ({

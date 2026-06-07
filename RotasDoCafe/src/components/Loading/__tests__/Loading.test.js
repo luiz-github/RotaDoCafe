@@ -1,4 +1,3 @@
-// Suíte do overlay de carregamento: cobre ausência de render quando invisível e texto quando visível.
 import React from 'react'
 import { render } from '@testing-library/react-native'
 import Loading from '../Loading'

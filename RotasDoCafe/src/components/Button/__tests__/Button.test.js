@@ -1,4 +1,3 @@
-// Suíte do botão base: cobre renderização, variantes, estado de loading e comportamento de clique.
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import { fireEvent, render } from '@testing-library/react-native'

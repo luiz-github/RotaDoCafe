@@ -1,4 +1,3 @@
-// Suíte do serviço de recuperação de senha: cobre entrada inválida, sucesso e falha do Firebase.
 const mockSendPasswordResetEmail = jest.fn()
 
 jest.mock('firebase/auth', () => ({

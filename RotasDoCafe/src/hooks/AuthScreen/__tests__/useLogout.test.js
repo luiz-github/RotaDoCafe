@@ -1,4 +1,3 @@
-// Suíte do logout: cobre confirmação do usuário, sucesso e falha na finalização da sessão.
 import { Alert } from 'react-native'
 import useLogout from '../useLogout'
 

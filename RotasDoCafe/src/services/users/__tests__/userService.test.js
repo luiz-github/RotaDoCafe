@@ -1,4 +1,3 @@
-// Suíte central do perfil de usuário: cobre leituras, atualização de perfil, primeiro login e foto.
 const mockUpdateEmail = jest.fn()
 const mockCollection = jest.fn((...args) => ({ type: 'collection', args }))
 const mockDoc = jest.fn((...args) => ({ type: 'doc', args }))
