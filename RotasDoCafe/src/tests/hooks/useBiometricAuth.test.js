@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native'
-import useBiometricAuth from '../useBiometricAuth'
+import useBiometricAuth from '../../hooks/AuthScreen/useBiometricAuth'
 
 const mockShowSuccess = jest.fn()
 const mockShowError = jest.fn()
@@ -11,7 +11,7 @@ const mockIsBiometricEmailMatch = jest.fn()
 const mockNormalizeEmail = jest.fn((value) => value?.trim().toLowerCase() || '')
 const mockSignInWithEmailAndPassword = jest.fn()
 
-jest.mock('../../../components/Toast/ToastMessage', () => ({
+jest.mock('../../components/Toast/ToastMessage', () => ({
   __esModule: true,
   default: () => ({
     showSuccess: (...args) => mockShowSuccess(...args),
@@ -29,11 +29,11 @@ jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: (...args) => mockSignInWithEmailAndPassword(...args),
 }))
 
-jest.mock('../../../services/firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: { currentUser: null, signOut: jest.fn() },
 }))
 
-jest.mock('../../../services/biometric/biometricStorage', () => ({
+jest.mock('../../services/biometric/biometricStorage', () => ({
   isBiometricEmailMatch: (...args) => mockIsBiometricEmailMatch(...args),
   normalizeEmail: (...args) => mockNormalizeEmail(...args),
   getBiometricSecret: (...args) => mockGetBiometricSecret(...args),

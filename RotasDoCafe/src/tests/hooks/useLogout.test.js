@@ -1,5 +1,5 @@
 import { Alert } from 'react-native'
-import useLogout from '../useLogout'
+import useLogout from '../../hooks/AuthScreen/useLogout'
 
 const mockSignOut = jest.fn()
 
@@ -10,7 +10,7 @@ jest.mock('firebase/auth', () => ({
 const mockShowSuccess = jest.fn()
 const mockShowError = jest.fn()
 
-jest.mock('../../../components/Toast/ToastMessage', () => ({
+jest.mock('../../components/Toast/ToastMessage', () => ({
   __esModule: true,
   default: () => ({
     showSuccess: (...args) => mockShowSuccess(...args),
@@ -18,7 +18,7 @@ jest.mock('../../../components/Toast/ToastMessage', () => ({
   }),
 }))
 
-jest.mock('../../../services/firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: { mocked: true },
 }))
 

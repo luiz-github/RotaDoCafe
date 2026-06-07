@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native'
-import useForgotPassword from '../useForgotPassword'
+import useForgotPassword from '../../hooks/AuthScreen/useForgotPassword'
 
 const mockSendResetEmail = jest.fn()
 const mockToastShow = jest.fn()
@@ -8,11 +8,11 @@ jest.mock('react-native-toast-message', () => ({
   show: (...args) => mockToastShow(...args),
 }))
 
-jest.mock('../../../services/auth/forgotPassword', () => ({
+jest.mock('../../services/auth/forgotPassword', () => ({
   sendResetEmail: (...args) => mockSendResetEmail(...args),
 }))
 
-jest.mock('../../../services/validations/loginValidation', () => ({
+jest.mock('../../services/validations/loginValidation', () => ({
   validateEmail: (email) => {
     if (!email || typeof email !== 'string' || !email.trim())
       return { isValid: false, error: 'E-mail é obrigatório' }

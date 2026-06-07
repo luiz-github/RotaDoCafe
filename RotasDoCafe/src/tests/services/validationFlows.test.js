@@ -4,7 +4,7 @@ import {
   validateEmail as validateLoginEmail,
   validateLoginForm,
   validatePassword as validateLoginPassword,
-} from '../loginValidation'
+} from '../../services/validations/loginValidation'
 import {
   canSubmitForm,
   validateConfirmPassword,
@@ -12,14 +12,14 @@ import {
   validatePassword as validateRegisterPassword,
   validateRegisterForm,
   validateUsername,
-} from '../registerValidation'
-import { validateEventForm } from '../eventValidation'
-import { getFieldError, isFieldComplete } from '../fieldValidation'
+} from '../../services/validations/registerValidation'
+import { validateEventForm } from '../../services/validations/eventValidation'
+import { getFieldError, isFieldComplete } from '../../services/validations/fieldValidation'
 import {
   getFirebaseErrorMessage,
   handleFirebaseError,
   handleSuccessResponse,
-} from '../firebaseErrorHandler'
+} from '../../services/validations/firebaseErrorHandler'
 
 describe('validation flows', () => {
   it('valida login com e-mail e senha', () => {

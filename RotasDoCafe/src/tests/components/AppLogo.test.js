@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import AppLogo from '../AppLogo'
+import AppLogo from '../../components/Brand/AppLogo'
 
 describe('AppLogo', () => {
   it('renderiza título e subtítulo informados', () => {

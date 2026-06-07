@@ -4,11 +4,11 @@ jest.mock('firebase/auth', () => ({
   sendPasswordResetEmail: (...args) => mockSendPasswordResetEmail(...args),
 }))
 
-jest.mock('../../firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: { mocked: true },
 }))
 
-const { sendResetEmail } = require('../forgotPassword')
+const { sendResetEmail } = require('../../services/auth/forgotPassword')
 
 describe('sendResetEmail', () => {
   beforeEach(() => {

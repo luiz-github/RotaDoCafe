@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import useLogin from '../useLogin'
+import useLogin from '../../hooks/AuthScreen/useLogin'
 
 const mockShowSuccess = jest.fn()
 const mockShowError = jest.fn()
@@ -14,7 +14,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(),
 }))
 
-jest.mock('../../../components/Toast/ToastMessage', () => ({
+jest.mock('../../components/Toast/ToastMessage', () => ({
   __esModule: true,
   default: () => ({
     showSuccess: (...args) => mockShowSuccess(...args),
@@ -26,16 +26,16 @@ jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: (...args) => mockSignInWithEmailAndPassword(...args),
 }))
 
-jest.mock('../../../services/firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: { mocked: true },
 }))
 
-jest.mock('../../../services/users/userService', () => ({
+jest.mock('../../services/users/userService', () => ({
   getUserByEmail: (...args) => mockGetUserByEmail(...args),
   markUserFirstLoginAsCompleted: (...args) => mockMarkUserFirstLoginAsCompleted(...args),
 }))
 
-jest.mock('../../../services/biometric/biometricStorage', () => ({
+jest.mock('../../services/biometric/biometricStorage', () => ({
   saveBiometricEmail: (...args) => mockSaveBiometricEmail(...args),
   saveBiometricSecret: (...args) => mockSaveBiometricSecret(...args),
 }))
