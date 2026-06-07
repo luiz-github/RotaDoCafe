@@ -11,7 +11,7 @@
     "start:tunnel": "npx expo start --tunnel",
     "create:super-admin": "node scripts/createSuperAdmin.js",
     "seed:places": "node scripts/seedPlaces.js",
-    "first-setup": "npm run create:super-admin && npm run seed:places",
+    "first:setup": "npm run create:super-admin && npm run seed:places",
     "test:maestro:all": "node scripts/runMaestro.js all"
   },
   "dependencies": {
