@@ -87,7 +87,7 @@ export default function EventosScreen() {
                 </Text>
 
                 <Text className="text-gray-400 text-sm mb-2">
-                  📍 {event.city} • {time}
+                  📍 {event.city} - {event.location} • {time}
                 </Text>
 
                 <Text numberOfLines={2} className="text-gray-300 text-sm">
