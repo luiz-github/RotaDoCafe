@@ -1,8 +1,39 @@
+import { useCallback, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { getRecentPlaces, subscribeRecentPlaces } from "../../services/recentPlaces";
 
 export default function HomeScreen({ navigation }) {
+  const [recentPlaces, setRecentPlaces] = useState([]);
+
+  const loadRecentPlaces = useCallback(async () => {
+    const places = await getRecentPlaces();
+    setRecentPlaces(places.slice(0, 3));
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeRecentPlaces((places) => {
+      setRecentPlaces(places.slice(0, 3));
+    });
+
+    loadRecentPlaces();
+
+    return unsubscribe;
+  }, [loadRecentPlaces]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadRecentPlaces();
+    }, [loadRecentPlaces])
+  );
+
+  const openPlaceOnMap = (place) => {
+    navigation.navigate("Mapa", {
+      selectedPlace: place,
+    });
+  };
 
   return (
 
@@ -94,37 +125,51 @@ export default function HomeScreen({ navigation }) {
 
         </View>
 
-
-
         <Text className="text-white text-lg font-semibold mb-3">
-          Lugares populares
+          Últimos lugares abertos
         </Text>
 
+        {recentPlaces.length === 0 ? (
+          <View className="bg-white/10 p-5 rounded-2xl mb-8">
+            <Text className="text-white font-semibold">
+              Abra um lugar na tela Explorar
+            </Text>
 
-        <View className="bg-white/10 p-5 rounded-2xl mb-4">
+            <Text className="text-gray-300 mt-1">
+              Os últimos lugares visualizados aparecem aqui automaticamente.
+            </Text>
+          </View>
+        ) : (
+          <View className="mb-8 gap-4">
+            {recentPlaces.map((place) => (
+              <TouchableOpacity
+                key={place.id}
+                onPress={() => openPlaceOnMap(place)}
+                className="bg-white/10 p-5 rounded-2xl active:opacity-80"
+              >
+                <View className="flex-row items-center">
+                  <View className="w-11 h-11 rounded-xl bg-amber-400/20 items-center justify-center mr-3">
+                    <Text className="text-2xl">
+                      {place.icon || "📍"}
+                    </Text>
+                  </View>
 
-          <Text className="text-white font-semibold">
-            Fazenda Santa Eufrásia
-          </Text>
+                  <View className="flex-1">
+                    <Text className="text-white font-semibold">
+                      {place.title}
+                    </Text>
 
-          <Text className="text-gray-300 mt-1">
-            Uma das fazendas históricas mais tradicionais de Vassouras.
-          </Text>
+                    <Text className="text-gray-300 mt-1" numberOfLines={2}>
+                      {place.locationLabel}
+                    </Text>
+                  </View>
 
-        </View>
-
-
-        <View className="bg-white/10 p-5 rounded-2xl mb-8">
-
-          <Text className="text-white font-semibold">
-            Conservatória
-          </Text>
-
-          <Text className="text-gray-300 mt-1">
-            Cidade famosa pelas serenatas e música ao vivo.
-          </Text>
-
-        </View>
+                  <Ionicons name="chevron-forward" size={20} color="#fbbf24" />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
       </ScrollView>
 
