@@ -15,13 +15,13 @@ jest.mock('firebase/firestore', () => ({
   setDoc: (...args) => mockSetDoc(...args),
 }))
 
-jest.mock('../../firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: { mocked: true },
   db: { mocked: true },
   COLLECTIONS: { USERS: 'users' },
 }))
 
-const { registerUserInFirebase } = require('../registerUser')
+const { registerUserInFirebase } = require('../../services/auth/registerUser')
 
 describe('registerUserInFirebase', () => {
   beforeEach(() => {

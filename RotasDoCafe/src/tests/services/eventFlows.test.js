@@ -18,14 +18,14 @@ jest.mock('firebase/firestore', () => ({
   updateDoc: (...args) => mockUpdateDoc(...args),
 }))
 
-jest.mock('../../firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: mockAuth,
   COLLECTIONS: { EVENTS: 'events' },
   db: { mocked: true },
 }))
 
-const { fetchEvents, createEvent, updateEvent, removeEvent } = require('../eventRepository')
-const eventService = require('../eventService')
+const { fetchEvents, createEvent, updateEvent, removeEvent } = require('../../services/events/eventRepository')
+const eventService = require('../../services/events/eventService')
 
 describe('event flows', () => {
   beforeEach(() => {

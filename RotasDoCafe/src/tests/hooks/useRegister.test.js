@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native'
-import useRegister from '../useRegister'
+import useRegister from '../../hooks/AuthScreen/useRegister'
 
 const mockRegisterUserInFirebase = jest.fn()
 const mockHandleFirebaseError = jest.fn()
@@ -9,11 +9,11 @@ jest.mock('react-native-toast-message', () => ({
   show: (...args) => mockToastShow(...args),
 }))
 
-jest.mock('../../../services/auth/registerUser', () => ({
+jest.mock('../../services/auth/registerUser', () => ({
   registerUserInFirebase: (...args) => mockRegisterUserInFirebase(...args),
 }))
 
-jest.mock('../../../services/validations/firebaseErrorHandler', () => ({
+jest.mock('../../services/validations/firebaseErrorHandler', () => ({
   handleFirebaseError: (...args) => mockHandleFirebaseError(...args),
 }))
 

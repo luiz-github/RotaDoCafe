@@ -1,7 +1,7 @@
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import { fireEvent, render } from '@testing-library/react-native'
-import Button from '../Button'
+import Button from '../../components/Button/Button'
 
 describe('Button', () => {
   it('renderiza o título e dispara o callback', () => {

@@ -27,7 +27,7 @@ jest.mock('firebase/firestore', () => ({
   where: (...args) => mockWhere(...args),
 }))
 
-jest.mock('../../firebase', () => ({
+jest.mock('../../services/firebase', () => ({
   auth: mockAuth,
   COLLECTIONS: { USERS: 'users' },
   db: { mocked: true },
@@ -40,7 +40,7 @@ const {
   markUserFirstLoginAsCompleted,
   updateCurrentProfilePhoto,
   updateCurrentUserProfile,
-} = require('../userService')
+} = require('../../services/users/userService')
 
 describe('userService', () => {
   beforeEach(() => {

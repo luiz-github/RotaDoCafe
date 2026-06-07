@@ -4,7 +4,7 @@ jest.mock('react-native-toast-message', () => ({
   show: (...args) => mockToastShow(...args),
 }))
 
-const useToast = require('../ToastMessage').default
+const useToast = require('../../components/Toast/ToastMessage').default
 
 describe('useToast', () => {
   beforeEach(() => {

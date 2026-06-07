@@ -21,7 +21,7 @@ const {
   saveBiometricSecret,
   getBiometricSecret,
   clearBiometricSecret,
-} = require('../biometricStorage')
+} = require('../../services/biometric/biometricStorage')
 
 describe('biometric storage', () => {
   beforeEach(() => {
