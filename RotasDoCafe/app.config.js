@@ -1,0 +1,41 @@
+export default {
+  expo: {
+    name: "Rotas Do Café",
+    slug: "Rotas Do Café",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/splash-icon.png",
+    backgroundColor: "#6F4E37",
+    userInterfaceStyle: "light",
+    splash: {
+      image: "./assets/splash-icon.png",
+      resizeMode: "contain",
+      backgroundColor: "#6F4E37",
+    },
+    ios: {
+      supportsTablet: true,
+      infoPlist: {
+        NSCameraUsageDescription:
+          "Precisamos acessar sua câmera para foto de perfil",
+        NSPhotoLibraryUsageDescription: "Precisamos acessar sua galeria",
+      },
+    },
+    android: {
+      adaptiveIcon: {
+        backgroundColor: "#6F4E37",
+        foregroundImage: "./assets/splash-icon.png",
+      },
+      permissions: ["CAMERA", "READ_MEDIA_IMAGES"],
+      package: "com.anonymous.RotasDoCaf",
+      config: {
+        googleMaps: {
+          apiKey: process.env.GoogleMapsApiKey,
+        },
+      },
+    },
+    web: {
+      favicon: "./assets/splash-icon.png",
+    },
+    plugins: ["@react-native-community/datetimepicker"],
+  },
+};

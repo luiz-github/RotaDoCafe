@@ -14,7 +14,8 @@ import ForgotPasswordScreen from './src/screens/Auth/ForgotPasswordScreen'
 import ManageEventsScreen from './src/screens/Eventos/ManageEventsScreen'
 import CreateEventScreen from './src/screens/Eventos/CreateEventScreen'
 import EditEventScreen from './src/screens/Eventos/EditEventScreen'
-
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs(true);
 
 import './src/styles/global.css'
 

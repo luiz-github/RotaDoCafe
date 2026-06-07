@@ -21,7 +21,8 @@ export default function Button({
   onPress,
   variant = "primary",
   loading = false,
-  disabled = false
+  disabled = false,
+  testID
 }) {
 
   const variantStyle = variants[variant] || variants.primary;
@@ -35,6 +36,7 @@ export default function Button({
       `}
       onPress={onPress}
       disabled={isDisabled}
+      testID={testID}
     >
       {loading && (
         <ActivityIndicator size="small" color="#000" style={{ marginRight: 8 }} />
