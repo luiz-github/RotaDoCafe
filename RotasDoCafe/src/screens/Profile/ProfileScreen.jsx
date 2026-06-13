@@ -29,13 +29,13 @@ export default function ProfileScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [image, setImage] = useState(null)
 
-  // const [currentPassword, setCurrentPassword] = useState("");
-  // const [newPassword, setNewPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // const [showCurrent, setShowCurrent] = useState(false);
-  // const [showNew, setShowNew] = useState(false);
-  // const [showConfirm, setShowConfirm] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -48,9 +48,22 @@ export default function ProfileScreen({ navigation }) {
   const handleSaveProfile = async () => {
     const success = await updateProfile({ name, email });
 
-    if (success) {
-      setIsEditing(false);
+    if (!success) {
+      return;
     }
+
+    await handleSave({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+      onSuccess: () => {
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      },
+    });
+
+    setIsEditing(false);
   };
 
   const onChangePhoto = async (base64Image) => {
@@ -137,34 +150,75 @@ export default function ProfileScreen({ navigation }) {
               </Text>
             )} */}
 
-            {/* {isEditing && (
+            {isEditing && (
               <>
                 <Text className="text-gray-400 mb-1">Senha atual</Text>
-                <TextInput
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
-                  secureTextEntry={!showCurrent}
-                  className="bg-white rounded-xl px-4 py-3 mb-4"
-                />
+                <View style={{ position: "relative", marginBottom: 16 }}>
+                  <TextInput
+                    value={currentPassword}
+                    onChangeText={setCurrentPassword}
+                    secureTextEntry={!showCurrent}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowCurrent(!showCurrent)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showCurrent ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
                 <Text className="text-gray-400 mb-1">Nova senha</Text>
-                <TextInput
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  secureTextEntry={!showNew}
-                  className="bg-white rounded-xl px-4 py-3 mb-4"
-                />
+                <View style={{ position: "relative", marginBottom: 16 }}>
+                  <TextInput
+                    value={newPassword}
+                    onChangeText={setNewPassword}
+                    secureTextEntry={!showNew}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowNew(!showNew)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showNew ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
                 <Text className="text-gray-400 mb-1">Confirmar nova senha</Text>
-                <TextInput
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry={!showConfirm}
-                  className="bg-white rounded-xl px-4 py-3 mb-6"
-                />
+                <View style={{ position: "relative", marginBottom: 24 }}>
+                  <TextInput
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirm}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowConfirm(!showConfirm)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showConfirm ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </>
-            )} */}
-
+            )}
             {isEditing ? (
               <View className="flex-row gap-3 mt-2">
 
@@ -174,10 +228,10 @@ export default function ProfileScreen({ navigation }) {
                     onPress={() => {
                       setName(user?.name || "");
                       setEmail(user?.email || "");
+                      setCurrentPassword("");
+                      setNewPassword("");
+                      setConfirmPassword("");
                       setIsEditing(false);
-                      // setCurrentPassword("");
-                      // setNewPassword("");
-                      // setConfirmPassword("");
                     }}
                   />
                 </View>

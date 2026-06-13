@@ -1,5 +1,13 @@
 import { useState } from "react";
 import Toast from "react-native-toast-message";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
+
+import { auth } from "../../services/firebase";
+import { saveBiometricSecret } from "../../services/biometric/biometricStorage";
 
 export default function useChangePassword() {
   const [loading, setLoading] = useState(false);
@@ -34,8 +42,6 @@ export default function useChangePassword() {
     currentPassword,
     newPassword,
     confirmPassword,
-    name,
-    email,
     onSuccess,
   }) => {
     try {
@@ -50,19 +56,30 @@ export default function useChangePassword() {
       if (validation === null) return;
 
       if (validation) {
+        const user = auth.currentUser;
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (!user || !user.email) {
+          throw new Error("Usuário não autenticado.");
+        }
 
+        const credential = EmailAuthProvider.credential(
+          user.email,
+          currentPassword
+        );
+
+        await reauthenticateWithCredential(user, credential);
+        await updatePassword(user, newPassword);
+        await saveBiometricSecret(user.email, newPassword);
         Toast.show({
           type: "success",
           text1: "Senha alterada com sucesso",
         });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Dados atualizados",
+        });
       }
-
-      Toast.show({
-        type: "success",
-        text1: "Dados atualizados",
-      });
 
       if (onSuccess) onSuccess();
 
