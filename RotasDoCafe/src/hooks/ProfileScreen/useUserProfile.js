@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import Toast from 'react-native-toast-message'
-import { getCurrentUserProfile, updateCurrentUserProfile, updateCurrentProfilePhoto } from '../../services/users/userService'
+import {
+  getCurrentUserProfile,
+  updateCurrentUserProfile,
+  updateCurrentProfilePhoto,
+} from '../../services/users/userService'
 
 export default function useUserProfile() {
   const [user, setUser] = useState(null)
@@ -28,7 +32,7 @@ export default function useUserProfile() {
     try {
       setUpdating(true)
       await updateCurrentProfilePhoto(base64Image)
-      
+
       setUser((prev) => ({
         ...prev,
         photoURL: base64Image,
@@ -38,7 +42,7 @@ export default function useUserProfile() {
         type: 'success',
         text1: 'Foto atualizada!',
       })
-      
+
       return true
     } catch (error) {
       console.error('Erro ao atualizar foto do perfil:', error)
@@ -55,28 +59,32 @@ export default function useUserProfile() {
   }
 
   const updateProfile = async ({ name, email }) => {
+    if (!name?.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'O nome é obrigatório.',
+      })
+
+      return {
+        success: false,
+      }
+    }
+
     try {
       setUpdating(true)
+
       const { profile, authEmailUpdated } = await updateCurrentUserProfile({
-        name,
+        name: name.trim(),
         email,
       })
 
       setUser(profile)
 
-      if (!authEmailUpdated) {
-        Toast.show({
-          type: 'info',
-          text1: 'Email salvo, mas precisa relogar',
-        })
+      return {
+        success: true,
+        authEmailUpdated,
       }
-
-      Toast.show({
-        type: 'success',
-        text1: 'Perfil atualizado!',
-      })
-
-      return true
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error)
 
@@ -85,7 +93,9 @@ export default function useUserProfile() {
         text1: 'Erro ao atualizar perfil',
       })
 
-      return false
+      return {
+        success: false,
+      }
     } finally {
       setUpdating(false)
     }
@@ -101,6 +111,6 @@ export default function useUserProfile() {
     updating,
     refetch: fetchUser,
     updateProfile,
-    updateProfilePhoto
+    updateProfilePhoto,
   }
 }

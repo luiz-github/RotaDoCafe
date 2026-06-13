@@ -15,6 +15,7 @@ import useLogout from "../../hooks/AuthScreen/useLogout";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import useChangePassword from "../../hooks/ProfileScreen/useChangePassword";
 import useUserProfile from "../../hooks/ProfileScreen/useUserProfile";
+import Toast from 'react-native-toast-message'
 
 export default function ProfileScreen({ navigation }) {
 
@@ -46,24 +47,40 @@ export default function ProfileScreen({ navigation }) {
   }, [user]);
 
   const handleSaveProfile = async () => {
-    const success = await updateProfile({ name, email });
+    const profileUpdated = await updateProfile({
+      name,
+      email,
+    });
 
-    if (!success) {
+    if (!profileUpdated.success) {
       return;
     }
 
-    await handleSave({
+    const passwordUpdated = await handleSave({
       currentPassword,
       newPassword,
       confirmPassword,
-      onSuccess: () => {
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      },
     });
 
+    if (passwordUpdated === false) {
+      return;
+    }
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+    setShowCurrent(false);
+    setShowNew(false);
+    setShowConfirm(false);
+
     setIsEditing(false);
+
+    Toast.show({
+      type: "success",
+      text1: "Sucesso",
+      text2: "Alterações salvas com sucesso.",
+    });
   };
 
   const onChangePhoto = async (base64Image) => {
@@ -231,6 +248,9 @@ export default function ProfileScreen({ navigation }) {
                       setCurrentPassword("");
                       setNewPassword("");
                       setConfirmPassword("");
+                      setShowCurrent(false);
+                      setShowNew(false);
+                      setShowConfirm(false);
                       setIsEditing(false);
                     }}
                   />
