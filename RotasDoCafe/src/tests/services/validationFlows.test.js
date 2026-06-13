@@ -132,6 +132,8 @@ describe('validation flows', () => {
         description: 'Descrição é obrigatória',
         organizer: 'Organizador é obrigatório',
         price: 'Preço é obrigatório. Se for gratuito, informe 0.00',
+        eventDateTime: 'Data e hora do evento são obrigatórias',
+        schedule: 'Programação do evento é obrigatória',
       },
     })
     expect(
@@ -143,6 +145,8 @@ describe('validation flows', () => {
         description: 'Evento delicioso',
         organizer: 'Rota do Café',
         price: '10,50',
+        eventDateTime: new Date('2030-01-01'),
+        schedule: '18h - Abertura\n19h - Palestra\n20h - Encerramento',
       }),
     ).toEqual({ isValid: true, errors: {} })
     expect(
@@ -154,6 +158,8 @@ describe('validation flows', () => {
         description: 'abc',
         organizer: 'Org',
         price: '-1',
+        eventDateTime: null,
+        schedule: 'abc',
       }),
     ).toMatchObject({
       isValid: false,
@@ -161,6 +167,8 @@ describe('validation flows', () => {
         title: 'Título muito curto',
         description: 'Descrição muito curta',
         price: 'Preço inválido',
+        eventDateTime: 'Data e hora do evento são obrigatórias',
+        schedule: 'Programação muito curta',
       },
     })
 
