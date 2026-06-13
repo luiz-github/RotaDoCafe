@@ -18,6 +18,7 @@ import { LogBox } from 'react-native';
 LogBox.ignoreAllLogs(true);
 
 import './src/styles/global.css'
+import EventDetailsScreen from './src/screens/Eventos/EventDetailsScreen';
 
 const Stack = createNativeStackNavigator()
 
@@ -73,6 +74,11 @@ export default function App() {
           <Stack.Screen
             name="EditEvent"
             component={EditEventScreen}
+          />
+
+          <Stack.Screen
+            name="EventDetails"
+            component={EventDetailsScreen}
           />
 
         </Stack.Navigator>

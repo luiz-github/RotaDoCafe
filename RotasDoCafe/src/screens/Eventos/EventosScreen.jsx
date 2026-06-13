@@ -5,7 +5,7 @@ import { formatDateTime } from "../../utils/date";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
-export default function EventosScreen() {
+export default function EventosScreen({ navigation }) {
   const { events, loading, fetchEvents } = useEvents();
 
   useFocusEffect(
@@ -48,6 +48,11 @@ export default function EventosScreen() {
             <TouchableOpacity
               key={event.id}
               className="bg-white/10 rounded-2xl mb-4 overflow-hidden active:opacity-80"
+              onPress={() =>
+                navigation.navigate("EventDetails", {
+                  event,
+                })
+              }
             >
 
               <View className="p-4 pb-2 flex-row justify-between items-center">
@@ -59,10 +64,10 @@ export default function EventosScreen() {
                     <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
                       }`}>
                       {event.is_free
-                          ? "Gratuito"
-                          : `R$ ${Number(event.price ?? 0)
-                              .toFixed(2)
-                              .replace(".", ",")}`}
+                        ? "Gratuito"
+                        : `R$ ${Number(event.price ?? 0)
+                          .toFixed(2)
+                          .replace(".", ",")}`}
 
                     </Text>
                   </View>

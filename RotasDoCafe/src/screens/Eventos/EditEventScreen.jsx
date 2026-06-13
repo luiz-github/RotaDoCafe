@@ -31,6 +31,7 @@ export default function EditEventScreen({ route, navigation }) {
     age_rating: event.age_rating,
     eventDateTime:
       event.date?.toDate ? event.date.toDate() : event.date || null,
+    schedule: event.schedule || "",
   });
 
   const labels = {
@@ -43,6 +44,7 @@ export default function EditEventScreen({ route, navigation }) {
     price: "Preço",
     age_rating: "Classificação Etária",
     eventDateTime: "Dia e hora do evento",
+    schedule: "Programação do Evento",
   };
 
   const [loading, setLoading] = useState(false);
@@ -95,9 +97,19 @@ export default function EditEventScreen({ route, navigation }) {
             ) : (
               <TextInput
                 value={form[field]}
-                placeholder={field === "price" ? "0.00" : labels[field]}
+                placeholder={
+                  field === "price"
+                    ? "0.00"
+                    : field === "schedule"
+                      ? "Ex:\n18h - Abertura\n19h - Show principal\n22h - Encerramento"
+                      : labels[field]
+                }
                 placeholderTextColor="#94a3b8"
                 keyboardType={field === "price" ? "numeric" : "default"}
+                multiline={field === "schedule"}
+                numberOfLines={field === "schedule" ? 8 : 1}
+                textAlignVertical={field === "schedule" ? "top" : "center"}
+                maxLength={field === "schedule" ? 1000 : undefined}
                 onFocus={(event) => {
                   scrollRef.current?.scrollToFocusedInput(event.target);
                 }}
@@ -109,7 +121,8 @@ export default function EditEventScreen({ route, navigation }) {
                     setForm({ ...form, [field]: v });
                   }
                 }}
-                className="bg-white/10 text-white p-3 rounded"
+                className={`bg-white/10 text-white p-3 rounded ${field === "schedule" ? "min-h-[180px]" : ""
+                  }`}
               />
             )}
 
