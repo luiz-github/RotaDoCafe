@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { formatDateTime } from "../../utils/date";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function EventDetailsScreen({ route, navigation }) {
     const { event } = route.params;
@@ -19,15 +20,18 @@ export default function EventDetailsScreen({ route, navigation }) {
                     paddingBottom: 60,
                 }}
             >
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    className="mb-6 self-start"
-                >
-                    <Text className="text-white text-xl">
-                        ← Voltar
-                    </Text>
-                </TouchableOpacity>
+                <View className="flex-row items-center mb-6">
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        className="mr-3"
+                    >
+                        <Ionicons name="arrow-back" size={24} color="#fff" />
+                    </TouchableOpacity>
 
+                    <Text className="text-white text-2xl font-bold">
+                        Detalhes do Evento
+                    </Text>
+                </View>
                 <View className="bg-white/10 rounded-3xl p-6">
 
                     <View className="flex-row flex-wrap gap-2 mb-4">
