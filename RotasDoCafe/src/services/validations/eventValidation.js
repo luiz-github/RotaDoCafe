@@ -61,6 +61,44 @@ const validatePrice = (value) => {
   return createResult(true)
 }
 
+const validateSchedule = (value) => {
+  const v = normalize(value)
+
+  if (!v) {
+    return createResult(false, 'Programação do evento é obrigatória')
+  }
+
+  if (v.length < 10) {
+    return createResult(false, 'Programação muito curta')
+  }
+
+  if (v.length > 2000) {
+    return createResult(false, 'Programação muito longa')
+  }
+
+  return createResult(true)
+}
+
+const validateEventDateTime = (value) => {
+  if (!(value instanceof Date) || isNaN(value.getTime())) {
+    return createResult(false, 'Data e hora do evento são obrigatórias')
+  }
+
+  return createResult(true)
+}
+
+export const validateFutureEventDateTime = (value) => {
+  if (!(value instanceof Date) || isNaN(value.getTime())) {
+    return createResult(false, 'Data e hora do evento são obrigatórias')
+  }
+
+  if (value <= new Date()) {
+    return createResult(false, 'A data e hora do evento devem ser futuras')
+  }
+
+  return createResult(true)
+}
+
 const validateEventForm = (data) => {
   const validators = {
     title: () => validateTitle(data.title),
@@ -70,6 +108,8 @@ const validateEventForm = (data) => {
     description: () => validateDescription(data.description),
     organizer: () => validateOrganizer(data.organizer),
     price: () => validatePrice(data.price),
+    eventDateTime: () => validateEventDateTime(data.eventDateTime),
+    schedule: () => validateSchedule(data.schedule),
   }
 
   const errors = Object.entries(validators).reduce((acc, [field, fn]) => {
