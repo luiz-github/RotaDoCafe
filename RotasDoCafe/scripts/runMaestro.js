@@ -55,6 +55,9 @@ const mergedEnv = { ...parsedRootEnv, ...parsedMaestroEnv }
 const envParts = Object.entries(mergedEnv)
   .map(([key, value]) => `-e "${key}=${value}"`)
   .join(' ')
+  
+// debbugger
+// const command = `maestro test "${targetPath}" ${envParts} --debug-output .maestro/debug`
 
 const command = `maestro test "${targetPath}" ${envParts}`
 
