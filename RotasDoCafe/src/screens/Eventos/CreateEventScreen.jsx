@@ -56,6 +56,7 @@ export default function CreateEventScreen({ navigation }) {
       <KeyboardAwareScrollView
         ref={scrollRef}
         enableOnAndroid
+        enableAutomaticScroll
         extraScrollHeight={120}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
@@ -94,6 +95,7 @@ export default function CreateEventScreen({ navigation }) {
               </TouchableOpacity>
             ) : (
               <TextInput
+                testID={field === "schedule" ? "event-programation" : undefined}
                 value={form[field]}
                 placeholder={
                   field === "price"
@@ -108,9 +110,6 @@ export default function CreateEventScreen({ navigation }) {
                 numberOfLines={field === "schedule" ? 8 : 1}
                 textAlignVertical={field === "schedule" ? "top" : "center"}
                 maxLength={field === "schedule" ? 1000 : undefined}
-                onFocus={(event) => {
-                  scrollRef.current?.scrollToFocusedInput(event.target);
-                }}
                 onChangeText={(v) => {
                   if (field === "price") {
                     const cleaned = v.replace(/[^0-9.,]/g, "");

@@ -46,6 +46,7 @@ export default function EventosScreen({ navigation }) {
 
           return (
             <TouchableOpacity
+              testID="event-card"
               key={event.id}
               className="bg-white/10 rounded-2xl mb-4 overflow-hidden active:opacity-80"
               onPress={() =>

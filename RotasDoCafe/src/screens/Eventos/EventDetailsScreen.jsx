@@ -10,6 +10,7 @@ export default function EventDetailsScreen({ route, navigation }) {
 
     return (
         <SafeAreaView
+            testID="event-details-screen"
             edges={["top", "left", "right"]}
             className="flex-1 bg-coffee"
         >
