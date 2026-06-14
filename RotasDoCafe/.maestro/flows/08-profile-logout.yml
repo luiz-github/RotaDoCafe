@@ -7,7 +7,7 @@ appId: ${APP_ID}
 - inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
-- inputText: "${TEST_PASSWORD}"
+- inputText: "${TEST_NEW_PASSWORD}"
 
 - hideKeyboard
 
@@ -16,7 +16,14 @@ appId: ${APP_ID}
 # - extendedWaitUntil:
 #     visible: "No thanks"
 #     timeout: 5000
-
+    
 # - tapOn: "No thanks"
 
-- assertVisible: "Descubra o Vale do Café no Sul Fluminense e explore fazendas históricas, cafés coloniais e experiências culturais."
+- assertVisible: "Rota do Café"
+
+- tapOn: "Perfil"
+- assertVisible: "Perfil"
+
+- tapOn: "Sair da conta"
+- tapOn: "SAIR"
+- assertVisible: "Bem-vindo!"
