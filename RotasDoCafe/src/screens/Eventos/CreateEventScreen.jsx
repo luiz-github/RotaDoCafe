@@ -12,7 +12,7 @@ import { useState, useRef } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { useEvents } from "../../hooks/EventScreen/useEvents";
-import { validateEventForm } from "../../services/validations/eventValidation";
+import { validateEventForm, validateFutureEventDateTime } from "../../services/validations/eventValidation";
 import Toast from "react-native-toast-message";
 
 export default function CreateEventScreen({ navigation }) {
@@ -29,6 +29,7 @@ export default function CreateEventScreen({ navigation }) {
     price: "",
     age_rating: "Livre",
     eventDateTime: null,
+    schedule: "",
   });
 
   const labels = {
@@ -41,6 +42,7 @@ export default function CreateEventScreen({ navigation }) {
     price: "Preço",
     age_rating: "Classificação Etária",
     eventDateTime: "Dia e hora do evento",
+    schedule: "Programação do Evento",
   };
 
   const [loading, setLoading] = useState(false);
@@ -93,9 +95,19 @@ export default function CreateEventScreen({ navigation }) {
             ) : (
               <TextInput
                 value={form[field]}
-                placeholder={field === "price" ? "0.00" : labels[field]}
+                placeholder={
+                  field === "price"
+                    ? "0.00"
+                    : field === "schedule"
+                      ? "Ex:\n18h - Abertura\n19h - Show principal\n22h - Encerramento"
+                      : labels[field]
+                }
                 placeholderTextColor="#94a3b8"
                 keyboardType={field === "price" ? "numeric" : "default"}
+                multiline={field === "schedule"}
+                numberOfLines={field === "schedule" ? 8 : 1}
+                textAlignVertical={field === "schedule" ? "top" : "center"}
+                maxLength={field === "schedule" ? 1000 : undefined}
                 onFocus={(event) => {
                   scrollRef.current?.scrollToFocusedInput(event.target);
                 }}
@@ -107,7 +119,8 @@ export default function CreateEventScreen({ navigation }) {
                     setForm({ ...form, [field]: v });
                   }
                 }}
-                className="bg-white/10 text-white p-3 rounded"
+                className={`bg-white/10 text-white p-3 rounded ${field === "schedule" ? "min-h-[180px]" : ""
+                  }`}
               />
             )}
 
@@ -165,6 +178,17 @@ export default function CreateEventScreen({ navigation }) {
             disabled={loading}
             onPress={async () => {
               const result = validateEventForm(form);
+
+              const dateValidation = validateFutureEventDateTime(form.eventDateTime)
+
+              if (!dateValidation.isValid) {
+                Toast.show({
+                  type: "error",
+                  text1: dateValidation.error,
+                })
+
+                return
+              }
 
               if (!result.isValid) {
                 Toast.show({
