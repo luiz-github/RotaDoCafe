@@ -7,7 +7,7 @@ appId: ${APP_ID}
 - inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
-- inputText: "${TEST_PASSWORD}"
+- inputText: "${TEST_NEW_PASSWORD}"
 
 - hideKeyboard
 
@@ -31,10 +31,20 @@ appId: ${APP_ID}
 
 - assertVisible: "Escolher foto"
 
-- assertVisible: "Remover foto"
-
-- tapOn: "Remover foto"
+- tapOn: "Tirar foto"
 
 - extendedWaitUntil:
-    visible: "Toque para alterar foto"
-    timeout: 5000
+    visible: "Shutter"
+    timeout: 10000
+
+- tapOn:
+    id: "com.android.camera2:id/shutter_button"
+
+- extendedWaitUntil:
+    visible: "Done"
+    timeout: 10000
+
+- tapOn:
+    id: "com.android.camera2:id/done_button"
+
+- assertVisible: "Perfil"

@@ -172,6 +172,7 @@ export default function ProfileScreen({ navigation }) {
                 <Text className="text-gray-400 mb-1">Senha atual</Text>
                 <View style={{ position: "relative", marginBottom: 16 }}>
                   <TextInput
+                    testID="current-password-input"
                     value={currentPassword}
                     onChangeText={setCurrentPassword}
                     secureTextEntry={!showCurrent}
@@ -194,6 +195,7 @@ export default function ProfileScreen({ navigation }) {
                 <Text className="text-gray-400 mb-1">Nova senha</Text>
                 <View style={{ position: "relative", marginBottom: 16 }}>
                   <TextInput
+                    testID="new-password-input"
                     value={newPassword}
                     onChangeText={setNewPassword}
                     secureTextEntry={!showNew}
@@ -216,6 +218,7 @@ export default function ProfileScreen({ navigation }) {
                 <Text className="text-gray-400 mb-1">Confirmar nova senha</Text>
                 <View style={{ position: "relative", marginBottom: 24 }}>
                   <TextInput
+                    testID="confirm-password-input"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!showConfirm}
@@ -259,6 +262,7 @@ export default function ProfileScreen({ navigation }) {
                 <View className="flex-1">
                   <Button
                     title={updating ? "Salvando..." : "Salvar"}
+                    testID="save-profile-button"
                     onPress={handleSaveProfile}
                     disabled={updating}
                   />
@@ -268,6 +272,7 @@ export default function ProfileScreen({ navigation }) {
             ) : (
               <Button
                 title="Editar dados"
+                testID="edit-profile-button"
                 onPress={() => setIsEditing(true)}
               />
             )}
@@ -275,6 +280,7 @@ export default function ProfileScreen({ navigation }) {
             <View className="mt-6">
               <Button
                 title="Sair da conta"
+                testID="logout-button"
                 onPress={handleLogout}
                 variant="danger"
               />

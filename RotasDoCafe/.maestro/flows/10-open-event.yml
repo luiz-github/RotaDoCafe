@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+
+---
+- launchApp
+
+
+- tapOn: "Digite sua senha"
+- inputText: "${SUPERADMIN_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+- tapOn: "Eventos"
+
+- tapOn:
+    id: "event-card"
+
+- assertVisible:
+    id: "event-details-screen"

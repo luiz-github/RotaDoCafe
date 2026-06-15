@@ -7,7 +7,7 @@ appId: ${APP_ID}
 - inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
-- inputText: "${TEST_PASSWORD}"
+- inputText: "${TEST_NEW_PASSWORD}"
 
 - hideKeyboard
 
