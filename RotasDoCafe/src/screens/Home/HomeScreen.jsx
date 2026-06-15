@@ -81,7 +81,7 @@ export default function HomeScreen({ navigation }) {
         <View className="flex-row flex-wrap justify-between mb-8">
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar")}
+            onPress={() => navigation.navigate("Explorar", { category: "fazendas"})}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="leaf" size={28} color="#fbbf24" />
@@ -92,23 +92,23 @@ export default function HomeScreen({ navigation }) {
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar")}
+            onPress={() => navigation.navigate("Explorar", { category: "turismo_lazer"})}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="cafe" size={28} color="#fbbf24" />
             <Text className="text-white mt-2 font-semibold">
-              Cafés coloniais
+              Turismo & Lazer
             </Text>
           </TouchableOpacity>
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar")}
+            onPress={() => navigation.navigate("Explorar", { category: "mirantes"})}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
-            <Ionicons name="business" size={28} color="#fbbf24" />
+            <Ionicons name="binoculars" size={28} color="#fbbf24" />
             <Text className="text-white mt-2 font-semibold">
-              Cidades históricas
+              Mirantes
             </Text>
           </TouchableOpacity>
 
