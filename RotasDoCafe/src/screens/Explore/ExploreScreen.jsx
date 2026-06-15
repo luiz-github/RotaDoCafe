@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import usePlaces from "../../hooks/MapScreen/usePlaces";
 import useLocation from "../../hooks/MapScreen/useLocation";
 import { saveRecentPlace } from "../../services/recentPlaces";
@@ -15,10 +15,19 @@ import {
 } from "../../utils/places";
 
 export default function ExploreScreen() {
+  const route = useRoute()
   const navigation = useNavigation();
   const { places, loading } = usePlaces();
   const { location, status } = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.category) {
+        setSelectedCategory(route.params.category);
+      }
+    }, [route.params?.category])
+  );
 
   const enrichedPlaces = useMemo(() => {
     return places.map((place) => enrichPlace(place, location));
