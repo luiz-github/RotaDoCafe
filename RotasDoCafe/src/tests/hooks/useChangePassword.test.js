@@ -34,9 +34,14 @@ jest.mock('../../services/biometric/biometricStorage', () => ({
 describe('useChangePassword', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
+    mockCredential.mockReturnValue('credential')
+    mockReauthenticate.mockResolvedValue(undefined)
+    mockUpdatePassword.mockResolvedValue(undefined)
+    mockSaveBiometricSecret.mockResolvedValue(undefined)
   })
 
-  it('mostra erro quando existem campos de senha incompletos', async () => {
+  it('mostra erro quando a senha atual não é informada', async () => {
     const { result } = renderHook(() => useChangePassword())
 
     await act(async () => {
@@ -48,10 +53,51 @@ describe('useChangePassword', () => {
     })
 
     expect(mockReauthenticate).not.toHaveBeenCalled()
+
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
       text1: 'Erro',
-      text2: 'Preencha todos os campos da senha.',
+      text2: 'Informe sua senha atual.',
+    })
+  })
+
+  it('mostra erro quando a nova senha não é informada', async () => {
+    const { result } = renderHook(() => useChangePassword())
+
+    await act(async () => {
+      await result.current.handleSave({
+        currentPassword: 'senhaAtual',
+        newPassword: '',
+        confirmPassword: '123456',
+      })
+    })
+
+    expect(mockUpdatePassword).not.toHaveBeenCalled()
+
+    expect(mockToastShow).toHaveBeenCalledWith({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Informe a nova senha.',
+    })
+  })
+
+  it('mostra erro quando a confirmação da senha não é informada', async () => {
+    const { result } = renderHook(() => useChangePassword())
+
+    await act(async () => {
+      await result.current.handleSave({
+        currentPassword: 'senhaAtual',
+        newPassword: '123456',
+        confirmPassword: '',
+      })
+    })
+
+    expect(mockUpdatePassword).not.toHaveBeenCalled()
+
+    expect(mockToastShow).toHaveBeenCalledWith({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Confirme a nova senha.',
     })
   })
 
@@ -67,6 +113,7 @@ describe('useChangePassword', () => {
     })
 
     expect(mockUpdatePassword).not.toHaveBeenCalled()
+
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
       text1: 'Erro',
@@ -75,9 +122,64 @@ describe('useChangePassword', () => {
   })
 
   it('troca a senha com sucesso', async () => {
-    mockCredential.mockReturnValue('credential')
-
     const onSuccess = jest.fn()
+
+    const { result } = renderHook(() => useChangePassword())
+
+    let response
+
+    await act(async () => {
+      response = await result.current.handleSave({
+        currentPassword: 'senhaAtual',
+        newPassword: 'novaSenha',
+        confirmPassword: 'novaSenha',
+        onSuccess,
+      })
+    })
+
+    expect(response).toBe(true)
+
+    expect(mockCredential).toHaveBeenCalledWith('usuario@exemplo.com', 'senhaAtual')
+
+    expect(mockReauthenticate).toHaveBeenCalled()
+
+    expect(mockUpdatePassword).toHaveBeenCalled()
+
+    expect(mockSaveBiometricSecret).toHaveBeenCalledWith('usuario@exemplo.com', 'novaSenha')
+
+    expect(onSuccess).toHaveBeenCalled()
+
+    expect(mockToastShow).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'success',
+      }),
+    )
+  })
+
+  it('mostra erro quando a senha atual está incorreta', async () => {
+    mockReauthenticate.mockRejectedValue({
+      code: 'auth/invalid-credential',
+    })
+
+    const { result } = renderHook(() => useChangePassword())
+
+    await act(async () => {
+      await result.current.handleSave({
+        currentPassword: 'senhaErrada',
+        newPassword: 'novaSenha',
+        confirmPassword: 'novaSenha',
+      })
+    })
+
+    expect(mockToastShow).toHaveBeenCalledWith({
+      type: 'error',
+      text1: 'Senha incorreta',
+      text2: 'A senha atual informada não confere.',
+    })
+  })
+
+  it('mostra erro genérico quando ocorre uma falha inesperada', async () => {
+    mockUpdatePassword.mockRejectedValue(new Error('Erro inesperado'))
 
     const { result } = renderHook(() => useChangePassword())
 
@@ -86,27 +188,33 @@ describe('useChangePassword', () => {
         currentPassword: 'senhaAtual',
         newPassword: 'novaSenha',
         confirmPassword: 'novaSenha',
-        onSuccess,
       })
     })
 
-    expect(mockCredential).toHaveBeenCalledWith(
-      'usuario@exemplo.com',
-      'senhaAtual'
-    )
-
-    expect(mockReauthenticate).toHaveBeenCalled()
-    expect(mockUpdatePassword).toHaveBeenCalled()
-    expect(mockSaveBiometricSecret).toHaveBeenCalledWith(
-      'usuario@exemplo.com',
-      'novaSenha'
-    )
-
     expect(mockToastShow).toHaveBeenCalledWith({
-      type: 'success',
-      text1: 'Senha alterada com sucesso',
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Falha ao salvar dados.',
+    })
+  })
+
+  it('retorna true quando nenhuma senha é informada', async () => {
+    const { result } = renderHook(() => useChangePassword())
+
+    let response
+
+    await act(async () => {
+      response = await result.current.handleSave({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      })
     })
 
-    expect(onSuccess).toHaveBeenCalled()
+    expect(response).toBe(true)
+
+    expect(mockReauthenticate).not.toHaveBeenCalled()
+    expect(mockUpdatePassword).not.toHaveBeenCalled()
+    expect(mockSaveBiometricSecret).not.toHaveBeenCalled()
   })
 })
