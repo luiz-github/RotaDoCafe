@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
@@ -15,11 +15,14 @@ import {
 } from "../../utils/places";
 
 export default function ExploreScreen() {
-  const route = useRoute()
+  const route = useRoute();
   const navigation = useNavigation();
   const { places, loading } = usePlaces();
   const { location, status } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const categoriesScrollRef = useRef(null);
+  const categoryPositions = useRef({});
 
   useFocusEffect(
     useCallback(() => {
@@ -53,13 +56,28 @@ export default function ExploreScreen() {
 
   const featuredPlace = recommended[0] ?? enrichedPlaces[0] ?? null;
 
-  const openPlaceOnMap = (place) => {
+  const openPlaceOnMap = useCallback((place) => {
     saveRecentPlace(place);
 
     navigation.navigate('Mapa', {
       selectedPlace: place,
     });
-  };
+  }, [navigation]);
+
+  useEffect(() => {
+    const position = categoryPositions.current[selectedCategory];
+
+    if (position !== undefined && categoriesScrollRef.current) {
+      const timeout = setTimeout(() => {
+        categoriesScrollRef.current?.scrollTo({
+          x: Math.max(position - 40, 0),
+          animated: true,
+        });
+      }, 100);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [selectedCategory]);
 
   const renderPlaceCard = (item) => (
     <TouchableOpacity
@@ -143,32 +161,59 @@ export default function ExploreScreen() {
           Categorias
         </Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+        <ScrollView
+          ref={categoriesScrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="mb-6"
+        >
           {[{ key: 'all', name: 'Todos', icon: '✨' }, ...categories].map((item) => {
-            const summary = categorySummary.find((category) => category.key === item.key)
-            const isSelected = selectedCategory === item.key
-            const count = item.key === 'all' ? enrichedPlaces.length : summary?.count ?? 0
+            const summary = categorySummary.find(
+              (category) => category.key === item.key
+            );
+
+            const isSelected = selectedCategory === item.key;
+
+            const count =
+              item.key === 'all'
+                ? enrichedPlaces.length
+                : summary?.count ?? 0;
 
             return (
-              <TouchableOpacity
+              <View
                 key={item.key}
-                onPress={() => setSelectedCategory(item.key)}
-                className={`px-5 py-4 rounded-2xl mr-3 items-center active:bg-white/20 ${isSelected ? 'bg-amber-400' : 'bg-white/10'}`}
+                onLayout={(event) => {
+                  categoryPositions.current[item.key] =
+                    event.nativeEvent.layout.x;
+                }}
               >
-                <Text className="text-2xl mb-1">{item.icon}</Text>
+                <TouchableOpacity
+                  onPress={() => setSelectedCategory(item.key)}
+                  className={`px-5 py-4 rounded-2xl mr-3 items-center active:bg-white/20 ${isSelected ? 'bg-amber-400' : 'bg-white/10'
+                    }`}
+                >
+                  <Text className="text-2xl mb-1">
+                    {item.icon}
+                  </Text>
 
-                <Text className={`text-sm font-semibold ${isSelected ? 'text-black' : 'text-white'}`}>
-                  {item.name}
-                </Text>
+                  <Text
+                    className={`text-sm font-semibold ${isSelected ? 'text-black' : 'text-white'
+                      }`}
+                  >
+                    {item.name}
+                  </Text>
 
-                <Text className={`text-xs mt-1 ${isSelected ? 'text-black/80' : 'text-gray-400'}`}>
-                  {count}
-                </Text>
-              </TouchableOpacity>
-            )
+                  <Text
+                    className={`text-xs mt-1 ${isSelected ? 'text-black/80' : 'text-gray-400'
+                      }`}
+                  >
+                    {count}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
           })}
         </ScrollView>
-
         <Text className="text-white text-xl font-semibold mb-3">
           Recomendados
         </Text>
