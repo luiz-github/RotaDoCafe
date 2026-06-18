@@ -1,31 +1,109 @@
-import MapView, { UrlTile, Marker } from 'react-native-maps'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { View, StyleSheet, Text, Pressable } from 'react-native'
-import { useEffect, useMemo, useRef } from 'react'
-import usePlaces from '../../hooks/MapScreen/usePlaces'
-import colors from '../../styles/colors'
-import useLocation from '../../hooks/MapScreen/useLocation'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 import * as Linking from 'expo-linking'
+
+import usePlaces from '../../hooks/MapScreen/usePlaces'
+import useLocation from '../../hooks/MapScreen/useLocation'
+import colors from '../../styles/colors'
 import { enrichPlace } from '../../utils/places'
+import { getRoutePath } from '../../services/routesService'
+import RouteInfoCard from '../Card/RouteInfoCard'
 
-export default function Map({ selectedPlace }) {
+export default function Map({ selectedPlace, selectedRoute }) {
   const { location, status, canAskAgain, requestPermission } = useLocation()
-
-  const baseUrlTemplate = process.env.EXPO_PUBLIC_OPENSTREETMAP_API_URL
-
   const { places } = usePlaces()
 
+  const [realRoute, setRealRoute] = useState([])
+  const [selectedRoutePoint, setSelectedRoutePoint] = useState(0)
+
   const mapRef = useRef(null)
+  const routeMarkersRef = useRef([])
   const selectedMarkerRef = useRef(null)
 
   const selectedPlaceMapData = useMemo(() => {
-    if (!selectedPlace) {
-      return null
-    }
-
+    if (!selectedPlace) return null
     return enrichPlace(selectedPlace, location)
   }, [location, selectedPlace])
 
+  const routeCoordinates = useMemo(() => {
+    if (!selectedRoute) return []
+    return selectedRoute.places.map((place) => ({
+      latitude: place.latitude,
+      longitude: place.longitude,
+    }))
+  }, [selectedRoute])
+
   useEffect(() => {
+    async function loadRoute() {
+      if (!selectedRoute) {
+        setRealRoute([])
+        return
+      }
+
+      try {
+        const route = await getRoutePath(selectedRoute.places)
+        setRealRoute(route)
+      } catch (error) {
+        console.log('Erro ao carregar rota:', error)
+      }
+    }
+
+    loadRoute()
+  }, [selectedRoute])
+
+  useEffect(() => {
+    if (!selectedRoute) return
+
+    const timeout = setTimeout(() => {
+      routeMarkersRef.current[0]?.showCallout()
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [selectedRoute])
+
+  useEffect(() => {
+    if (selectedRoute) {
+      setSelectedRoutePoint(0)
+    }
+  }, [selectedRoute])
+
+  useEffect(() => {
+    if (!selectedRoute) return
+
+    const selectedPlace = selectedRoute.places[selectedRoutePoint]
+
+    if (!selectedPlace || !mapRef.current) return
+
+    mapRef.current.animateToRegion(
+      {
+        latitude: selectedPlace.latitude,
+        longitude: selectedPlace.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      },
+      500,
+    )
+
+    setTimeout(() => {
+      routeMarkersRef.current[selectedRoutePoint]?.showCallout()
+    }, 500)
+  }, [selectedRoutePoint, selectedRoute])
+
+  useEffect(() => {
+    if (selectedRoute && mapRef.current && routeCoordinates.length > 0) {
+      mapRef.current.fitToCoordinates(realRoute.length > 0 ? realRoute : routeCoordinates, {
+        edgePadding: {
+          top: 100,
+          right: 100,
+          bottom: 100,
+          left: 100,
+        },
+        animated: true,
+      })
+      return
+    }
+
     if (!mapRef.current || !selectedPlaceMapData?.latitude || !selectedPlaceMapData?.longitude) {
       return
     }
@@ -45,7 +123,7 @@ export default function Map({ selectedPlace }) {
     }, 850)
 
     return () => clearTimeout(timeout)
-  }, [selectedPlaceMapData])
+  }, [selectedPlaceMapData, selectedRoute, routeCoordinates, realRoute])
 
   const handlePermission = async () => {
     if (canAskAgain) {
@@ -78,14 +156,22 @@ export default function Map({ selectedPlace }) {
         showsUserLocation={false}
         followsUserLocation={false}
         initialRegion={{
-          latitude: selectedPlaceMapData?.latitude ?? location?.latitude ?? -22.43,
-          longitude: selectedPlaceMapData?.longitude ?? location?.longitude ?? -43.73,
-          latitudeDelta: selectedPlaceMapData ? 0.08 : 1.5,
-          longitudeDelta: selectedPlaceMapData ? 0.08 : 1.5,
+          latitude:
+            selectedPlaceMapData?.latitude ??
+            routeCoordinates[0]?.latitude ??
+            location?.latitude ??
+            -22.43,
+
+          longitude:
+            selectedPlaceMapData?.longitude ??
+            routeCoordinates[0]?.longitude ??
+            location?.longitude ??
+            -43.73,
+
+          latitudeDelta: 1.5,
+          longitudeDelta: 1.5,
         }}
       >
-        {/* <UrlTile urlTemplate={`${baseUrlTemplate}/{z}/{x}/{y}.png`} /> */}
-
         {location && (
           <Marker
             key="userLocation"
@@ -124,12 +210,56 @@ export default function Map({ selectedPlace }) {
             description={selectedPlaceMapData.locationLabel}
           />
         )}
+
+        {selectedRoute?.places.map((place, index) => {
+          const isSelected = selectedRoutePoint === index
+
+          return (
+            <Marker
+              ref={(ref) => {
+                routeMarkersRef.current[index] = ref
+              }}
+              key={`route-${index}-${selectedRoutePoint}`}
+              coordinate={{
+                latitude: place.latitude,
+                longitude: place.longitude,
+              }}
+              pinColor={isSelected ? '#22c55e' : '#fbbf24'}
+              title={`${index + 1}. ${place.name}`}
+              onPress={() => setSelectedRoutePoint(index)}
+            />
+          )
+        })}
+
+        {realRoute.length > 0 && (
+          <Polyline
+            coordinates={realRoute}
+            strokeWidth={6}
+            strokeColor="#fbbf24"
+            lineCap="round"
+            lineJoin="round"
+          />
+        )}
       </MapView>
+
+      <RouteInfoCard
+        route={selectedRoute}
+        selectedIndex={selectedRoutePoint}
+        onSelect={setSelectedRoutePoint}
+      />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: '100%', height: '100%' },
-  map: { flex: 1, width: '100%', height: '100%' },
+  container: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  map: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
 })
