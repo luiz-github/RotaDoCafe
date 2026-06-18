@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { getRecentPlaces, subscribeRecentPlaces } from "../../services/recentPlaces";
+import SuggestedRouteCard from "../../components/Card/SuggestedRouteCard";
 
 export default function HomeScreen({ navigation }) {
   const [recentPlaces, setRecentPlaces] = useState([]);
@@ -58,21 +59,13 @@ export default function HomeScreen({ navigation }) {
 
         </View>
 
-
-
-        <View className="bg-amber-900/40 p-6 rounded-3xl mb-8">
-
-          <Text className="text-white text-lg font-bold mb-2">
-            Rota sugerida hoje
-          </Text>
-
-          <Text className="text-gray-200">
-            Vassouras → Café colonial → Conservatória
-          </Text>
-
-        </View>
-
-
+        <SuggestedRouteCard
+          onPress={(route) =>
+            navigation.navigate("Mapa", {
+              selectedRoute: route,
+            })
+          }
+        />
 
         <Text className="text-white text-lg font-semibold mb-3">
           Explorar
@@ -81,7 +74,7 @@ export default function HomeScreen({ navigation }) {
         <View className="flex-row flex-wrap justify-between mb-8">
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "fazendas"})}
+            onPress={() => navigation.navigate("Explorar", { category: "fazendas" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="leaf" size={28} color="#fbbf24" />
@@ -92,7 +85,7 @@ export default function HomeScreen({ navigation }) {
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "turismo_lazer"})}
+            onPress={() => navigation.navigate("Explorar", { category: "turismo_lazer" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="cafe" size={28} color="#fbbf24" />
@@ -103,7 +96,7 @@ export default function HomeScreen({ navigation }) {
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "mirantes"})}
+            onPress={() => navigation.navigate("Explorar", { category: "mirantes" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="binoculars" size={28} color="#fbbf24" />
