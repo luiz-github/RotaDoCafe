@@ -53,6 +53,9 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 ### Eventos
 - Listagem de eventos regionais com data, horário, preço e classificação etária
 - CRUD completo (criar, editar, soft-delete) para administradores
+- Seleção de local do evento no mapa com 3 métodos: busca por nome (geocoding), localização atual (GPS) ou seleção manual em mapa fullscreen
+- Validação automática de cidade (somente cidades do Vale do Café)
+- Reverse geocoding para preencher cidade/estado automaticamente
 - Metadados automáticos: `createdBy`, `createdAt`, `updatedAt`
 
 ### Perfil
@@ -82,7 +85,7 @@ RotasDoCafe/
 │   ├── seedPlaces.js             # Popula collection 'places' no Firestore
 │   └── runMaestro.js             # Runner de testes E2E com merge de .env
 ├── .maestro/
-│   └── flows/                    # 12 fluxos E2E independentes (registro, login, perfil, mapa, admin...)
+│   └── flows/                    # 14 fluxos E2E independentes (registro, login, perfil, mapa, admin...)
 ├── src/
 │   ├── cache/
 │   │   └── cacheManager.js       # AsyncStorage cache com TTL de 24h
@@ -250,8 +253,6 @@ TEST_NEW_PASSWORD=
 SUPERADMIN_EMAIL=
 SUPERADMIN_PASSWORD=
 EVENT_TITLE=
-EVENT_CITY=
-EVENT_STATE=
 EVENT_LOCATION=
 EVENT_DESCRIPTION=
 EVENT_ORGANIZER=
@@ -267,10 +268,12 @@ EVENT_PRICE=
 6. Alterar foto de perfil
 7. Remover foto de perfil
 8. Logout
-9. Gerenciamento de eventos (admin)
-10. Abrir evento
-11. Rota sugerida (tap card, navegar pelos pontos, fechar)
-12. Rota por categoria (tap lugar destaque, verificar card no mapa, fechar)
+9. Gerenciamento de eventos (admin — criar evento com busca de local no mapa)
+10. Seleção de local no mapa fullscreen (admin — criar evento e selecionar no mapa)
+11. Edição de evento (admin — swipe no card, editar título)
+12. Detalhes do evento (usuário — abrir evento e verificar localização)
+13. Rota sugerida (tap card, navegar pelos pontos, fechar)
+14. Rota por categoria (tap lugar destaque, verificar card no mapa, fechar)
 
 ---
 

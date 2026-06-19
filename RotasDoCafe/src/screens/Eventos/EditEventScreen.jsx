@@ -457,6 +457,8 @@ export default function EditEventScreen({ route, navigation }) {
                   value={form.location}
                   placeholder="Ex: Universidade de Vassouras..."
                   placeholderTextColor="#94a3b8"
+                  autoCorrect={false}
+                  autoCapitalize="none"
                   onChangeText={(v) => {
                     setForm({ ...form, location: v });
                     setLocationConfirmed(false);
@@ -494,6 +496,7 @@ export default function EditEventScreen({ route, navigation }) {
                 </View>
 
                 <TouchableOpacity
+                  testID="open-full-screen-map"
                   onPress={openFullScreenMap}
                   className="mt-2 bg-purple-600 p-3 rounded-xl flex-row items-center justify-center gap-2"
                 >
@@ -532,7 +535,7 @@ export default function EditEventScreen({ route, navigation }) {
 
                 <View className="mt-2 p-3 rounded-lg bg-white/5">
                   {locationConfirmed ? (
-                    <View>
+                    <View testID="location-confirmed">
                       <View className="flex-row items-center gap-2 mb-1">
                         <Text className="text-green-400">✓</Text>
                         <Text className="text-green-400 text-sm font-semibold">
@@ -717,6 +720,7 @@ export default function EditEventScreen({ route, navigation }) {
             </TouchableOpacity>
             <Text className="text-white font-bold text-lg">Selecionar Local</Text>
             <TouchableOpacity
+              testID="full-screen-map-confirm"
               onPress={confirmFullScreenSelection}
               disabled={isReverseGeocoding}
               className="p-2"
