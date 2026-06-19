@@ -1,54 +1,46 @@
 import { View, Text, Pressable } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
-export default function RouteInfoCard({
-  route,
-  selectedIndex,
-  onSelect,
-}) {
-  if (!route) {
-    return null
-  }
+export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose }) {
+  if (!route) return null
 
   return (
     <View
       className="
-        absolute
-        bottom-6
-        left-4
-        right-4
-        bg-white
-        rounded-3xl
-        p-4
-        z-50
+        absolute bottom-6 left-4 right-4
+        bg-white rounded-3xl p-4 z-50
       "
-      style={{
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-      }}
     >
-      <Text className="text-coffee text-lg font-bold mb-3">
-        {route.icon} {route.title}
-      </Text>
+      <View className="flex-row items-center justify-between mb-3">
+        <Text className="text-lg font-bold">
+          {route.icon} {route.title}
+        </Text>
+
+        <Pressable
+          onPress={onClose}
+          className="w-8 h-8 items-center justify-center rounded-full bg-gray-200"
+        >
+          <Ionicons name="close" size={18} color="#374151" />
+        </Pressable>
+      </View>
 
       {route.places.map((place, index) => {
-        const isSelected = selectedIndex === index
+        const selected = selectedIndex === index
 
         return (
-          <Pressable
-            key={index}
-            onPress={() => onSelect(index)}
-          >
+          <Pressable key={index} onPress={() => onSelect(index)}>
             <Text
               className="mb-2 font-medium"
               style={{
-                color: isSelected
-                  ? '#22c55e'
-                  : '#d4a017',
+                color: place.isUser
+                  ? '#228dff'
+                  : selected
+                    ? '#22c55e'
+                    : '#d4a017',
               }}
             >
-              {isSelected ? '🟢' : '🟡'} {index + 1}. {place.name}
+              {place.isUser ? '🔵' : selected ? '🟢' : '🟡'}{' '}
+              {index + 1}. {place.name}
             </Text>
           </Pressable>
         )
