@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
-  Modal
+  Modal,
+  KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import * as Location from "expo-location";
 
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState, useRef } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -398,263 +399,272 @@ export default function CreateEventScreen({ navigation }) {
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
-      <KeyboardAwareScrollView
-        ref={scrollRef}
-        enableOnAndroid
-        enableAutomaticScroll
-        extraScrollHeight={120}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          padding: 24,
-          paddingBottom: 160,
-        }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Text className="text-white text-2xl font-bold mb-6">
-          Criar Evento
-        </Text>
+        <ScrollView
+          ref={scrollRef}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            padding: 24,
+            paddingBottom: 160,
+          }}
+        >
+          <Text className="text-white text-2xl font-bold mb-6">
+            Criar Evento
+          </Text>
 
-        {visibleFields.map((field) => (
-          <View key={field} className="mb-4">
-            <Text className="text-gray-300 mb-1">
-              {labels[field]}
-            </Text>
+          {visibleFields.map((field) => (
+            <View key={field} className="mb-4">
+              <Text className="text-gray-300 mb-1">
+                {labels[field]}
+              </Text>
 
-            {field === "eventDateTime" ? (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setShowDatePicker(true)}
-                className="bg-white/10 border border-white/10 p-4 rounded-xl flex-row items-center justify-between"
-              >
-                <Text className="text-white">
-                  {form.eventDateTime
-                    ? form.eventDateTime.toLocaleString("pt-BR", {
-                      dateStyle: "short",
-                      timeStyle: "short",
-                    })
-                    : "Selecionar data e hora"}
-                </Text>
-                <Text className="text-gray-400 text-lg">📅</Text>
-              </TouchableOpacity>
-            ) : field === "location" ? (
-              <View>
-                <TextInput
-                  value={form.location}
-                  placeholder="Ex: Universidade de Vassouras..."
-                  placeholderTextColor="#94a3b8"
-                  onChangeText={(v) => {
-                    setForm({ ...form, location: v });
-                    setLocationConfirmed(false);
-                  }}
-                  onSubmitEditing={searchLocation}
-                  returnKeyType="search"
-                  className="bg-white/10 text-white p-3 rounded-t-xl border border-white/10"
-                />
-
-                <View className="flex-row gap-2">
-                  <TouchableOpacity
-                    onPress={searchLocation}
-                    disabled={isSearching}
-                    className="flex-1 bg-amber-400 p-3 rounded-b-xl flex-row items-center justify-center gap-2"
-                  >
-                    {isSearching ? (
-                      <ActivityIndicator size="small" color="#000" />
-                    ) : (
-                      <>
-                        <Text>🔍</Text>
-                        <Text className="text-black font-semibold">Buscar local</Text>
-                      </>
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={useCurrentLocation}
-                    disabled={isSearching}
-                    className="bg-blue-500 px-4 rounded-b-xl flex-row items-center justify-center"
-                  >
-                    <Text className="text-white text-lg">📍</Text>
-                  </TouchableOpacity>
-                </View>
-
+              {field === "eventDateTime" ? (
                 <TouchableOpacity
-                  onPress={openFullScreenMap}
-                  className="mt-2 bg-purple-600 p-3 rounded-xl flex-row items-center justify-center gap-2"
+                  activeOpacity={0.8}
+                  onPress={() => setShowDatePicker(true)}
+                  className="bg-white/10 border border-white/10 p-4 rounded-xl flex-row items-center justify-between"
                 >
-                  <Text className="text-white text-lg">🗺️</Text>
-                  <Text className="text-white font-semibold">
-                    Selecionar no mapa
+                  <Text className="text-white">
+                    {form.eventDateTime
+                      ? form.eventDateTime.toLocaleString("pt-BR", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })
+                      : "Selecionar data e hora"}
                   </Text>
+                  <Text className="text-gray-400 text-lg">📅</Text>
                 </TouchableOpacity>
-
-                <View className="mt-3 rounded-xl overflow-hidden border border-white/20" style={{ height: 280 }}>
-                  <MapView
-                    ref={mapRef}
-                    style={{ flex: 1 }}
-                    provider={PROVIDER_DEFAULT}
-                    initialRegion={{
-                      latitude: form.latitude,
-                      longitude: form.longitude,
-                      latitudeDelta: 0.01,
-                      longitudeDelta: 0.01,
+              ) : field === "location" ? (
+                <View>
+                  <TextInput
+                    value={form.location}
+                    placeholder="Ex: Universidade de Vassouras..."
+                    placeholderTextColor="#94a3b8"
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                    onChangeText={(v) => {
+                      setForm({ ...form, location: v });
+                      setLocationConfirmed(false);
                     }}
-                  >
-                    {form.latitude && form.longitude && (
-                      <Marker
-                        coordinate={{
-                          latitude: form.latitude,
-                          longitude: form.longitude,
-                        }}
-                        title={form.title || form.location || "Local do Evento"}
-                      />
-                    )}
-                  </MapView>
-                </View>
+                    onSubmitEditing={searchLocation}
+                    returnKeyType="search"
+                    className="bg-white/10 text-white p-3 rounded-t-xl border border-white/10"
+                  />
 
-                <View className="mt-2 p-3 rounded-lg bg-white/5">
-                  {locationConfirmed ? (
-                    <View>
-                      <View className="flex-row items-center gap-2 mb-1">
-                        <Text className="text-green-400">✓</Text>
-                        <Text className="text-green-400 text-sm font-semibold">
-                          Local confirmado {form.city ? `(${form.city})` : ""}
+                  <View className="flex-row gap-2">
+                    <TouchableOpacity
+                      onPress={searchLocation}
+                      disabled={isSearching}
+                      className="flex-1 bg-amber-400 p-3 rounded-b-xl flex-row items-center justify-center gap-2"
+                    >
+                      {isSearching ? (
+                        <ActivityIndicator size="small" color="#000" />
+                      ) : (
+                        <>
+                          <Text>🔍</Text>
+                          <Text className="text-black font-semibold">Buscar local</Text>
+                        </>
+                      )}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={useCurrentLocation}
+                      disabled={isSearching}
+                      className="bg-blue-500 px-4 rounded-b-xl flex-row items-center justify-center"
+                    >
+                      <Text className="text-white text-lg">📍</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <TouchableOpacity
+                    testID="open-full-screen-map"
+                    onPress={openFullScreenMap}
+                    className="mt-2 bg-purple-600 p-3 rounded-xl flex-row items-center justify-center gap-2"
+                  >
+                    <Text className="text-white text-lg">🗺️</Text>
+                    <Text className="text-white font-semibold">
+                      Selecionar no mapa
+                    </Text>
+                  </TouchableOpacity>
+
+                  <View className="mt-3 rounded-xl overflow-hidden border border-white/20" style={{ height: 280 }} pointerEvents="none">
+                    <MapView
+                      ref={mapRef}
+                      style={{ flex: 1 }}
+                      provider={PROVIDER_DEFAULT}
+                      scrollEnabled={false}
+                      zoomEnabled={false}
+                      rotateEnabled={false}
+                      pitchEnabled={false}
+                      initialRegion={{
+                        latitude: form.latitude,
+                        longitude: form.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                      }}
+                    >
+                      {form.latitude && form.longitude && (
+                        <Marker
+                          coordinate={{
+                            latitude: form.latitude,
+                            longitude: form.longitude,
+                          }}
+                          title={form.title || form.location || "Local do Evento"}
+                        />
+                      )}
+                    </MapView>
+                  </View>
+
+                  <View className="mt-2 p-3 rounded-lg bg-white/5">
+                    {locationConfirmed ? (
+                      <View testID="location-confirmed">
+                        <View className="flex-row items-center gap-2 mb-1">
+                          <Text className="text-green-400">✓</Text>
+                          <Text className="text-green-400 text-sm font-semibold">
+                            Local confirmado {form.city ? `(${form.city})` : ""}
+                          </Text>
+                        </View>
+                        {foundAddress ? (
+                          <Text className="text-gray-300 text-xs">
+                            📍 {foundAddress}
+                          </Text>
+                        ) : null}
+                      </View>
+                    ) : (
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-yellow-400">⚠</Text>
+                        <Text className="text-yellow-400 text-sm">
+                          Digite o nome do local e clique em "Buscar"
                         </Text>
                       </View>
-                      {foundAddress ? (
-                        <Text className="text-gray-300 text-xs">
-                          📍 {foundAddress}
-                        </Text>
-                      ) : null}
-                    </View>
-                  ) : (
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-yellow-400">⚠</Text>
-                      <Text className="text-yellow-400 text-sm">
-                        Digite o nome do local e clique em "Buscar"
-                      </Text>
-                    </View>
-                  )}
+                    )}
+                  </View>
                 </View>
-              </View>
-            ) : (
-              <TextInput
-                testID={field === "schedule" ? "event-programation" : undefined}
-                value={form[field]}
-                placeholder={
-                  field === "price"
-                    ? "0.00"
-                    : field === "schedule"
-                      ? "Ex:\n18h - Abertura\n19h - Show principal\n22h - Encerramento"
-                      : labels[field]
-                }
-                placeholderTextColor="#94a3b8"
-                keyboardType={field === "price" ? "numeric" : "default"}
-                multiline={field === "schedule"}
-                numberOfLines={field === "schedule" ? 8 : 1}
-                textAlignVertical={field === "schedule" ? "top" : "center"}
-                maxLength={field === "schedule" ? 1000 : undefined}
-                onChangeText={(v) => {
-                  if (field === "price") {
-                    const cleaned = v.replace(/[^0-9.,]/g, "");
-                    setForm({ ...form, [field]: cleaned });
-                  } else {
-                    setForm({ ...form, [field]: v });
+              ) : (
+                <TextInput
+                  testID={field === "schedule" ? "event-programation" : undefined}
+                  value={form[field]}
+                  placeholder={
+                    field === "price"
+                      ? "0.00"
+                      : field === "schedule"
+                        ? "Ex:\n18h - Abertura\n19h - Show principal\n22h - Encerramento"
+                        : labels[field]
                   }
-                }}
-                className={`bg-white/10 text-white p-3 rounded ${field === "schedule" ? "min-h-[180px]" : ""
-                  }`}
-              />
-            )}
+                  placeholderTextColor="#94a3b8"
+                  keyboardType={field === "price" ? "numeric" : "default"}
+                  multiline={field === "schedule"}
+                  numberOfLines={field === "schedule" ? 8 : 1}
+                  textAlignVertical={field === "schedule" ? "top" : "center"}
+                  maxLength={field === "schedule" ? 1000 : undefined}
+                  onChangeText={(v) => {
+                    if (field === "price") {
+                      const cleaned = v.replace(/[^0-9.,]/g, "");
+                      setForm({ ...form, [field]: cleaned });
+                    } else {
+                      setForm({ ...form, [field]: v });
+                    }
+                  }}
+                  className={`bg-white/10 text-white p-3 rounded ${field === "schedule" ? "min-h-[180px]" : ""
+                    }`}
+                />
+              )}
+            </View>
+          ))}
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={form.eventDateTime || new Date()}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={(_, selected) => {
+                setShowDatePicker(false);
+                if (selected) {
+                  const current = form.eventDateTime || new Date();
+                  const merged = new Date(selected);
+                  merged.setHours(current.getHours(), current.getMinutes(), 0, 0);
+                  setForm({ ...form, eventDateTime: merged });
+                  setShowTimePicker(true);
+                }
+              }}
+            />
+          )}
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={form.eventDateTime || new Date()}
+              mode="time"
+              is24Hour={true}
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={(_, selected) => {
+                setShowTimePicker(false);
+                if (selected) {
+                  const current = form.eventDateTime || new Date();
+                  const merged = new Date(current);
+                  merged.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
+                  setForm({ ...form, eventDateTime: merged });
+                }
+              }}
+            />
+          )}
+
+          <View className="flex-row gap-3 mt-6">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="flex-1 bg-gray-600 p-4 rounded-xl"
+            >
+              <Text className="text-white text-center font-semibold">
+                Cancelar
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              disabled={loading}
+              onPress={async () => {
+                const dateValidation = validateFutureEventDateTime(form.eventDateTime);
+                if (!dateValidation.isValid) {
+                  showError(dateValidation.error);
+                  return;
+                }
+
+                const result = validateEventForm(form);
+                if (!result.isValid) {
+                  showError(Object.values(result.errors)[0]);
+                  return;
+                }
+
+                const locationValidation = validateLocation(form, locationConfirmed);
+                if (!locationValidation.isValid) {
+                  showError(locationValidation.error);
+                  return;
+                }
+
+                setLoading(true);
+
+                const success = await createEvent({
+                  ...form,
+                  is_free: Number((form.price || "0").replace(",", ".")) === 0,
+                  price: Number((form.price || "0").replace(",", ".")).toFixed(2) * 1,
+                  date: form.eventDateTime || new Date(),
+                  latitude: form.latitude,
+                  longitude: form.longitude,
+                });
+
+                setLoading(false);
+                if (success) navigation.goBack();
+              }}
+              className="flex-1 bg-amber-400 p-4 rounded-xl"
+            >
+              <Text className="text-black text-center font-semibold">
+                {loading ? "Salvando..." : "Salvar"}
+              </Text>
+            </TouchableOpacity>
           </View>
-        ))}
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={form.eventDateTime || new Date()}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(_, selected) => {
-              setShowDatePicker(false);
-              if (selected) {
-                const current = form.eventDateTime || new Date();
-                const merged = new Date(selected);
-                merged.setHours(current.getHours(), current.getMinutes(), 0, 0);
-                setForm({ ...form, eventDateTime: merged });
-                setShowTimePicker(true);
-              }
-            }}
-          />
-        )}
-
-        {showTimePicker && (
-          <DateTimePicker
-            value={form.eventDateTime || new Date()}
-            mode="time"
-            is24Hour={true}
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(_, selected) => {
-              setShowTimePicker(false);
-              if (selected) {
-                const current = form.eventDateTime || new Date();
-                const merged = new Date(current);
-                merged.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
-                setForm({ ...form, eventDateTime: merged });
-              }
-            }}
-          />
-        )}
-
-        <View className="flex-row gap-3 mt-6">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="flex-1 bg-gray-600 p-4 rounded-xl"
-          >
-            <Text className="text-white text-center font-semibold">
-              Cancelar
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            disabled={loading}
-            onPress={async () => {
-              const dateValidation = validateFutureEventDateTime(form.eventDateTime);
-              if (!dateValidation.isValid) {
-                showError(dateValidation.error);
-                return;
-              }
-
-              const result = validateEventForm(form);
-              if (!result.isValid) {
-                showError(Object.values(result.errors)[0]);
-                return;
-              }
-
-              const locationValidation = validateLocation(form, locationConfirmed);
-              if (!locationValidation.isValid) {
-                showError(locationValidation.error);
-                return;
-              }
-
-              setLoading(true);
-
-              const success = await createEvent({
-                ...form,
-                is_free: Number((form.price || "0").replace(",", ".")) === 0,
-                price: Number((form.price || "0").replace(",", ".")).toFixed(2) * 1,
-                date: form.eventDateTime || new Date(),
-                latitude: form.latitude,
-                longitude: form.longitude,
-              });
-
-              setLoading(false);
-              if (success) navigation.goBack();
-            }}
-            className="flex-1 bg-amber-400 p-4 rounded-xl"
-          >
-            <Text className="text-black text-center font-semibold">
-              {loading ? "Salvando..." : "Salvar"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <Modal
         visible={showFullScreenMap}
@@ -672,6 +682,7 @@ export default function CreateEventScreen({ navigation }) {
             </TouchableOpacity>
             <Text className="text-white font-bold text-lg">Selecionar Local</Text>
             <TouchableOpacity
+              testID="full-screen-map-confirm"
               onPress={confirmFullScreenSelection}
               disabled={isReverseGeocoding}
               className="p-2"

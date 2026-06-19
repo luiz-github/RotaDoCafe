@@ -5,11 +5,11 @@ appId: ${APP_ID}
 
 - tapOn: "Digite seu e-mail"
 - eraseText
-- inputText: "${SUPERADMIN_EMAIL}"
+- inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
 - eraseText
-- inputText: "${SUPERADMIN_PASSWORD}"
+- inputText: "${TEST_NEW_PASSWORD}"
 
 - hideKeyboard
 
@@ -26,3 +26,11 @@ appId: ${APP_ID}
 
 - assertVisible:
     id: "event-details-screen"
+
+- scrollUntilVisible:
+    element:
+      text: "Localização"
+    direction: DOWN
+
+- assertVisible: "Localização"
+- assertVisible: "Como chegar"
