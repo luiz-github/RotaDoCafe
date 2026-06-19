@@ -87,7 +87,15 @@ export const validateFutureEventDateTime = (eventDateTime) => {
   return { isValid: true };
 };
 
-export const validateLocation = (form) => {
+export const validateLocation = (form, locationConfirmed) => {
+  if (!locationConfirmed) {
+    return {
+      isValid: false,
+      error:
+        "Você precisa validar o local usando Buscar Local, Minha Localização ou Selecionar no Mapa",
+    };
+  }
+
   if (!form.latitude || !form.longitude) {
     return {
       isValid: false,

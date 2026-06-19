@@ -668,7 +668,7 @@ export default function EditEventScreen({ route, navigation }) {
                 return;
               }
 
-              const locationValidation = validateLocation(form);
+              const locationValidation = validateLocation(form, locationConfirmed);
               if (!locationValidation.isValid) {
                 showError(locationValidation.error);
                 return;

@@ -120,7 +120,7 @@ export default function CreateEventScreen({ navigation }) {
       }
 
       const r = reverseResults[0];
-      console.log("Reverse geocode completo:", r);
+      // console.log("Reverse geocode completo:", r);
 
       let cityName = r.subregion || "";
 
@@ -627,7 +627,7 @@ export default function CreateEventScreen({ navigation }) {
                 return;
               }
 
-              const locationValidation = validateLocation(form);
+              const locationValidation = validateLocation(form, locationConfirmed);
               if (!locationValidation.isValid) {
                 showError(locationValidation.error);
                 return;
