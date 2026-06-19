@@ -15,9 +15,12 @@ import useLogout from "../../hooks/AuthScreen/useLogout";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import useChangePassword from "../../hooks/ProfileScreen/useChangePassword";
 import useUserProfile from "../../hooks/ProfileScreen/useUserProfile";
-import Toast from 'react-native-toast-message'
+import useToast from '../../components/Toast/ToastMessage'
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function ProfileScreen({ navigation }) {
+   const { showSuccess } = useToast()
 
   const handleLogout = useLogout(navigation);
   const { handleSave, loading } = useChangePassword();
@@ -76,16 +79,31 @@ export default function ProfileScreen({ navigation }) {
 
     setIsEditing(false);
 
-    Toast.show({
-      type: "success",
-      text1: "Sucesso",
-      text2: "Alterações salvas com sucesso.",
-    });
+    showSuccess("Alterações salvas com sucesso.");
   };
 
   const onChangePhoto = async (base64Image) => {
     await updateProfilePhoto(base64Image)
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsEditing(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setShowCurrent(false);
+        setShowNew(false);
+        setShowConfirm(false);
+        if (user) {
+          setName(user.name || "");
+          setEmail(user.email || "");
+          setImage(user.photoURL || null);
+        }
+      };
+    }, [user])
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">

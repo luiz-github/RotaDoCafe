@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import Toast from 'react-native-toast-message'
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
 
 import { auth } from '../../services/firebase'
 import { saveBiometricSecret } from '../../services/biometric/biometricStorage'
+import useToast from '../../components/Toast/ToastMessage'
 
 export default function useChangePassword() {
   const [loading, setLoading] = useState(false)
+   const { showError } = useToast()
 
   const validate = ({ currentPassword, newPassword, confirmPassword }) => {
     const wantsToChangePassword = currentPassword || newPassword || confirmPassword
@@ -16,41 +17,25 @@ export default function useChangePassword() {
     }
 
     if (!currentPassword) {
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Informe sua senha atual.',
-      })
+      showError('Informe sua senha atual.')
 
       return null
     }
 
     if (!newPassword) {
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Informe a nova senha.',
-      })
+      showError('Informe a nova senha.')
 
       return null
     }
 
     if (!confirmPassword) {
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Confirme a nova senha.',
-      })
+      showError('Confirme a nova senha.')
 
       return null
     }
 
     if (newPassword !== confirmPassword) {
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'As senhas não coincidem.',
-      })
+      showError('As senhas não coincidem.')
 
       return null
     }
@@ -94,20 +79,12 @@ export default function useChangePassword() {
       return true
     } catch (error) {
       if (error?.code === 'auth/invalid-credential') {
-        Toast.show({
-          type: 'error',
-          text1: 'Senha incorreta',
-          text2: 'A senha atual informada não confere.',
-        })
+        showError('A senha atual informada não confere.')
 
         return false
       }
 
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Falha ao salvar dados.',
-      })
+      showError('Falha ao salvar dados.')
 
       return false
     } finally {

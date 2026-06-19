@@ -1,22 +1,19 @@
 import { useState } from 'react'
-import Toast from 'react-native-toast-message'
+import useToast from '../../components/Toast/ToastMessage'
 import { validateRegisterForm } from '../../services/validations/registerValidation'
 import { handleFirebaseError } from '../../services/validations/firebaseErrorHandler'
 import { registerUserInFirebase } from '../../services/auth/registerUser'
 
 export default function useRegister(navigation) {
   const [loading, setLoading] = useState(false)
+  const { showSuccess, showError } = useToast()
 
   const validate = ({ username, email, password, confirmPassword }) => {
     const validation = validateRegisterForm({ username, email, password, confirmPassword })
 
     if (!validation.isValid) {
       const firstError = Object.values(validation.errors)[0]
-      Toast.show({
-        type: 'error',
-        text1: 'Erro de validação',
-        text2: firstError,
-      })
+      showError(firstError)
       return false
     }
 
@@ -31,20 +28,13 @@ export default function useRegister(navigation) {
 
       await registerUserInFirebase({ username, email, password })
 
-      Toast.show({
-        type: 'success',
-        text1: 'Conta criada 🎉',
-      })
+      showSuccess('Conta criada 🎉')
 
       navigation.navigate('Auth', { email })
     } catch (error) {
       const errorResponse = handleFirebaseError(error)
 
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: errorResponse.message,
-      })
+      showError(errorResponse.message)
     } finally {
       setLoading(false)
     }
