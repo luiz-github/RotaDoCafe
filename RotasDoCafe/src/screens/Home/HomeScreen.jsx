@@ -33,6 +33,7 @@ export default function HomeScreen({ navigation }) {
   const openPlaceOnMap = (place) => {
     navigation.navigate("Explorar", {
       selectedPlace: place,
+      _tsPlace: Date.now(),
     });
   };
 

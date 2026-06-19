@@ -10,7 +10,7 @@ import { enrichPlace } from '../../utils/places'
 import { getRoutePath } from '../../services/routesService'
 import RouteInfoCard from '../Card/RouteInfoCard'
 
-export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) {
+export default function Map({ selectedPlace, selectedRoute, setSelectedRoute, setSelectedPlace }) {
   const { location, status, canAskAgain, requestPermission } = useLocation()
   const { places } = usePlaces()
 
@@ -29,15 +29,21 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
   }, [selectedPlace, location])
 
   useEffect(() => {
-    async function loadRoute() {
-      if (!selectedRoute || !location) {
-        setRealRoute([])
-        setDisplayRoute(null)
-        return
-      }
+    if (!selectedPlace) return
 
-      const routeWithUser = {
-        ...selectedRoute,
+    if (displayRoute) {
+      setHighlightRoute([])
+      setSelectedRoutePoint(0)
+
+      if (setSelectedRoute) {
+        setSelectedRoute(null)
+      }
+    }
+
+    if (location) {
+      const placeRoute = {
+        icon: selectedPlace.icon || '📍',
+        title: selectedPlace.title || selectedPlace.name || 'Rota',
         places: [
           {
             name: 'Minha localização',
@@ -45,20 +51,86 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
             longitude: location.longitude,
             isUser: true,
           },
-          ...selectedRoute.places,
+          {
+            name: selectedPlace.title || selectedPlace.name,
+            latitude: selectedPlace.latitude,
+            longitude: selectedPlace.longitude,
+          },
         ],
+      }
+
+      setDisplayRoute(placeRoute)
+      setRealRoute([
+        { latitude: location.latitude, longitude: location.longitude },
+        { latitude: selectedPlace.latitude, longitude: selectedPlace.longitude },
+      ])
+
+      async function loadPlaceRoute() {
+        try {
+          const route = await getRoutePath([
+            { latitude: location.latitude, longitude: location.longitude },
+            { latitude: selectedPlace.latitude, longitude: selectedPlace.longitude },
+          ])
+          setRealRoute(route)
+        } catch (error) {
+          console.log('Erro rota lugar:', error)
+        }
+      }
+
+      loadPlaceRoute()
+    } else {
+      const placeRoute = {
+        icon: selectedPlace.icon || '📍',
+        title: selectedPlace.title || selectedPlace.name || 'Destino',
+        places: [
+          {
+            name: selectedPlace.title || selectedPlace.name,
+            latitude: selectedPlace.latitude,
+            longitude: selectedPlace.longitude,
+          },
+        ],
+      }
+
+      setDisplayRoute(placeRoute)
+      setRealRoute([])
+    }
+  }, [selectedPlace])
+
+  useEffect(() => {
+    async function loadRoute() {
+      if (!selectedRoute) {
+        setRealRoute([])
+        setDisplayRoute(null)
+        return
+      }
+
+      const places = location
+        ? [
+            {
+              name: 'Minha localização',
+              latitude: location.latitude,
+              longitude: location.longitude,
+              isUser: true,
+            },
+            ...selectedRoute.places,
+          ]
+        : selectedRoute.places
+
+      const routeWithUser = {
+        ...selectedRoute,
+        places,
       }
 
       setDisplayRoute(routeWithUser)
       setRealRoute(
-        routeWithUser.places.map((p) => ({
+        places.map((p) => ({
           latitude: p.latitude,
           longitude: p.longitude,
         }))
       )
 
       try {
-        const route = await getRoutePath(routeWithUser.places)
+        const route = await getRoutePath(places)
         setRealRoute(route)
       } catch (error) {
         console.log('Erro rota:', error)
@@ -160,6 +232,10 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
       setSelectedRoute(null)
     }
 
+    if (setSelectedPlace) {
+      setSelectedPlace(null)
+    }
+
     if (location && mapRef.current) {
       mapRef.current.animateToRegion(
         {
@@ -244,7 +320,7 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
           )
         })}
 
-        {selectedPlaceMapData && (
+        {selectedPlaceMapData && !displayRoute && (
           <Marker
             ref={selectedMarkerRef}
             pinColor={colors.warning}

@@ -61,6 +61,7 @@ export default function ExploreScreen() {
 
     navigation.navigate('Explorar', {
       selectedPlace: place,
+      _tsPlace: Date.now(),
     });
   }, [navigation]);
 
