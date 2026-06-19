@@ -187,6 +187,7 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
       <MapView
         ref={mapRef}
         style={styles.map}
+        showsMyLocationButton={false}
         initialRegion={{
           latitude: location?.latitude ?? -22.43,
           longitude: location?.longitude ?? -43.73,
@@ -205,6 +206,17 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
             title={place.name}
           />
         ))}
+
+        {location && (
+          <Marker
+            coordinate={{
+              latitude: location.latitude,
+              longitude: location.longitude,
+            }}
+            pinColor="#228dff"
+            title="Sua localização"
+          />
+        )}
 
         {displayRoute?.places.map((place, index) => {
           const selected = selectedRoutePoint === index
