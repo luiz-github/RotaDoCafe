@@ -1,8 +1,10 @@
 appId: ${APP_ID}
-
 ---
-- launchApp
+- launchApp:
+    clearState: true
 
+- tapOn: "Digite seu e-mail"
+- inputText: "${SUPERADMIN_EMAIL}"
 
 - tapOn: "Digite sua senha"
 - inputText: "${SUPERADMIN_PASSWORD}"
@@ -10,6 +12,8 @@ appId: ${APP_ID}
 - hideKeyboard
 
 - tapOn: "Entrar"
+
+- assertVisible: "Rota do Café"
 
 - tapOn: "Eventos"
 
