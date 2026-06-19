@@ -1,7 +1,12 @@
 import { View, Text, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose }) {
+export default function RouteInfoCard({
+  route,
+  selectedIndex,
+  onSelect,
+  onClose,
+}) {
   if (!route) return null
 
   return (
@@ -12,14 +17,19 @@ export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose 
         bg-white rounded-3xl p-4 z-50
       "
     >
-      <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-lg font-bold">
+      <View className="flex-row items-start justify-between mb-3">
+        <Text
+          className="text-lg font-bold flex-1 mr-3"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {route.icon} {route.title}
         </Text>
 
         <Pressable
           testID="route-info-close"
           onPress={onClose}
+          style={{ flexShrink: 0 }}
           className="w-8 h-8 items-center justify-center rounded-full bg-gray-200"
         >
           <Ionicons name="close" size={18} color="#374151" />
