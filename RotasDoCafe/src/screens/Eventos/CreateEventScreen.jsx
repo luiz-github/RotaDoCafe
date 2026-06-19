@@ -31,7 +31,7 @@ export default function CreateEventScreen({ navigation }) {
   const mapRef = useRef(null);
   const fullScreenMapRef = useRef(null);
   const debounceTimer = useRef(null);
-  const lastWarnedCity = useRef(null); // 🆕 Para não repetir o mesmo toast
+  const lastWarnedCity = useRef(null);
 
   const { showSuccess, showError, showWarning } = useToast();
 

@@ -31,7 +31,7 @@ export default function EditEventScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const fullScreenMapRef = useRef(null);
   const debounceTimer = useRef(null);
-  const lastWarnedCity = useRef(null); // 🆕 Para não repetir o mesmo toast
+  const lastWarnedCity = useRef(null);
 
   const { showSuccess, showError } = useToast();
 
@@ -303,7 +303,6 @@ export default function EditEventScreen({ route, navigation }) {
     }
   };
 
-  // 🗺️ Abrir mapa em tela cheia
   const openFullScreenMap = () => {
     setFullScreenCoords({
       latitude: form.latitude,
