@@ -28,15 +28,14 @@ describe('SuggestedRouteCard', () => {
     fireEvent.press(getByText(`${suggestedRoutes[0].icon} ${suggestedRoutes[0].title}`))
 
     expect(onPress).toHaveBeenCalledTimes(1)
-
     expect(onPress).toHaveBeenCalledWith(suggestedRoutes[0])
   })
 
-  it('troca para a próxima rota após 8 segundos', () => {
+  it('troca para a próxima rota após 15 segundos', () => {
     const { getByText } = render(<SuggestedRouteCard onPress={jest.fn()} />)
 
     act(() => {
-      jest.advanceTimersByTime(8000)
+      jest.advanceTimersByTime(15000)
     })
 
     expect(getByText(`${suggestedRoutes[1].icon} ${suggestedRoutes[1].title}`)).toBeTruthy()
@@ -46,9 +45,19 @@ describe('SuggestedRouteCard', () => {
     const { getByText } = render(<SuggestedRouteCard onPress={jest.fn()} />)
 
     act(() => {
-      jest.advanceTimersByTime(16000)
+      jest.advanceTimersByTime(30000)
     })
 
     expect(getByText(`${suggestedRoutes[2].icon} ${suggestedRoutes[2].title}`)).toBeTruthy()
+  })
+
+  it('retorna para a primeira rota após completar o ciclo', () => {
+    const { getByText } = render(<SuggestedRouteCard onPress={jest.fn()} />)
+
+    act(() => {
+      jest.advanceTimersByTime(suggestedRoutes.length * 15000)
+    })
+
+    expect(getByText(`${suggestedRoutes[0].icon} ${suggestedRoutes[0].title}`)).toBeTruthy()
   })
 })
