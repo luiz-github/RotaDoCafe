@@ -126,49 +126,52 @@ describe('validation flows', () => {
       isValid: false,
       errors: {
         title: 'Título é obrigatório',
-        city: 'Cidade é obrigatória',
-        state: 'Estado é obrigatório',
-        location: 'Local é obrigatório',
+        location: 'Local do evento é obrigatório',
+        coordinates: 'Você precisa definir a localização no mapa',
         description: 'Descrição é obrigatória',
         organizer: 'Organizador é obrigatório',
-        price: 'Preço é obrigatório. Se for gratuito, informe 0.00',
-        eventDateTime: 'Data e hora do evento são obrigatórias',
-        schedule: 'Programação do evento é obrigatória',
+        price: 'Preço é obrigatório (use 0 para gratuito)',
+        eventDateTime: 'Data e hora são obrigatórias',
+        age_rating: 'Classificação etária é obrigatória',
       },
     })
     expect(
       validateEventForm({
         title: 'Café ao Amanhecer',
-        city: 'São Paulo',
-        state: 'SP',
         location: 'Centro',
-        description: 'Evento delicioso',
+        latitude: -22.9,
+        longitude: -43.2,
+        description: 'Evento delicioso para amantes de café',
         organizer: 'Rota do Café',
         price: '10,50',
         eventDateTime: new Date('2030-01-01'),
-        schedule: '18h - Abertura\n19h - Palestra\n20h - Encerramento',
+        age_rating: 'Livre',
       }),
-    ).toEqual({ isValid: true, errors: {} })
+    ).toEqual({
+      isValid: true,
+      errors: {},
+    })
     expect(
       validateEventForm({
         title: 'Te',
-        city: 'Cidade',
-        state: 'UF',
-        location: 'Local',
+        location: 'Lo',
         description: 'abc',
-        organizer: 'Org',
+        organizer: 'O',
         price: '-1',
         eventDateTime: null,
-        schedule: 'abc',
+        age_rating: '',
       }),
     ).toMatchObject({
       isValid: false,
       errors: {
-        title: 'Título muito curto',
-        description: 'Descrição muito curta',
-        price: 'Preço inválido',
-        eventDateTime: 'Data e hora do evento são obrigatórias',
-        schedule: 'Programação muito curta',
+        title: 'Título deve ter no mínimo 3 caracteres',
+        location: 'Informe um local válido',
+        coordinates: 'Você precisa definir a localização no mapa',
+        description: 'Descrição deve ter no mínimo 10 caracteres',
+        organizer: 'Informe um organizador válido',
+        price: 'Preço não pode ser negativo',
+        eventDateTime: 'Data e hora são obrigatórias',
+        age_rating: 'Classificação etária é obrigatória',
       },
     })
 
