@@ -2,25 +2,22 @@ appId: ${APP_ID}
 ---
 - launchApp:
     clearState: true
+
 - tapOn: "Digite seu e-mail"
+- eraseText
 - inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
+- eraseText
 - inputText: "${TEST_NEW_PASSWORD}"
 
 - hideKeyboard
 
 - tapOn: "Entrar"
 
-# - extendedWaitUntil:
-#     visible: "No thanks"
-#     timeout: 5000
-
-# - tapOn: "No thanks"
-
 - assertVisible: "Rota do Café"
 
-- tapOn: 
+- tapOn:
     id: "tab-categoria"
 - assertVisible: "Descubra experiências únicas ☕"
 

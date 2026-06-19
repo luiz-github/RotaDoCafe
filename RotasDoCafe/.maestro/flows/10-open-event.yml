@@ -4,16 +4,20 @@ appId: ${APP_ID}
     clearState: true
 
 - tapOn: "Digite seu e-mail"
+- eraseText
 - inputText: "${SUPERADMIN_EMAIL}"
 
 - tapOn: "Digite sua senha"
+- eraseText
 - inputText: "${SUPERADMIN_PASSWORD}"
 
 - hideKeyboard
 
 - tapOn: "Entrar"
 
-- assertVisible: "Rota do Café"
+- extendedWaitUntil:
+    visible: "Rota do Café"
+    timeout: 10000
 
 - tapOn: "Eventos"
 

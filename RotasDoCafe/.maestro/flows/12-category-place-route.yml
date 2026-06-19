@@ -1,0 +1,49 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+
+- tapOn: "Digite seu e-mail"
+- eraseText
+- inputText: "${TEST_EMAIL}"
+
+- tapOn: "Digite sua senha"
+- eraseText
+- inputText: "${TEST_NEW_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+- extendedWaitUntil:
+    visible: "Rota do Café"
+    timeout: 10000
+
+- tapOn:
+    id: "tab-categoria"
+
+- extendedWaitUntil:
+    visible: "Descubra experiências únicas ☕"
+    timeout: 5000
+
+- tapOn: "Toque para abrir no mapa"
+
+- extendedWaitUntil:
+    visible:
+      id: "route-info-card"
+    timeout: 10000
+
+- assertVisible:
+    id: "map-screen"
+
+- assertVisible:
+    id: "route-info-card"
+
+- tapOn:
+    id: "route-info-close"
+
+- assertNotVisible:
+    id: "route-info-card"
+
+- assertVisible:
+    id: "map-screen"

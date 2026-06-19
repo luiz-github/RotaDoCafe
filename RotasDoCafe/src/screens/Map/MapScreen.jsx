@@ -26,7 +26,7 @@ export default function MapScreen({ route }) {
     }, [paramTsPlace])
 
     return (
-        <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-coffee items-center justify-center">
+        <SafeAreaView testID="map-screen" edges={['top', 'left', 'right']} className="flex-1 bg-coffee items-center justify-center">
             <MapView
                 selectedPlace={selectedPlace}
                 selectedRoute={selectedRoute}

@@ -6,6 +6,7 @@ export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose 
 
   return (
     <View
+      testID="route-info-card"
       className="
         absolute bottom-6 left-4 right-4
         bg-white rounded-3xl p-4 z-50
@@ -17,6 +18,7 @@ export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose 
         </Text>
 
         <Pressable
+          testID="route-info-close"
           onPress={onClose}
           className="w-8 h-8 items-center justify-center rounded-full bg-gray-200"
         >
@@ -28,7 +30,11 @@ export default function RouteInfoCard({ route, selectedIndex, onSelect, onClose 
         const selected = selectedIndex === index
 
         return (
-          <Pressable key={index} onPress={() => onSelect(index)}>
+          <Pressable
+            key={index}
+            testID={`route-point-${index}`}
+            onPress={() => onSelect(index)}
+          >
             <Text
               className="mb-2 font-medium"
               style={{

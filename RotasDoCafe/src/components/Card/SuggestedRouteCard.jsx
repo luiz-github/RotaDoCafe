@@ -111,6 +111,7 @@ export default function SuggestedRouteCard({ onPress }) {
         <PanGestureHandler onHandlerStateChange={onGestureStateChange}>
             <View>
                 <TouchableOpacity
+                    testID="suggested-route-card"
                     activeOpacity={0.9}
                     onPress={() => onPress(route)}
                 >
