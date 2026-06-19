@@ -21,11 +21,11 @@ appId: ${APP_ID}
 - assertVisible: "Rota do Café"
 
 - tapOn: 
-    id: "tab-explorar"
+    id: "tab-categoria"
 - assertVisible: "Descubra experiências únicas ☕"
 
 - tapOn:
-    id: "tab-mapa"
+    id: "tab-explorar"
 
 - assertVisible:
     id: "map-screen"

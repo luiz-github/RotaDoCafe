@@ -59,7 +59,7 @@ export default function ExploreScreen() {
   const openPlaceOnMap = useCallback((place) => {
     saveRecentPlace(place);
 
-    navigation.navigate('Mapa', {
+    navigation.navigate('Explorar', {
       selectedPlace: place,
     });
   }, [navigation]);

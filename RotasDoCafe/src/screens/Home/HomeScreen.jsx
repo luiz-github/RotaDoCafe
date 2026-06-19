@@ -31,7 +31,7 @@ export default function HomeScreen({ navigation }) {
   );
 
   const openPlaceOnMap = (place) => {
-    navigation.navigate("Mapa", {
+    navigation.navigate("Explorar", {
       selectedPlace: place,
     });
   };
@@ -61,8 +61,9 @@ export default function HomeScreen({ navigation }) {
 
         <SuggestedRouteCard
           onPress={(route) =>
-            navigation.navigate("Mapa", {
+            navigation.navigate("Explorar", {
               selectedRoute: route,
+              _ts: Date.now(),
             })
           }
         />
@@ -74,7 +75,7 @@ export default function HomeScreen({ navigation }) {
         <View className="flex-row flex-wrap justify-between mb-8">
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "fazendas" })}
+            onPress={() => navigation.navigate("Categoria", { category: "fazendas" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="leaf" size={28} color="#fbbf24" />
@@ -85,7 +86,7 @@ export default function HomeScreen({ navigation }) {
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "turismo_lazer" })}
+            onPress={() => navigation.navigate("Categoria", { category: "turismo_lazer" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="cafe" size={28} color="#fbbf24" />
@@ -96,7 +97,7 @@ export default function HomeScreen({ navigation }) {
 
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Explorar", { category: "mirantes" })}
+            onPress={() => navigation.navigate("Categoria", { category: "mirantes" })}
             className="bg-white/10 w-[48%] p-5 rounded-2xl mb-4"
           >
             <Ionicons name="binoculars" size={28} color="#fbbf24" />

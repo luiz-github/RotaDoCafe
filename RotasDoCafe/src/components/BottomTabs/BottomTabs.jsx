@@ -55,10 +55,10 @@ export default function BottomTabs() {
       />
 
       <Tab.Screen
-        name="Explorar"
+        name="Categoria"
         component={ExploreScreen}
         options={{
-          tabBarButtonTestID: 'tab-explorar',
+          tabBarButtonTestID: 'tab-categoria',
           tabBarIcon: ({ color }) => (
             <Ionicons name="compass" size={22} color={color} />
           ),
@@ -66,10 +66,10 @@ export default function BottomTabs() {
       />
 
       <Tab.Screen
-        name="Mapa"
+        name="Explorar"
         component={MapScreen}
         options={{
-          tabBarButtonTestID: 'tab-mapa',
+          tabBarButtonTestID: 'tab-explorar',
           tabBarIcon: ({ color }) => (
             <Ionicons name="map" size={22} color={color} />
           ),

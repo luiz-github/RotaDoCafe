@@ -156,6 +156,10 @@ export default function Map({ selectedPlace, selectedRoute, setSelectedRoute }) 
     setDisplayRoute(null)
     setSelectedRoutePoint(0)
 
+    if (setSelectedRoute) {
+      setSelectedRoute(null)
+    }
+
     if (location && mapRef.current) {
       mapRef.current.animateToRegion(
         {
