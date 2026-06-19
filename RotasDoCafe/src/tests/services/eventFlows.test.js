@@ -24,7 +24,12 @@ jest.mock('../../services/firebase', () => ({
   db: { mocked: true },
 }))
 
-const { fetchEvents, createEvent, updateEvent, removeEvent } = require('../../services/events/eventRepository')
+const {
+  fetchEvents,
+  createEvent,
+  updateEvent,
+  removeEvent,
+} = require('../../services/events/eventRepository')
 const eventService = require('../../services/events/eventService')
 
 describe('event flows', () => {
@@ -37,26 +42,55 @@ describe('event flows', () => {
   })
 
   it('filtra eventos apagados e ordena por data de criação', async () => {
+    const future = Date.now() + 100000
+
     mockGetDocs.mockResolvedValueOnce({
       docs: [
         {
           id: 'event-2',
-          data: () => ({ title: 'B', deletedAt: null, createdAt: { toMillis: () => 200 } }),
+          data: () => ({
+            title: 'B',
+            deletedAt: null,
+            createdAt: { toMillis: () => 200 },
+            eventDateTime: { toMillis: () => future + 1000 },
+          }),
         },
         {
           id: 'event-1',
-          data: () => ({ title: 'A', deletedAt: null, createdAt: { toMillis: () => 100 } }),
+          data: () => ({
+            title: 'A',
+            deletedAt: null,
+            createdAt: { toMillis: () => 100 },
+            eventDateTime: { toMillis: () => future },
+          }),
         },
         {
           id: 'event-3',
-          data: () => ({ title: 'C', deletedAt: 'deleted', createdAt: { toMillis: () => 50 } }),
+          data: () => ({
+            title: 'C',
+            deletedAt: 'deleted',
+            createdAt: { toMillis: () => 50 },
+            eventDateTime: { toMillis: () => future + 2000 },
+          }),
         },
       ],
     })
 
     await expect(fetchEvents()).resolves.toEqual([
-      { id: 'event-1', title: 'A', deletedAt: null, createdAt: { toMillis: expect.any(Function) } },
-      { id: 'event-2', title: 'B', deletedAt: null, createdAt: { toMillis: expect.any(Function) } },
+      {
+        id: 'event-1',
+        title: 'A',
+        deletedAt: null,
+        createdAt: { toMillis: expect.any(Function) },
+        eventDateTime: { toMillis: expect.any(Function) },
+      },
+      {
+        id: 'event-2',
+        title: 'B',
+        deletedAt: null,
+        createdAt: { toMillis: expect.any(Function) },
+        eventDateTime: { toMillis: expect.any(Function) },
+      },
     ])
   })
 
