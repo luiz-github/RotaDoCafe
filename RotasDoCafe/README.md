@@ -354,13 +354,19 @@ O app consulta dados de pontos turísticos e históricos nestas cidades do Vale 
 
 - Vassouras
 - Valença
-- Barra do Piraí
 - Rio das Flores
-- Piraí
-- Miguel Pereira
-- Paty do Alferes
+- Barra do Piraí
 - Engenheiro Paulo de Frontin
+- Paty do Alferes
+- Paracambi
+- Miguel Pereira
+- Mendes
+- Pinheiral
+- Barra Mansa
+- Rio Claro
+- Paraíba do Sul
 - Volta Redonda
+- Piabas
 
 ---
 
