@@ -173,7 +173,7 @@ describe('useChangePassword', () => {
 
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
-      text1: 'Senha incorreta',
+      text1: 'Erro',
       text2: 'A senha atual informada não confere.',
     })
   })

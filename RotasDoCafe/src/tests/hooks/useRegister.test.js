@@ -42,7 +42,7 @@ describe('useRegister', () => {
     expect(mockRegisterUserInFirebase).not.toHaveBeenCalled()
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
-      text1: 'Erro de validação',
+      text1: 'Erro',
       text2: 'Usuário é obrigatório',
     })
   })
@@ -67,7 +67,8 @@ describe('useRegister', () => {
     })
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'success',
-      text1: 'Conta criada 🎉',
+      text1: 'Sucesso',
+      text2: 'Conta criada 🎉',
     })
     expect(navigation.navigate).toHaveBeenCalledWith('Auth', { email: 'novo@exemplo.com' })
   })

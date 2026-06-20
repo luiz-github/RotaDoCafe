@@ -11,7 +11,7 @@ export default function useForgotPassword(navigation) {
     const validation = validateEmail(email)
 
     if (!validation.isValid) {
-      showError(validation.message)
+      showError(validation.error)
       return
     }
 
