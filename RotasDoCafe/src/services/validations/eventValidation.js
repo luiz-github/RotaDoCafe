@@ -1,127 +1,114 @@
-const createResult = (isValid, error = null) => ({ isValid, error })
+export const validateEventForm = (form) => {
+  const errors = {};
 
-const normalize = (value) => value?.toString().trim() || ''
-
-const validateTitle = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Título é obrigatório')
-  if (v.length < 3) return createResult(false, 'Título muito curto')
-  return createResult(true)
-}
-
-const validateCity = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Cidade é obrigatória')
-  return createResult(true)
-}
-
-const validateState = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Estado é obrigatório')
-  return createResult(true)
-}
-
-const validateLocation = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Local é obrigatório')
-  return createResult(true)
-}
-
-const validateDescription = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Descrição é obrigatória')
-  if (v.length < 5) return createResult(false, 'Descrição muito curta')
-  return createResult(true)
-}
-
-const validateOrganizer = (value) => {
-  const v = normalize(value)
-  if (!v) return createResult(false, 'Organizador é obrigatório')
-  return createResult(true)
-}
-
-const validatePrice = (value) => {
-  const v = normalize(value)
-
-  if (!v) {
-    return createResult(false, 'Preço é obrigatório. Se for gratuito, informe 0.00')
+  if (!form.title || form.title.trim() === "") {
+    errors.title = "Título é obrigatório";
+  } else if (form.title.trim().length < 3) {
+    errors.title = "Título deve ter no mínimo 3 caracteres";
+  } else if (form.title.trim().length > 100) {
+    errors.title = "Título deve ter no máximo 100 caracteres";
   }
 
-  const normalized = v.replace(',', '.')
-
-  const num = Number(normalized)
-  if (!Number.isFinite(num)) {
-    return createResult(false, 'Preço inválido')
+  if (!form.location || form.location.trim() === "") {
+    errors.location = "Local do evento é obrigatório";
+  } else if (form.location.trim().length < 3) {
+    errors.location = "Informe um local válido";
   }
 
-  if (num < 0) {
-    return createResult(false, 'Preço inválido')
+  if (!form.latitude || !form.longitude) {
+    errors.coordinates = "Você precisa definir a localização no mapa";
+  } else if (
+    form.latitude === -22.4038900 &&
+    form.longitude === -43.6625000 &&
+    !form.location?.trim()
+  ) {
+    errors.coordinates = "Busque um local no mapa antes de salvar";
   }
 
-  return createResult(true)
-}
-
-const validateSchedule = (value) => {
-  const v = normalize(value)
-
-  if (!v) {
-    return createResult(false, 'Programação do evento é obrigatória')
+  if (!form.description || form.description.trim() === "") {
+    errors.description = "Descrição é obrigatória";
+  } else if (form.description.trim().length < 10) {
+    errors.description = "Descrição deve ter no mínimo 10 caracteres";
+  } else if (form.description.trim().length > 1000) {
+    errors.description = "Descrição deve ter no máximo 1000 caracteres";
   }
 
-  if (v.length < 10) {
-    return createResult(false, 'Programação muito curta')
+  if (!form.organizer || form.organizer.trim() === "") {
+    errors.organizer = "Organizador é obrigatório";
+  } else if (form.organizer.trim().length < 2) {
+    errors.organizer = "Informe um organizador válido";
   }
 
-  if (v.length > 2000) {
-    return createResult(false, 'Programação muito longa')
+  if (form.price === undefined || form.price === null || form.price === "") {
+    errors.price = "Preço é obrigatório (use 0 para gratuito)";
+  } else {
+    const priceNumber = Number(String(form.price).replace(",", "."));
+    if (isNaN(priceNumber)) {
+      errors.price = "Preço inválido";
+    } else if (priceNumber < 0) {
+      errors.price = "Preço não pode ser negativo";
+    } else if (priceNumber > 999999) {
+      errors.price = "Preço excede o limite máximo";
+    }
   }
 
-  return createResult(true)
-}
-
-const validateEventDateTime = (value) => {
-  if (!(value instanceof Date) || isNaN(value.getTime())) {
-    return createResult(false, 'Data e hora do evento são obrigatórias')
+  if (!form.eventDateTime) {
+    errors.eventDateTime = "Data e hora são obrigatórias";
   }
 
-  return createResult(true)
-}
-
-export const validateFutureEventDateTime = (value) => {
-  if (!(value instanceof Date) || isNaN(value.getTime())) {
-    return createResult(false, 'Data e hora do evento são obrigatórias')
+  if (!form.age_rating || form.age_rating.trim() === "") {
+    errors.age_rating = "Classificação etária é obrigatória";
   }
-
-  if (value <= new Date()) {
-    return createResult(false, 'A data e hora do evento devem ser futuras')
-  }
-
-  return createResult(true)
-}
-
-const validateEventForm = (data) => {
-  const validators = {
-    title: () => validateTitle(data.title),
-    city: () => validateCity(data.city),
-    state: () => validateState(data.state),
-    location: () => validateLocation(data.location),
-    description: () => validateDescription(data.description),
-    organizer: () => validateOrganizer(data.organizer),
-    price: () => validatePrice(data.price),
-    eventDateTime: () => validateEventDateTime(data.eventDateTime),
-    schedule: () => validateSchedule(data.schedule),
-  }
-
-  const errors = Object.entries(validators).reduce((acc, [field, fn]) => {
-    const result = fn()
-    if (!result.isValid) acc[field] = result.error
-    return acc
-  }, {})
 
   return {
     isValid: Object.keys(errors).length === 0,
     errors,
-  }
-}
+  };
+};
 
-export { validateEventForm }
+export const validateFutureEventDateTime = (eventDateTime) => {
+  if (!eventDateTime) {
+    return {
+      isValid: false,
+      error: "Data e hora são obrigatórias",
+    };
+  }
+
+  const now = new Date();
+  const eventDate = new Date(eventDateTime);
+
+  if (eventDate <= now) {
+    return {
+      isValid: false,
+      error: "O evento deve ser em uma data futura",
+    };
+  }
+
+  return { isValid: true };
+};
+
+export const validateLocation = (form, locationConfirmed) => {
+  if (!locationConfirmed) {
+    return {
+      isValid: false,
+      error:
+        "Você precisa validar o local usando Buscar Local, Minha Localização ou Selecionar no Mapa",
+    };
+  }
+
+  if (!form.latitude || !form.longitude) {
+    return {
+      isValid: false,
+      error: "Você precisa definir a localização no mapa",
+    };
+  }
+
+  if (!form.location || form.location.trim() === "") {
+    return {
+      isValid: false,
+      error: "Busque o local no mapa antes de salvar",
+    };
+  }
+
+  return { isValid: true };
+};

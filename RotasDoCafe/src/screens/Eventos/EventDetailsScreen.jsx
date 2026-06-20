@@ -1,7 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { formatDateTime } from "../../utils/date";
 import { Ionicons } from "@expo/vector-icons";
+import * as Linking from 'expo-linking';
 
 export default function EventDetailsScreen({ route, navigation }) {
     const { event } = route.params;
@@ -33,10 +35,9 @@ export default function EventDetailsScreen({ route, navigation }) {
                         Detalhes do Evento
                     </Text>
                 </View>
+
                 <View className="bg-white/10 rounded-3xl p-6">
-
                     <View className="flex-row flex-wrap gap-2 mb-4">
-
                         <View
                             className={`px-3 py-1 rounded-full ${event.is_free
                                 ? "bg-green-500/20"
@@ -62,7 +63,6 @@ export default function EventDetailsScreen({ route, navigation }) {
                                 {event.age_rating || "Livre"}
                             </Text>
                         </View>
-
                     </View>
 
                     <Text className="text-white text-3xl font-bold mb-3">
@@ -81,9 +81,54 @@ export default function EventDetailsScreen({ route, navigation }) {
                         📍 {event.location}
                     </Text>
 
-                    <Text className="text-gray-300 text-base mb-2">
+                    <Text className="text-gray-300 text-base mb-4">
                         🏙️ {event.city} - {event.state}
                     </Text>
+
+                    {event.latitude && event.longitude && (
+                        <View className="mb-5">
+                            <Text className="text-white text-xl font-semibold mb-3">
+                                Localização
+                            </Text>
+
+                            <View className="rounded-2xl overflow-hidden border border-white/20" style={{ height: 250 }}>
+                                <MapView
+                                    style={{ flex: 1 }}
+                                    provider={PROVIDER_DEFAULT}
+                                    initialRegion={{
+                                        latitude: event.latitude,
+                                        longitude: event.longitude,
+                                        latitudeDelta: 0.005,
+                                        longitudeDelta: 0.005,
+                                    }}
+                                    scrollEnabled={false}
+                                    zoomEnabled={false}
+                                >
+                                    <Marker
+                                        coordinate={{
+                                            latitude: event.latitude,
+                                            longitude: event.longitude,
+                                        }}
+                                        title={event.title}
+                                        description={event.location}
+                                    />
+                                </MapView>
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const url = `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
+                                    Linking.openURL(url);
+                                }}
+                                className="mt-3 bg-blue-500/20 p-3 rounded-xl flex-row items-center justify-center gap-2"
+                            >
+                                <Ionicons name="navigate" size={20} color="#60a5fa" />
+                                <Text className="text-blue-400 font-semibold">
+                                    Como chegar
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
 
                     <View className="border-t border-white/10 pt-5 mb-5">
                         <Text className="text-white text-xl font-semibold mb-3">
@@ -97,7 +142,6 @@ export default function EventDetailsScreen({ route, navigation }) {
 
                     {event.schedule && (
                         <View className="border-t border-white/10 pt-5 mb-5">
-
                             <Text className="text-white text-xl font-semibold mb-3">
                                 Programação
                             </Text>
@@ -105,12 +149,10 @@ export default function EventDetailsScreen({ route, navigation }) {
                             <Text className="text-gray-300 leading-6">
                                 {event.schedule}
                             </Text>
-
                         </View>
                     )}
 
                     <View className="border-t border-white/10 pt-5">
-
                         <Text className="text-white text-xl font-semibold mb-3">
                             Informações
                         </Text>
@@ -122,9 +164,7 @@ export default function EventDetailsScreen({ route, navigation }) {
                         <Text className="text-gray-300">
                             Classificação: {event.age_rating || "Livre"}
                         </Text>
-
                     </View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>

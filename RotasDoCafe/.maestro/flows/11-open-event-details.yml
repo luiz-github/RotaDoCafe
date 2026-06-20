@@ -19,20 +19,18 @@ appId: ${APP_ID}
     visible: "Rota do Café"
     timeout: 10000
 
-- tapOn:
-    id: "tab-perfil"
-
-- assertVisible: "Perfil"
+- tapOn: "Eventos"
 
 - tapOn:
-    id: "profile-avatar"
+    id: "event-card"
 
-- assertVisible: "Escolher foto"
+- assertVisible:
+    id: "event-details-screen"
 
-- assertVisible: "Remover foto"
+- scrollUntilVisible:
+    element:
+      text: "Localização"
+    direction: DOWN
 
-- tapOn: "Remover foto"
-
-- extendedWaitUntil:
-    visible: "Toque para alterar foto"
-    timeout: 5000
+- assertVisible: "Localização"
+- assertVisible: "Como chegar"

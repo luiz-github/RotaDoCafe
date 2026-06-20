@@ -1,11 +1,4 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore'
+import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { auth, COLLECTIONS, db } from '../firebase'
 
 const getEventsCollection = () => collection(db, COLLECTIONS.EVENTS)
@@ -18,12 +11,20 @@ const normalizeEvent = (eventDoc) => ({
 const fetchEvents = async () => {
   const snapshot = await getDocs(getEventsCollection())
 
+  const now = Date.now()
+
   return snapshot.docs
     .map(normalizeEvent)
-    .filter((event) => event.deletedAt == null)
+    .filter((event) => {
+      if (event.deletedAt != null) return false
+
+      const eventDateTime = event.eventDateTime?.toMillis?.() ?? 0
+
+      return eventDateTime >= now
+    })
     .sort((left, right) => {
-      const leftDate = left.createdAt?.toMillis?.() ?? 0
-      const rightDate = right.createdAt?.toMillis?.() ?? 0
+      const leftDate = left.eventDateTime?.toMillis?.() ?? 0
+      const rightDate = right.eventDateTime?.toMillis?.() ?? 0
 
       return leftDate - rightDate
     })

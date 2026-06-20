@@ -1,0 +1,17 @@
+export const allowedCities = [
+  'Vassouras',
+  'Valença',
+  'Rio das Flores',
+  'Barra do Piraí',
+  'Engenheiro Paulo de Frontin',
+  'Paty do Alferes',
+  'Paracambi',
+  'Miguel Pereira',
+  'Mendes',
+  'Pinheiral',
+  'Barra Mansa',
+  'Rio Claro',
+  'Paraíba do Sul',
+  'Volta Redonda',
+  'Piabas',
+]

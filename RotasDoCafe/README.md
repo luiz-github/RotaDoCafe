@@ -37,15 +37,25 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Algoritmo de recomendação baseado em peso de categoria + proximidade
 - Ordenação por distância (fórmula de Haversine)
 - Cache em 3 camadas: memória → AsyncStorage (TTL 24h) → Firestore (fallback)
+- Carrossel de rotas sugeridas integrado à tela de categorias
 
 ### Mapa Interativo
 - Google Maps com marcadores de pontos turísticos
 - Centralização na localização do usuário
 - Abertura de lugar no mapa a partir de qualquer tela
+- Rotas sugeridas com carrossel animado (fade + auto-play + swipe)
+- RouteInfoCard com waypoints clicáveis e botão de fechar
+- Traçado de rota real (polyline) do usuário ao destino via OSRM API
+- Rota automática ao selecionar lugar de qualquer categoria
+- Fallback sem localização: exibe card e polyline entre waypoints, sem ponto do usuário
+- Marcador permanente de localização do usuário (pin azul)
 
 ### Eventos
 - Listagem de eventos regionais com data, horário, preço e classificação etária
 - CRUD completo (criar, editar, soft-delete) para administradores
+- Seleção de local do evento no mapa com 3 métodos: busca por nome (geocoding), localização atual (GPS) ou seleção manual em mapa fullscreen
+- Validação automática de cidade (somente cidades do Vale do Café)
+- Reverse geocoding para preencher cidade/estado automaticamente
 - Metadados automáticos: `createdBy`, `createdAt`, `updatedAt`
 
 ### Perfil
@@ -54,7 +64,7 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Logout com confirmação
 
 ### Home
-- Rota sugerida do dia
+- Rotas sugeridas com carrossel animado (dots indicadores, swipe, auto-play 15s)
 - Atalhos rápidos para categorias
 - Histórico dos últimos 3 lugares abertos (padrão pub/sub em memória)
 
@@ -75,7 +85,7 @@ RotasDoCafe/
 │   ├── seedPlaces.js             # Popula collection 'places' no Firestore
 │   └── runMaestro.js             # Runner de testes E2E com merge de .env
 ├── .maestro/
-│   └── flows/                    # 8 fluxos E2E (registro, login, perfil, admin...)
+│   └── flows/                    # 14 fluxos E2E independentes (registro, login, perfil, mapa, admin...)
 ├── src/
 │   ├── cache/
 │   │   └── cacheManager.js       # AsyncStorage cache com TTL de 24h
@@ -83,6 +93,7 @@ RotasDoCafe/
 │   │   ├── BottomTabs/           # Tab Navigator principal (Material Top Tabs)
 │   │   ├── Brand/                # AppLogo
 │   │   ├── Button/               # Botão reutilizável (primary, secondary, danger)
+│   │   ├── Card/                 # SuggestedRouteCard (carrossel animado), RouteInfoCard
 │   │   ├── Loading/              # Overlay de carregamento
 │   │   ├── Maps/                 # MapViewer
 │   │   ├── Navigation/           # MainNavigator
@@ -114,14 +125,18 @@ RotasDoCafe/
 │   │   ├── validations/          # login, register, event, field, firebaseError
 │   │   ├── getPlaces.js          # Fetch multi-source (cache/API/DB)
 │   │   ├── queries.js            # Overpass QL query (Vale do Café)
-│   │   └── recentPlaces.js       # Pub/sub de lugares recentes
+│   │   ├── recentPlaces.js       # Pub/sub de lugares recentes
+│   │   └── routesService.js      # getRoutePath via OSRM API
 │   ├── styles/
 │   │   ├── colors.js             # Paleta coffee, cream, latte, danger...
 │   │   └── global.css            # Entry point NativeWind
+│   ├── data/
+│   │   └── suggestedRoutes.js    # Rotas sugeridas pré-definidas (10 rotas)
 │   ├── tests/
-│   │   ├── components/           # AppLogo, Button, Loading, useToast
-│   │   ├── hooks/                # useBiometricAuth, useLogin, useRegister...
-│   │   └── services/             # auth, biometric, events, users, validations
+│   │   ├── __mocks__/            # Mocks (@expo/vector-icons)
+│   │   ├── components/           # AppLogo, Button, Loading, useToast, RouteInfoCard, SuggestedRouteCard
+│   │   ├── hooks/                # useBiometricAuth, useLogin, useRegister, useChangePassword...
+│   │   └── services/             # auth, biometric, events, users, validations, getRoutePath
 │   └── utils/
 │       ├── places.js             # Categorização, enriquecimento, Haversine
 │       └── date.js               # Formatação de data/hora
@@ -211,10 +226,10 @@ Os testes ficam centralizados em `src/tests/` organizados por domínio:
 npm run test
 ```
 
-**Cobertura atual:** 15 test suites, 51 testes cobrindo:
-- Componentes: AppLogo, Button, Loading, useToast
-- Hooks: useLogin, useRegister, useForgotPassword, useBiometricAuth, useLogout
-- Services: registerUser, forgotPassword, biometricStorage, eventFlows, userService, validationFlows
+**Cobertura atual:** 19 test suites, 73 testes cobrindo:
+- Componentes: AppLogo, Button, Loading, useToast, RouteInfoCard, SuggestedRouteCard
+- Hooks: useLogin, useRegister, useForgotPassword, useBiometricAuth, useLogout, useChangePassword
+- Services: registerUser, forgotPassword, biometricStorage, eventFlows, userService, validationFlows, getRoutePath
 
 ### Testes E2E (Maestro)
 
@@ -234,26 +249,31 @@ Configure `.maestro/.env` (baseado em `.maestro/.env.example`):
 APP_ID=
 TEST_EMAIL=
 TEST_PASSWORD=
+TEST_NEW_PASSWORD=
 SUPERADMIN_EMAIL=
 SUPERADMIN_PASSWORD=
 EVENT_TITLE=
-EVENT_CITY=
-EVENT_STATE=
 EVENT_LOCATION=
 EVENT_DESCRIPTION=
 EVENT_ORGANIZER=
 EVENT_PRICE=
 ```
 
-**Fluxos disponíveis:**
+**Fluxos disponíveis (todos independentes, exceto 01 que requer DB limpo):**
 1. Registro de usuário
 2. Login
-3. Navegação entre abas
-4. Edição de perfil
-5. Alterar foto de perfil
-6. Remover foto de perfil
-7. Logout
-8. Gerenciamento de eventos (admin)
+3. Alteração de senha
+4. Navegação entre abas
+5. Edição de perfil
+6. Alterar foto de perfil
+7. Remover foto de perfil
+8. Logout
+9. Gerenciamento de eventos (admin — criar evento com busca de local no mapa)
+10. Seleção de local no mapa fullscreen (admin — criar evento e selecionar no mapa)
+11. Edição de evento (admin — swipe no card, editar título)
+12. Detalhes do evento (usuário — abrir evento e verificar localização)
+13. Rota sugerida (tap card, navegar pelos pontos, fechar)
+14. Rota por categoria (tap lugar destaque, verificar card no mapa, fechar)
 
 ---
 
@@ -267,8 +287,8 @@ Auth (Stack)
 
 App (Material Top Tabs - posição bottom, swipeable)
 ├── Home
-├── Explorar
-├── Mapa
+├── Categoria (exploração por categorias)
+├── Explorar (mapa interativo)
 ├── Eventos
 ├── Admin (apenas super-admin)
 └── Perfil

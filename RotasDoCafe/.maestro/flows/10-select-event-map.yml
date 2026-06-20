@@ -4,16 +4,20 @@ appId: ${APP_ID}
     clearState: true
 
 - tapOn: "Digite seu e-mail"
+- eraseText
 - inputText: "${SUPERADMIN_EMAIL}"
 
 - tapOn: "Digite sua senha"
+- eraseText
 - inputText: "${SUPERADMIN_PASSWORD}"
 
 - hideKeyboard
 
 - tapOn: "Entrar"
 
-- assertVisible: "Rota do Café"
+- extendedWaitUntil:
+    visible: "Rota do Café"
+    timeout: 10000
 
 - tapOn: "Admin"
 - assertVisible: "Painel Admin"
@@ -28,11 +32,19 @@ appId: ${APP_ID}
 - inputText: "${EVENT_TITLE}"
 - hideKeyboard
 
-- tapOn: "Ex: Universidade de Vassouras..."
-- inputText: "${EVENT_LOCATION}"
-- hideKeyboard
+- tapOn:
+    id: "open-full-screen-map"
 
-- tapOn: "Buscar local"
+- assertVisible: "Selecionar Local"
+
+- swipe:
+    start: 50%, 50%
+    end: 65%, 35%
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "full-screen-map-confirm"
 
 - extendedWaitUntil:
     visible:

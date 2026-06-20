@@ -4,6 +4,7 @@ import { useEvents } from "../../hooks/EventScreen/useEvents";
 import { formatDateTime } from "../../utils/date";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function EventosScreen({ navigation }) {
   const { events, loading, fetchEvents } = useEvents();
@@ -56,49 +57,66 @@ export default function EventosScreen({ navigation }) {
               }
             >
 
-              <View className="p-4 pb-2 flex-row justify-between items-center">
+              <View className="p-4 pb-3 flex-row justify-between items-start">
 
-                <View className="flex-row gap-2">
+                <View className="flex-1">
+                  <View className="flex-row flex-wrap gap-2 mb-2">
 
-                  <View className={`px-3 py-1 rounded-full ${event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
-                    }`}>
-                    <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
+                    <View className={`px-3 py-1 rounded-full ${event.is_free ? "bg-green-500/20" : "bg-yellow-500/20"
                       }`}>
-                      {event.is_free
-                        ? "Gratuito"
-                        : `R$ ${Number(event.price ?? 0)
-                          .toFixed(2)
-                          .replace(".", ",")}`}
+                      <Text className={`text-xs font-semibold ${event.is_free ? "text-green-400" : "text-yellow-400"
+                        }`}>
+                        {event.is_free
+                          ? "Gratuito"
+                          : `R$ ${Number(event.price ?? 0)
+                            .toFixed(2)
+                            .replace(".", ",")}`}
+                      </Text>
+                    </View>
 
-                    </Text>
+                    <View className="bg-white/10 px-3 py-1 rounded-full">
+                      <Text className="text-xs text-gray-300">
+                        {event.age_rating || "Livre"}
+                      </Text>
+                    </View>
+
                   </View>
 
-                  <View className="bg-white/10 px-3 py-1 rounded-full">
-                    <Text className="text-xs text-gray-300">
-                      {event.age_rating || "Livre"}
-                    </Text>
-                  </View>
-
+                  <Text className="text-white text-lg font-bold" numberOfLines={2}>
+                    {event.title}
+                  </Text>
                 </View>
 
-                <Text className="text-gray-400 text-xs">
-                  {date}
-                </Text>
               </View>
 
               <View className="px-4 pb-4">
 
-                <Text className="text-white text-lg font-semibold mb-1">
-                  {event.title}
-                </Text>
+                <View className="flex-row items-center mb-2">
+                  <Ionicons name="calendar-outline" size={16} color="#9ca3af" style={{ marginRight: 6 }} />
+                  <Text className="text-gray-300 text-sm">
+                    {date} • {time}
+                  </Text>
+                </View>
 
-                <Text className="text-gray-400 text-sm mb-2">
-                  📍 {event.city} - {event.location} • {time}
-                </Text>
+                <View className="flex-row items-start mb-2">
+                  <Ionicons name="location-outline" size={16} color="#9ca3af" style={{ marginRight: 6, marginTop: 2 }} />
+                  <View className="flex-1">
+                    <Text className="text-gray-300 text-sm" numberOfLines={1}>
+                      {event.location}
+                    </Text>
+                    {event.city && event.state && (
+                      <Text className="text-gray-400 text-xs">
+                        {event.city} - {event.state}
+                      </Text>
+                    )}
+                  </View>
+                </View>
 
-                <Text numberOfLines={2} className="text-gray-300 text-sm">
-                  {event.description}
-                </Text>
+                {event.description && (
+                  <Text numberOfLines={2} className="text-gray-400 text-sm mt-2 leading-5">
+                    {event.description}
+                  </Text>
+                )}
 
               </View>
 
