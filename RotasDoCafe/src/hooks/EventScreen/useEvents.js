@@ -5,12 +5,12 @@ import {
     deleteEvent,
     updateEvent
 } from "../../services/events/eventService";
-
-import Toast from "react-native-toast-message";
+import useToast from "../../components/Toast/ToastMessage";
 
 export const useEvents = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { showSuccess, showError } = useToast()
 
     const fetchEvents = async () => {
         try {
@@ -20,10 +20,7 @@ export const useEvents = () => {
         } catch (error) {
             console.error("Erro ao buscar eventos:", error);
 
-            Toast.show({
-                type: "error",
-                text1: "Erro ao carregar eventos",
-            });
+            showError("Erro ao carregar eventos");
         } finally {
             setLoading(false);
         }
@@ -33,20 +30,13 @@ export const useEvents = () => {
         try {
             await createEvent(eventData);
 
-            Toast.show({
-                type: "success",
-                text1: "Evento criado!",
-            });
+            showSuccess("Evento criado!");
 
             await fetchEvents();
             return true;
 
         } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "Erro ao criar evento",
-            });
-
+            showError("Erro ao criar evento");
             return false;
         }
     };
@@ -55,19 +45,13 @@ export const useEvents = () => {
         try {
             await deleteEvent(eventId)
 
-            Toast.show({
-                type: "success",
-                text1: "Evento deletado!",
-            });
+            showSuccess("Evento deletado!");
 
             await fetchEvents();
             return true;
 
         } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "Erro ao deletar",
-            });
+            showError("Erro ao deletar evento");
 
             return false;
         }
@@ -77,20 +61,13 @@ export const useEvents = () => {
         try {
             await updateEvent(eventId, updatedData);
 
-            Toast.show({
-                type: "success",
-                text1: "Evento atualizado!",
-            });
+            showSuccess("Evento atualizado!");
 
             await fetchEvents();
             return true;
 
         } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "Erro ao atualizar",
-            });
-
+            showError("Erro ao atualizar evento");
             return false;
         }
     };

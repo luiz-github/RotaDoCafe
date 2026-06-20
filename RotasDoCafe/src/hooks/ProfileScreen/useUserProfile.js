@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react'
-import Toast from 'react-native-toast-message'
-import { getCurrentUserProfile, updateCurrentUserProfile, updateCurrentProfilePhoto } from '../../services/users/userService'
+import {
+  getCurrentUserProfile,
+  updateCurrentUserProfile,
+  updateCurrentProfilePhoto,
+} from '../../services/users/userService'
+import useToast from '../../components/Toast/ToastMessage'
 
 export default function useUserProfile() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
+  const { showSuccess, showError } = useToast()
 
   const fetchUser = async () => {
     try {
@@ -14,11 +19,7 @@ export default function useUserProfile() {
       setUser(profile)
     } catch (error) {
       console.error('Erro ao buscar usuário:', error)
-
-      Toast.show({
-        type: 'error',
-        text1: 'Erro ao carregar perfil',
-      })
+      showError('Erro ao carregar perfil')
     } finally {
       setLoading(false)
     }
@@ -28,26 +29,18 @@ export default function useUserProfile() {
     try {
       setUpdating(true)
       await updateCurrentProfilePhoto(base64Image)
-      
+
       setUser((prev) => ({
         ...prev,
         photoURL: base64Image,
       }))
 
-      Toast.show({
-        type: 'success',
-        text1: 'Foto atualizada!',
-      })
-      
+      showSuccess('Foto atualizada!')
       return true
     } catch (error) {
       console.error('Erro ao atualizar foto do perfil:', error)
 
-      Toast.show({
-        type: 'error',
-        text1: 'Erro ao atualizar foto do perfil',
-      })
-
+      showError('Erro ao atualizar foto do perfil')
       return false
     } finally {
       setUpdating(false)
@@ -55,37 +48,36 @@ export default function useUserProfile() {
   }
 
   const updateProfile = async ({ name, email }) => {
+    if (!name?.trim()) {
+      showError('O nome é obrigatório.')
+
+      return {
+        success: false,
+      }
+    }
+
     try {
       setUpdating(true)
+
       const { profile, authEmailUpdated } = await updateCurrentUserProfile({
-        name,
+        name: name.trim(),
         email,
       })
 
       setUser(profile)
 
-      if (!authEmailUpdated) {
-        Toast.show({
-          type: 'info',
-          text1: 'Email salvo, mas precisa relogar',
-        })
+      return {
+        success: true,
+        authEmailUpdated,
       }
-
-      Toast.show({
-        type: 'success',
-        text1: 'Perfil atualizado!',
-      })
-
-      return true
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error)
 
-      Toast.show({
-        type: 'error',
-        text1: 'Erro ao atualizar perfil',
-      })
+      showError('Erro ao atualizar perfil')
 
-      return false
+      return {
+        success: false,
+      }
     } finally {
       setUpdating(false)
     }
@@ -101,6 +93,6 @@ export default function useUserProfile() {
     updating,
     refetch: fetchUser,
     updateProfile,
-    updateProfilePhoto
+    updateProfilePhoto,
   }
 }

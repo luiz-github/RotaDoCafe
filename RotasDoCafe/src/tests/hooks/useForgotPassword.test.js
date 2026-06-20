@@ -41,7 +41,7 @@ describe('useForgotPassword', () => {
     expect(mockSendResetEmail).not.toHaveBeenCalled()
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
-      text1: 'Campo inválido',
+      text1: 'Erro',
       text2: 'E-mail inválido',
     })
   })
@@ -58,8 +58,8 @@ describe('useForgotPassword', () => {
     expect(navigation.goBack).toHaveBeenCalledTimes(1)
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'success',
-      text1: 'E-mail enviado 📩',
-      text2: 'Verifique sua caixa de entrada',
+      text1: 'Sucesso',
+      text2: 'E-mail enviado 📩',
     })
   })
 
@@ -73,8 +73,8 @@ describe('useForgotPassword', () => {
 
     expect(mockToastShow).toHaveBeenCalledWith({
       type: 'error',
-      text1: 'Erro ao enviar e-mail',
-      text2: 'Falha controlada',
+      text1: 'Erro',
+      text2: 'Erro ao enviar e-mail',
     })
     expect(navigation.goBack).not.toHaveBeenCalled()
   })

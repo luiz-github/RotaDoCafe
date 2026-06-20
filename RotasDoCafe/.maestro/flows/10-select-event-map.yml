@@ -1,0 +1,107 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+
+- tapOn: "Digite seu e-mail"
+- eraseText
+- inputText: "${SUPERADMIN_EMAIL}"
+
+- tapOn: "Digite sua senha"
+- eraseText
+- inputText: "${SUPERADMIN_PASSWORD}"
+
+- hideKeyboard
+
+- tapOn: "Entrar"
+
+- extendedWaitUntil:
+    visible: "Rota do Café"
+    timeout: 10000
+
+- tapOn: "Admin"
+- assertVisible: "Painel Admin"
+
+- tapOn: "Gerenciar Eventos"
+- assertVisible: "Gerenciar Eventos"
+
+- tapOn: "Criar Evento"
+- assertVisible: "Criar Evento"
+
+- tapOn: "Título"
+- inputText: "${EVENT_TITLE}"
+- hideKeyboard
+
+- tapOn:
+    id: "open-full-screen-map"
+
+- assertVisible: "Selecionar Local"
+
+- swipe:
+    start: 50%, 50%
+    end: 65%, 35%
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "full-screen-map-confirm"
+
+- extendedWaitUntil:
+    visible:
+      id: "location-confirmed"
+    timeout: 15000
+
+- scrollUntilVisible:
+    element:
+      text: "Descrição"
+    direction: DOWN
+    timeout: 10000
+
+- tapOn: "Descrição"
+- inputText: "${EVENT_DESCRIPTION}"
+- hideKeyboard
+
+- scrollUntilVisible:
+    element:
+      text: "Programação do Evento"
+    direction: DOWN
+    timeout: 10000
+
+- tapOn: "Organizador"
+- inputText: "${EVENT_ORGANIZER}"
+- hideKeyboard
+
+- swipe:
+    start: 50%, 80%
+    end: 50%, 30%
+
+- tapOn: "0.00"
+- eraseText
+- inputText: "${EVENT_PRICE}"
+- hideKeyboard
+
+- tapOn: "Livre"
+- eraseText
+- inputText: "Livre"
+- hideKeyboard
+
+- tapOn: "Selecionar data e hora"
+
+- tapOn: "28"
+
+- tapOn: "OK"
+
+- tapOn: "OK"
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "event-programation"
+
+- inputText: "18h - Abertura 19h - Show principal 22h - Encerramento"
+
+- hideKeyboard
+
+- tapOn: "Salvar"
+
+- assertVisible: "${EVENT_TITLE}"

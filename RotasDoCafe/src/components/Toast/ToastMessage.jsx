@@ -25,5 +25,13 @@ export default function useToast() {
         });
     };
 
-    return { showSuccess, showError, showInfo };
+    const showWarning = (message) => {
+        Toast.show({
+            type: 'warning',
+            text1: 'Atenção',
+            text2: message,
+        });
+    };
+
+    return { showSuccess, showError, showInfo, showWarning };
 }

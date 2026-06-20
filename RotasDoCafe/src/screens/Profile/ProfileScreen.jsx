@@ -15,8 +15,12 @@ import useLogout from "../../hooks/AuthScreen/useLogout";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
 import useChangePassword from "../../hooks/ProfileScreen/useChangePassword";
 import useUserProfile from "../../hooks/ProfileScreen/useUserProfile";
+import useToast from '../../components/Toast/ToastMessage'
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function ProfileScreen({ navigation }) {
+   const { showSuccess } = useToast()
 
   const handleLogout = useLogout(navigation);
   const { handleSave, loading } = useChangePassword();
@@ -29,13 +33,13 @@ export default function ProfileScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [image, setImage] = useState(null)
 
-  // const [currentPassword, setCurrentPassword] = useState("");
-  // const [newPassword, setNewPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // const [showCurrent, setShowCurrent] = useState(false);
-  // const [showNew, setShowNew] = useState(false);
-  // const [showConfirm, setShowConfirm] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -46,16 +50,60 @@ export default function ProfileScreen({ navigation }) {
   }, [user]);
 
   const handleSaveProfile = async () => {
-    const success = await updateProfile({ name, email });
+    const profileUpdated = await updateProfile({
+      name,
+      email,
+    });
 
-    if (success) {
-      setIsEditing(false);
+    if (!profileUpdated.success) {
+      return;
     }
+
+    const passwordUpdated = await handleSave({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+
+    if (passwordUpdated === false) {
+      return;
+    }
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+    setShowCurrent(false);
+    setShowNew(false);
+    setShowConfirm(false);
+
+    setIsEditing(false);
+
+    showSuccess("Alterações salvas com sucesso.");
   };
 
   const onChangePhoto = async (base64Image) => {
     await updateProfilePhoto(base64Image)
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsEditing(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setShowCurrent(false);
+        setShowNew(false);
+        setShowConfirm(false);
+        if (user) {
+          setName(user.name || "");
+          setEmail(user.email || "");
+          setImage(user.photoURL || null);
+        }
+      };
+    }, [user])
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-coffee">
@@ -137,34 +185,78 @@ export default function ProfileScreen({ navigation }) {
               </Text>
             )} */}
 
-            {/* {isEditing && (
+            {isEditing && (
               <>
                 <Text className="text-gray-400 mb-1">Senha atual</Text>
-                <TextInput
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
-                  secureTextEntry={!showCurrent}
-                  className="bg-white rounded-xl px-4 py-3 mb-4"
-                />
+                <View style={{ position: "relative", marginBottom: 16 }}>
+                  <TextInput
+                    testID="current-password-input"
+                    value={currentPassword}
+                    onChangeText={setCurrentPassword}
+                    secureTextEntry={!showCurrent}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowCurrent(!showCurrent)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showCurrent ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
                 <Text className="text-gray-400 mb-1">Nova senha</Text>
-                <TextInput
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  secureTextEntry={!showNew}
-                  className="bg-white rounded-xl px-4 py-3 mb-4"
-                />
+                <View style={{ position: "relative", marginBottom: 16 }}>
+                  <TextInput
+                    testID="new-password-input"
+                    value={newPassword}
+                    onChangeText={setNewPassword}
+                    secureTextEntry={!showNew}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowNew(!showNew)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showNew ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
                 <Text className="text-gray-400 mb-1">Confirmar nova senha</Text>
-                <TextInput
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry={!showConfirm}
-                  className="bg-white rounded-xl px-4 py-3 mb-6"
-                />
+                <View style={{ position: "relative", marginBottom: 24 }}>
+                  <TextInput
+                    testID="confirm-password-input"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirm}
+                    className="bg-white rounded-xl px-4 py-3 pr-12"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowConfirm(!showConfirm)}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>
+                      {showConfirm ? "🙈" : "👁️"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </>
-            )} */}
-
+            )}
             {isEditing ? (
               <View className="flex-row gap-3 mt-2">
 
@@ -174,10 +266,13 @@ export default function ProfileScreen({ navigation }) {
                     onPress={() => {
                       setName(user?.name || "");
                       setEmail(user?.email || "");
+                      setCurrentPassword("");
+                      setNewPassword("");
+                      setConfirmPassword("");
+                      setShowCurrent(false);
+                      setShowNew(false);
+                      setShowConfirm(false);
                       setIsEditing(false);
-                      // setCurrentPassword("");
-                      // setNewPassword("");
-                      // setConfirmPassword("");
                     }}
                   />
                 </View>
@@ -185,6 +280,7 @@ export default function ProfileScreen({ navigation }) {
                 <View className="flex-1">
                   <Button
                     title={updating ? "Salvando..." : "Salvar"}
+                    testID="save-profile-button"
                     onPress={handleSaveProfile}
                     disabled={updating}
                   />
@@ -194,6 +290,7 @@ export default function ProfileScreen({ navigation }) {
             ) : (
               <Button
                 title="Editar dados"
+                testID="edit-profile-button"
                 onPress={() => setIsEditing(true)}
               />
             )}
@@ -201,6 +298,7 @@ export default function ProfileScreen({ navigation }) {
             <View className="mt-6">
               <Button
                 title="Sair da conta"
+                testID="logout-button"
                 onPress={handleLogout}
                 variant="danger"
               />

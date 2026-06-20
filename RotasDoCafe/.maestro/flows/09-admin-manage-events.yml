@@ -2,7 +2,7 @@ appId: ${APP_ID}
 ---
 - launchApp:
     clearState: true
-    
+
 - tapOn: "Digite seu e-mail"
 - inputText: "${SUPERADMIN_EMAIL}"
 
@@ -26,43 +26,70 @@ appId: ${APP_ID}
 
 - tapOn: "Título"
 - inputText: "${EVENT_TITLE}"
+- hideKeyboard
 
-- tapOn: "Cidade"
-- inputText: "${EVENT_CITY}"
-
-- tapOn: "Estado"
-- inputText: "${EVENT_STATE}"
-
-- tapOn: "Local"
+- tapOn: "Ex: Universidade de Vassouras..."
 - inputText: "${EVENT_LOCATION}"
+- hideKeyboard
+
+- tapOn: "Buscar local"
+
+- extendedWaitUntil:
+    visible:
+      id: "location-confirmed"
+    timeout: 15000
+
+- scrollUntilVisible:
+    element:
+      text: "Descrição"
+    direction: DOWN
+    timeout: 10000
 
 - tapOn: "Descrição"
 - inputText: "${EVENT_DESCRIPTION}"
+- hideKeyboard
+
+- scrollUntilVisible:
+    element:
+      text: "Programação do Evento"
+    direction: DOWN
+    timeout: 10000
 
 - tapOn: "Organizador"
 - inputText: "${EVENT_ORGANIZER}"
+- hideKeyboard
+
+- swipe:
+    start: 50%, 80%
+    end: 50%, 30%
 
 - tapOn: "0.00"
+- eraseText
 - inputText: "${EVENT_PRICE}"
+- hideKeyboard
 
 - tapOn: "Livre"
 - eraseText
 - inputText: "Livre"
+- hideKeyboard
 
 - tapOn: "Selecionar data e hora"
 
-- extendedWaitUntil:
-    visible: "OK"
-    timeout: 5000
+- tapOn: "28"
 
 - tapOn: "OK"
 
-- extendedWaitUntil:
-    visible: "OK"
-    timeout: 5000
-
 - tapOn: "OK"
 
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "event-programation"
+
+- inputText: "18h - Abertura 19h - Show principal 22h - Encerramento"
+
+- hideKeyboard
 
 - tapOn: "Salvar"
+
 - assertVisible: "${EVENT_TITLE}"

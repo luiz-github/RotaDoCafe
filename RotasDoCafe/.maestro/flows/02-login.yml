@@ -4,19 +4,15 @@ appId: ${APP_ID}
     clearState: true
 
 - tapOn: "Digite seu e-mail"
+- eraseText
 - inputText: "${TEST_EMAIL}"
 
 - tapOn: "Digite sua senha"
+- eraseText
 - inputText: "${TEST_PASSWORD}"
 
 - hideKeyboard
 
 - tapOn: "Entrar"
 
-# - extendedWaitUntil:
-#     visible: "No thanks"
-#     timeout: 5000
-
-# - tapOn: "No thanks"
-
-- assertVisible: "Rota do Café"
+- assertVisible: "Descubra o Vale do Café no Sul Fluminense e explore fazendas históricas, cafés coloniais e experiências culturais."
