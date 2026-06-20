@@ -6,25 +6,26 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 
 ## Tecnologias
 
-| Camada | Stack |
-|--------|-------|
-| Framework | React Native 0.81 + Expo SDK 54 |
-| Estilização | NativeWind 4 (TailwindCSS 3.4) |
-| Navegação | React Navigation 7 (Native Stack + Material Top Tabs) |
-| Mapas | react-native-maps + Google Maps API |
-| Backend | Firebase 12 (Authentication + Firestore) |
-| Armazenamento local | AsyncStorage, Expo SecureStore |
-| Animações | react-native-reanimated 4, react-native-gesture-handler |
-| Localização | expo-location |
-| Biometria | expo-local-authentication |
-| Testes unitários | Jest 29 + jest-expo + @testing-library/react-native |
-| Testes E2E | Maestro |
+| Camada              | Stack                                                   |
+| ------------------- | ------------------------------------------------------- |
+| Framework           | React Native 0.81 + Expo SDK 54                         |
+| Estilização         | NativeWind 4 (TailwindCSS 3.4)                          |
+| Navegação           | React Navigation 7 (Native Stack + Material Top Tabs)   |
+| Mapas               | react-native-maps + Google Maps API                     |
+| Backend             | Firebase 12 (Authentication + Firestore)                |
+| Armazenamento local | AsyncStorage, Expo SecureStore                          |
+| Animações           | react-native-reanimated 4, react-native-gesture-handler |
+| Localização         | expo-location                                           |
+| Biometria           | expo-local-authentication                               |
+| Testes unitários    | Jest 29 + jest-expo + @testing-library/react-native     |
+| Testes E2E          | Maestro                                                 |
 
 ---
 
 ## Funcionalidades
 
 ### Autenticação
+
 - Login com email e senha
 - Cadastro com rollback automático caso o Firestore falhe
 - Recuperação de senha via Firebase
@@ -32,6 +33,7 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Controle de papéis (`user`, `super-admin`)
 
 ### Exploração de Lugares
+
 - Dados de pontos turísticos via Overpass API (OpenStreetMap)
 - Categorização automática em 7 grupos: Histórico, Mirantes, Museus & Cultura, Natureza, Religioso, Fazendas, Turismo & Lazer
 - Algoritmo de recomendação baseado em peso de categoria + proximidade
@@ -40,6 +42,7 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Carrossel de rotas sugeridas integrado à tela de categorias
 
 ### Mapa Interativo
+
 - Google Maps com marcadores de pontos turísticos
 - Centralização na localização do usuário
 - Abertura de lugar no mapa a partir de qualquer tela
@@ -51,6 +54,7 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Marcador permanente de localização do usuário (pin azul)
 
 ### Eventos
+
 - Listagem de eventos regionais com data, horário, preço e classificação etária
 - CRUD completo (criar, editar, soft-delete) para administradores
 - Seleção de local do evento no mapa com 3 métodos: busca por nome (geocoding), localização atual (GPS) ou seleção manual em mapa fullscreen
@@ -59,11 +63,13 @@ Aplicativo móvel de turismo para o **Vale do Café** (Sul Fluminense, RJ). Ajud
 - Metadados automáticos: `createdBy`, `createdAt`, `updatedAt`
 
 ### Perfil
+
 - Edição de nome
 - Upload de foto via câmera ou galeria
 - Logout com confirmação
 
 ### Home
+
 - Rotas sugeridas com carrossel animado (dots indicadores, swipe, auto-play 15s)
 - Atalhos rápidos para categorias
 - Histórico dos últimos 3 lugares abertos (padrão pub/sub em memória)
@@ -190,6 +196,9 @@ EXPO_PUBLIC_SUPER_ADMIN_PASSWORD=
 
 # Google Maps (Android)
 GoogleMapsApiKey=
+
+# OSRM
+EXPO_PUBLIC_OPENSTREETMAP_ROUTER_URL
 ```
 
 ### Seed Inicial
@@ -200,19 +209,21 @@ Cria o usuário super-admin e popula o Firestore com os pontos turísticos:
 npm run first:setup
 ```
 
-### Executar
+## Executar
+
+### Iniciar o Projeto
 
 ```bash
 npx expo start
 ```
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm start` | Inicia o Expo (modo LAN) |
+| Comando                | Descrição                                   |
+| ---------------------- | ------------------------------------------- |
+| `npm start`            | Inicia o Expo (modo LAN)                    |
 | `npm run start:tunnel` | Expo via tunnel (dispositivos fora da rede) |
-| `npm run android` | Build e executa no Android |
-| `npm run ios` | Build e executa no iOS |
-| `npm run web` | Abre no navegador |
+| `npm run android`      | Build e executa no Android                  |
+| `npm run ios`          | Build e executa no iOS                      |
+| `npm run web`          | Abre no navegador                           |
 
 ---
 
@@ -227,13 +238,30 @@ npm run test
 ```
 
 **Cobertura atual:** 19 test suites, 73 testes cobrindo:
+
 - Componentes: AppLogo, Button, Loading, useToast, RouteInfoCard, SuggestedRouteCard
 - Hooks: useLogin, useRegister, useForgotPassword, useBiometricAuth, useLogout, useChangePassword
 - Services: registerUser, forgotPassword, biometricStorage, eventFlows, userService, validationFlows, getRoutePath
 
-### Testes E2E (Maestro)
+### Testes E2E (Maestro) - OBS: Para rodar o teste do maestro é necessario desabilitar a stylus do emulador desabilitar o corretor e ativar a localização
 
 Requer o [Maestro CLI](https://maestro.mobile.dev/) instalado e um emulador/dispositivo rodando o app.
+
+## Executar
+
+### Android Nativo
+
+Caso tenha alterado dependências nativas, permissões, plugins Expo ou configurações do Android, gere novamente a estrutura nativa:
+
+```bash
+npx expo prebuild --clean
+```
+
+Depois gere e instale o aplicativo no dispositivo ou emulador Android:
+
+```bash
+npx expo run:android
+```
 
 ```bash
 # Rodar todos os fluxos
@@ -260,6 +288,7 @@ EVENT_PRICE=
 ```
 
 **Fluxos disponíveis (todos independentes, exceto 01 que requer DB limpo):**
+
 1. Registro de usuário
 2. Login
 3. Alteração de senha
@@ -270,10 +299,9 @@ EVENT_PRICE=
 8. Logout
 9. Gerenciamento de eventos (admin — criar evento com busca de local no mapa)
 10. Seleção de local no mapa fullscreen (admin — criar evento e selecionar no mapa)
-11. Edição de evento (admin — swipe no card, editar título)
-12. Detalhes do evento (usuário — abrir evento e verificar localização)
-13. Rota sugerida (tap card, navegar pelos pontos, fechar)
-14. Rota por categoria (tap lugar destaque, verificar card no mapa, fechar)
+11. Detalhes do evento (usuário — abrir evento e verificar localização)
+12. Rota sugerida (tap card, navegar pelos pontos, fechar)
+13. Rota por categoria (tap lugar destaque, verificar card no mapa, fechar)
 
 ---
 
@@ -305,16 +333,16 @@ Modais (Stack)
 
 Paleta inspirada em tons de café:
 
-| Token | Cor | Uso |
-|-------|-----|-----|
-| `coffee` | `#6F4E37` | Background principal |
-| `coffeeDark` | `#4E3526` | Navbar, elementos escuros |
-| `coffeeLight` | `#8B6A52` | Destaques sutis |
-| `cream` | `#F5F1E8` | Textos sobre fundo escuro |
-| `latte` | `#C8A27A` | Acentos secundários |
-| `amber-400` | `#fbbf24` | Ícones ativos, CTAs |
-| `danger` | `#FF6B6B` | Ações destrutivas |
-| `success` | `#4CAF50` | Confirmações |
+| Token         | Cor       | Uso                       |
+| ------------- | --------- | ------------------------- |
+| `coffee`      | `#6F4E37` | Background principal      |
+| `coffeeDark`  | `#4E3526` | Navbar, elementos escuros |
+| `coffeeLight` | `#8B6A52` | Destaques sutis           |
+| `cream`       | `#F5F1E8` | Textos sobre fundo escuro |
+| `latte`       | `#C8A27A` | Acentos secundários       |
+| `amber-400`   | `#fbbf24` | Ícones ativos, CTAs       |
+| `danger`      | `#FF6B6B` | Ações destrutivas         |
+| `success`     | `#4CAF50` | Confirmações              |
 
 Cards usam estilo glassmorphism (`bg-white/10`) com bordas arredondadas (`rounded-2xl`).
 
